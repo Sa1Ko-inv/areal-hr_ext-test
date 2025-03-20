@@ -1,8 +1,12 @@
+.idea
+
+.env
+.env.example
+
 /server/node_modules/
 /client/node_modules/
-/client/vite.config.js
+
 /client/.vite
 /client/dist
 /client/.vscode/
-.idea
 
