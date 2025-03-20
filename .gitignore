@@ -1,7 +1,7 @@
 .idea
 
 .env
-.env.example
+#.env.example
 
 /server/node_modules/
 /client/node_modules/
@@ -10,3 +10,4 @@
 /client/dist
 /client/.vscode/
 
+.env.example
