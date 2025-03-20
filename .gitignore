@@ -4,5 +4,5 @@
 /client/.vite
 /client/dist
 /client/.vscode/
-.idea/
+.idea
 
