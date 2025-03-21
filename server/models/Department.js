@@ -17,3 +17,5 @@ Department.belongsTo(Organization, {foreignKey: 'organization_Id'})
 
 Department.belongsTo(Department, { as: 'parent', foreignKey: 'parent_Id' });
 Department.hasMany(Department, { as: 'children', foreignKey: 'parent_Id' });
+
+module.exports = Department
