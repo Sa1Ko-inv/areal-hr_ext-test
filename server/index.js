@@ -1,10 +1,9 @@
 require('dotenv').config({path: '../.env'});
 const express = require('express');
 const sequelize = require('./db');
-// const models = require('./models/models')
 const cors = require('cors');
-// const router = require('./routes/index');
-// const errorHandler = require('./middleware/ErrorHandlingMiddleware');
+const router = require('./routes/index');
+const errorHandler = require('./middleware/ErrorHandlingMiddleware');
 
 
 
@@ -16,10 +15,10 @@ app.use(cors());
 app.use(express.json());
 
 // Подключаем роутер, первый параметр - это префикс, по которому будет доступен наш роутер
-// app.use('/api', router);
+app.use('/api', router);
 
 // Обработка ошибок, последний middleware
-// app.use(errorHandler);
+app.use(errorHandler);
 
 // Все операции с БД являются асинхронными
 const start = async () => {
