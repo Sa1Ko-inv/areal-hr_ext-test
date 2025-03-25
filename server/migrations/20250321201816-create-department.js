@@ -21,22 +21,22 @@ module.exports = {
         allowNull: true,
         comment: 'Комментарий',
       },
-      organization_Id: {
+      organization_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Organizations', // Таблица, на которую ссылаемся
+          model: 'organizations', // Таблица, на которую ссылаемся
           key: 'id',
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
         comment: 'ID организации',
       },
-      parent_Id: {
+      parent_id: {
         type: Sequelize.INTEGER,
         allowNull: true,
         references: {
-          model: 'Departments', // Самореференция на родительский отдел
+          model: 'departments', // Самореференция на родительский отдел
           key: 'id',
         },
         onUpdate: 'CASCADE',
@@ -62,6 +62,6 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('Departments');
+    await queryInterface.dropTable('departments');
   }
 };

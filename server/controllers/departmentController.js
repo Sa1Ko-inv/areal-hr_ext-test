@@ -1,20 +1,20 @@
-const Department = require("../models/Department");
+const Department = require("../models/department");
 const ApiError = require("../error/ApiError");
 
 class DepartmentController {
     async createDepartment(req, res, next) {
-        const {name, comment, organization_Id, parent_Id} = req.body;
+        const {name, comment, organization_id, parent_id} = req.body;
 
         try {
-            if (!organization_Id) {
+            if (!organization_id) {
                 return next(ApiError.badRequest('ID организации не указан'));
             }
 
             const department = await Department.create({
                 name,
                 comment,
-                organization_Id,
-                parent_Id
+                organization_id,
+                parent_id
             });
 
             return res.json(department);
@@ -28,10 +28,15 @@ class DepartmentController {
     async getAllDepartment(req, res, next) {
         try {
             const departments = await Department.findAll({
+                where: {
+                    parent_id: null // выбираем только корневые отделы
+                },
                 paranoid: false,
                 include: [
-                    {model: Department, as: "parent"},
-                    {model: Department, as: "children"},
+                    {
+                        model: Department,
+                        as: "children",
+                    }
                 ]
             });
             return res.json(departments);
@@ -43,7 +48,7 @@ class DepartmentController {
 
     async updateDepartment(req, res, next) {
         const {id} = req.params;
-        const {name, comment, organization_Id, parent_Id} = req.body;
+        const {name, comment, organization_id, parent_id} = req.body;
 
         try {
             const department = await Department.findByPk(id);
@@ -55,8 +60,8 @@ class DepartmentController {
             await department.update({
                 name,
                 comment,
-                organization_Id,
-                parent_Id
+                organization_id,
+                parent_id
             })
 
             return res.json(department);

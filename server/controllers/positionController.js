@@ -1,4 +1,4 @@
-const Position = require('../models/Position');
+const Position = require('../models/position');
 const ApiError = require('../error/ApiError');
 
 class PositionController {
