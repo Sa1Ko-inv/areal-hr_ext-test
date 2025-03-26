@@ -1,5 +1,4 @@
 const Organization = require('../models/organization')
-const ApiError = require('../error/ApiError')
 
 class OrganizationController {
     async createOrganization(req, res, next) {
@@ -12,7 +11,6 @@ class OrganizationController {
 
         } catch (error) {
             console.log('Ошибка при создании Организации', error)
-            return next(ApiError.internal(error.message));
         }
     }
 
@@ -22,7 +20,6 @@ class OrganizationController {
             return res.json(organizations);
         } catch (error) {
             console.log('Ошибка при получении Организаций', error)
-            return next(ApiError.internal(error.message));
         }
     }
 
@@ -32,17 +29,13 @@ class OrganizationController {
 
         try {
             const organization = await Organization.findByPk(id);
-            if (!organization) {
-                return next(ApiError.badRequest('Организация не найдена'));
-            }
-
             await organization.update(
                 {name, comment}
             )
             return res.json(organization);
         } catch (error) {
             console.log('Ошибка при обновлении Организации', error)
-            return next(ApiError.internal(error.message));
+
         }
     }
 
@@ -51,15 +44,10 @@ class OrganizationController {
 
         try {
             const organization = await Organization.findByPk(id);
-            if (!organization) {
-                return next(ApiError.badRequest('Организация не найдена'));
-            }
-
             await organization.destroy();
             return res.json({message: 'Организация удалена'});
         } catch (error) {
             console.log('Ошибка при удалении Организации', error)
-            return next(ApiError.internal(error.message));
         }
     }
 }

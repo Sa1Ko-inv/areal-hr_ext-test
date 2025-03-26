@@ -13,7 +13,6 @@ module.exports = {
       name: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true,
         comment: 'Название отдела',
       },
       comment: {
@@ -23,7 +22,7 @@ module.exports = {
       },
       organization_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: 'organizations', // Таблица, на которую ссылаемся
           key: 'id',

@@ -4,9 +4,9 @@ const Organization = require("./organization");
 
 const Department = sequelize.define("department", {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    name: {type: DataTypes.STRING, allowNull: false, unique: true, comment: "Название отдела"},
+    name: {type: DataTypes.STRING, allowNull: false, comment: "Название отдела"},
     comment: {type: DataTypes.TEXT, allowNull: true, comment: "Комментарий"},
-    organization_id: {type: DataTypes.INTEGER, allowNull: false, comment: "ID организации"},
+    organization_id: {type: DataTypes.INTEGER, allowNull: true, comment: "ID организации"},
     parent_id: {type: DataTypes.INTEGER, allowNull: true, comment: "ID родительского отдела"},
 }, {
     paranoid: true,

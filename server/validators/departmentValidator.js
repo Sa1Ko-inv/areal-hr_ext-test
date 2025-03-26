@@ -1,17 +1,10 @@
 const Joi = require('joi');
-const Department = require('../models/department');
 
 const departmentSchema = Joi.object({
     name: Joi.string()
         .min(2)
         .max(100)
         .required()
-        .external(async (value) => {
-            const exists = await Department.findOne({ where: { name: value } });
-            if (exists) {
-                throw new Error('Отдел с таким названием уже существует');
-            }
-        })
         .messages({
             'string.base': 'Название отдела должно быть строкой',
             'string.empty': 'Название отдела не может быть пустым',
@@ -30,7 +23,11 @@ const departmentSchema = Joi.object({
     organization_id: Joi.number()
         .integer()
         .positive()
-        .required()
+        .when('parent_id', {
+            is: Joi.exist(),
+            then: Joi.optional(),
+            otherwise: Joi.required()
+        })
         .messages({
             'number.base': 'ID организации должен быть числом',
             'number.integer': 'ID организации должен быть целым числом',
