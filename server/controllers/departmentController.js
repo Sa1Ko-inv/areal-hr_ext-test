@@ -1,14 +1,10 @@
 const Department = require("../models/department");
-const ApiError = require("../error/ApiError");
 
 class DepartmentController {
     async createDepartment(req, res, next) {
         const {name, comment, organization_id, parent_id} = req.body;
 
         try {
-            if (!organization_id) {
-                return next(ApiError.badRequest('ID организации не указан'));
-            }
 
             const department = await Department.create({
                 name,
@@ -21,7 +17,7 @@ class DepartmentController {
 
         } catch (error) {
             console.log('Ошибка при создании отдела', error);
-            next(ApiError.badRequest(error.message));
+
         }
     }
 
@@ -29,7 +25,7 @@ class DepartmentController {
         try {
             const departments = await Department.findAll({
                 where: {
-                    parent_id: null // выбираем только корневые отделы
+                    parent_id: null
                 },
                 paranoid: false,
                 include: [
@@ -42,7 +38,7 @@ class DepartmentController {
             return res.json(departments);
         } catch (error) {
             console.log('Ошибка при получении всех отделов', error);
-            next(ApiError.badRequest(error.message));
+
         }
     }
 
@@ -52,10 +48,6 @@ class DepartmentController {
 
         try {
             const department = await Department.findByPk(id);
-
-            if (!department) {
-                return next(ApiError.badRequest('Отдел не найден'));
-            }
 
             await department.update({
                 name,
@@ -67,7 +59,7 @@ class DepartmentController {
             return res.json(department);
         } catch (error) {
             console.log('Ошибка при обновлении отдела', error);
-            next(ApiError.badRequest(error.message));
+
         }
     }
 
@@ -76,16 +68,14 @@ class DepartmentController {
 
         try {
             const department = await Department.findByPk(id);
-            if (!department) {
-                return next(ApiError.badRequest('Отдел не найден'));
-            }
+
 
             await department.destroy()
 
             return res.json({message: 'Отдел успешно удален'});
         } catch (error) {
             console.log('Ошибка при удалении отдела', error);
-            next(ApiError.badRequest(error.message));
+
         }
     }
 }

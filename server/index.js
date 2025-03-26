@@ -18,7 +18,7 @@ app.use(express.json());
 app.use('/api', router);
 
 // Обработка ошибок, последний middleware
-app.use(errorHandler);
+// app.use(errorHandler);
 
 // Все операции с БД являются асинхронными
 const start = async () => {
