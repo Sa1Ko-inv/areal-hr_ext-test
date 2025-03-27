@@ -3,7 +3,7 @@ const validate = (schema) => async (req, res, next) => {
         // Добавляем stripUnknown: true для автоматического удаления не указанных в схеме полей
         req.body = await schema.validateAsync(req.body, {
             abortEarly: false,
-            // stripUnknown: true
+            stripUnknown: true
         });
         next();
     } catch (error) {
