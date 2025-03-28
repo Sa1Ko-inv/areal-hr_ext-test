@@ -15,7 +15,7 @@
         Редактировать
       </button>
 
-      <button class="position__button position__button--delete">
+      <button @click="deletePositions" class="position__button position__button--delete">
         Удалить
       </button>
     </div>
@@ -47,6 +47,9 @@ export default {
     saveEdit() {
       this.$emit('update', { id: this.position.id, name: this.editedName });
       this.isEditing = false;
+    },
+    deletePositions() {
+      this.$emit('delete', this.position.id);
     }
   }
 }
@@ -127,11 +130,11 @@ export default {
     }
     &--save {
       background-color: transparent;
-      color: #2e7d32;
-      border-color: #2e7d32;
+      color: #792ec9;
+      border-color: #792ec9;
 
       &:hover {
-        background-color: rgba(#2e7d32, 0.1);
+        background-color: rgba(#792ec9, 0.1);
       }
     }
 

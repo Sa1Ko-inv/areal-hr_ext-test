@@ -18,6 +18,7 @@
           :position="position"
           :key="position.id"
           @update="updatePosition"
+          @delete="deletePositions"
       />
     </div>
   </div>
@@ -54,6 +55,10 @@ export default {
 
     updatePosition(updatedPosition) {
       this.$emit('update', updatedPosition);
+    },
+
+    deletePositions(id) {
+      this.$emit('delete', id);
     },
 
     cancelCreate() {

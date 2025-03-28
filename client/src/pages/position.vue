@@ -1,6 +1,6 @@
 <script>
 //вывод ошибок есть в Cody
-import {createPosition, fetchPositions, updatePosition} from "@/http/positionAPI.js";
+import {createPosition, deletePosition, fetchPositions, updatePosition} from "@/http/positionAPI.js";
 import PositionList from "@/components/positions/positionList.vue";
 
 export default {
@@ -35,15 +35,19 @@ export default {
     async updatePosition(updatedPosition) {
       try {
         const response = await updatePosition(updatedPosition.id, updatedPosition.name);
-        // Обновляем массив positions
-        // const index = this.positions.findIndex(p => p.id === updatedPosition.id);
-        // if (index !== -1) {
-        //   this.positions.splice(index, 1, response.data);
-        // }
-        // Или можно просто перезагрузить список:
         this.getPositions();
       } catch (error) {
         console.error('Ошибка при обновлении должности:', error);
+      }
+    },
+
+    async deletePosition(id) {
+      try {
+        await deletePosition(id);
+        this.positions = this.positions.filter(position => position.id !== id);
+        this.getPositions();
+      } catch (error) {
+        console.error('Ошибка при удалении должности:', error);
       }
     }
 
@@ -63,6 +67,7 @@ export default {
       :positions="positions"
       @create="createPosition"
       @update="updatePosition"
+      @delete="deletePosition"
   />
 
 </template>
