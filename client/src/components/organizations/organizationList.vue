@@ -1,27 +1,24 @@
 <template>
   <div class="organizationList">
-    <!--    <MyModalWindow-->
-    <!--        :visible="dialogVisible"-->
-    <!--        @close="cancelCreate"-->
-    <!--    >-->
-    <!--      <OrganizationCreateForm-->
-    <!--          @create="createOrganization"-->
-    <!--          @cancel="cancelCreate"-->
-    <!--      />-->
-    <!--    </MyModalWindow>-->
-
+    <h2>Список организаций</h2>
     <div class="organizationList__items">
-      <div class="organization" v-for="organization in organizations">
-        <div class=""><strong>Название:</strong> {{ organization.name }}</div>
-      </div>
+      <router-link
+          v-for="organization in organizations"
+          :key="organization.id"
+          :to="`/organization/${organization.id}`"
+          class="organization-item"
+      >
+        <div class="organization-info">
+          <h3>{{ organization.name }}</h3>
+          <p v-if="organization.comment" class="organization-comment">{{ organization.comment }}</p>
+        </div>
+      </router-link>
     </div>
-
   </div>
 </template>
 
 <script>
 export default {
-
   props: {
     organizations: {
       type: Array,
@@ -31,6 +28,36 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
+.organizationList {
+  padding: 20px;
+}
 
+.organizationList__items {
+  margin-top: 20px;
+}
+
+.organization-item {
+  display: block;
+  padding: 15px;
+  margin: 10px 0;
+  background: #f8f9fa;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.organization-item:hover {
+  background: #e9ecef;
+}
+
+.organization-info h3 {
+  margin: 0 0 5px 0;
+  color: #792ec9;
+}
+
+.organization-comment {
+  margin: 0;
+  color: #34393b;
+  font-size: 0.9em;
+}
 </style>

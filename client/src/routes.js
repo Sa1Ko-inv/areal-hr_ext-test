@@ -3,6 +3,7 @@ import {createRouter, createWebHistory} from "vue-router";
 import position from "@/pages/position.vue";
 import main from "@/pages/main.vue";
 import organization from "@/pages/organization.vue";
+import organizationInfo from "@/components/organizations/organizationInfo.vue";
 
 const routes = [
     {
@@ -19,6 +20,17 @@ const routes = [
     {
         path: ORGANIZATION_ROUTE,
         component: organization
+    },
+
+    // {
+    //     path: '/organization',
+    //     name: 'Organizations',
+    //     component: () => import('@/views/OrganizationPage.vue')
+    // },
+    {
+        path: '/organization/:id',
+        name: 'Organization',
+        component: organizationInfo
     }
 
 ]

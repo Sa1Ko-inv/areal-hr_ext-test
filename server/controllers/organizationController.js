@@ -1,4 +1,6 @@
 const Organization = require('../models/organization')
+// const {department} = require('../models/department')
+const Department = require("../models/department");
 
 class OrganizationController {
     async createOrganization(req, res, next) {
@@ -14,12 +16,45 @@ class OrganizationController {
         }
     }
 
+    // Получение всех организаций
     async getAllOrganization(req, res, next) {
         try {
             const organizations = await Organization.findAll({paranoid: false});
             return res.json(organizations);
         } catch (error) {
             console.log('Ошибка при получении Организаций', error)
+        }
+    }
+
+    // Получение организации по ID с ее отделами
+    async getOrganizationWithDepartments(req, res, next) {
+        try {
+            const {id} = req.params;
+            const organization = await Organization.findOne({
+                where: {id: id},
+                paranoid: false,
+                include: [{
+                    model: Department,
+                    as: 'departments',
+                    padaranoid: false,
+                    where: {parent_id: null},
+                    include: [
+                        {
+                            model: Department,
+                            as: 'children',
+                            paranoid: false,
+                        }
+                    ]
+                }]
+            });
+
+            if (organization) {
+                return res.json(organization);
+            } else {
+                return res.status(404).json({ error: 'Организация не найдена' });
+            }
+        } catch (error) {
+            console.log('Ошибка при получении Организации', error)
         }
     }
 
@@ -51,4 +86,5 @@ class OrganizationController {
         }
     }
 }
+
 module.exports = new OrganizationController();
