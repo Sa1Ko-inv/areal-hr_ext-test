@@ -1,12 +1,12 @@
 <script>
-import {POSITION_ROUTE, MAIN_ROUTE} from "@/utils/consts.js";
+import {POSITION_ROUTE, MAIN_ROUTE, ORGANIZATION_ROUTE} from "@/utils/consts.js";
 
 export default {
   data() {
     return {}
   },
   setup() {
-    return {POSITION_ROUTE, MAIN_ROUTE}
+    return {POSITION_ROUTE, MAIN_ROUTE, ORGANIZATION_ROUTE}
   }
 }
 </script>
@@ -17,7 +17,7 @@ export default {
       <router-link :to='MAIN_ROUTE' class="navbar__home-link">На главную</router-link>
     </div>
     <div class="navbar__menu">
-      <router-link :to='POSITION_ROUTE' class="navbar__link">Организации</router-link>
+      <router-link :to='ORGANIZATION_ROUTE' class="navbar__link">Организации</router-link>
       <router-link :to='POSITION_ROUTE' class="navbar__link">Должности</router-link>
     </div>
     <router-link to="" class="navbar__link">Выход</router-link>
