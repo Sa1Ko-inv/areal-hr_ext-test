@@ -5,35 +5,57 @@
 
     <div class="departments-section">
       <h2>Отделы</h2>
-      <organizationDepartmentTree :departments="departments" />
+      <organizationDepartmentTree
+          :departments="departments"
+      />
     </div>
 
     <router-link to="/organization">
       Вернуться к списку организаций
     </router-link>
   </div>
+
+  <MyModalWindow v-model:show="dialogVisible">
+    <DepartmentCreateForm
+        :cancel="cancelCreate"
+        :organizationId="organization.id"
+        :departments="departments"
+        @created="loadOrganization"
+    />
+  </MyModalWindow>
+
+  <button @click="showDialog">
+    Создать отдел
+  </button>
 </template>
 
 <script>
 import organizationDepartmentTree from "@/components/organizations/organizationDepartmentTree.vue";
-import { fetchOrganizationWithDepartments } from "@/http/organizationAPI.js";
+import {fetchOrganizationWithDepartments} from "@/http/organizationAPI.js";
+import MyModalWindow from "@/components/UI/MyModalWindow.vue";
+import DepartmentCreateForm from "@/components/departments/departmentCreateForm.vue";
 
 
 export default {
-  components: { organizationDepartmentTree },
+  components: {DepartmentCreateForm, MyModalWindow, organizationDepartmentTree},
   data() {
     return {
       organization: {},
-      departments: []
+      departments: [],
+      dialogVisible: false
     };
   },
   async created() {
     await this.loadOrganization();
   },
   methods: {
-    ORGANIZATION_ROUTE() {
-      return ORGANIZATION_ROUTE
+    showDialog() {
+      this.dialogVisible = true;
     },
+    cancelCreate() {
+      this.dialogVisible = false;
+    },
+
     async loadOrganization() {
       try {
         const organizationId = this.$route.params.id;
@@ -43,8 +65,8 @@ export default {
       } catch (error) {
         console.error('Ошибка при загрузке организации:', error);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

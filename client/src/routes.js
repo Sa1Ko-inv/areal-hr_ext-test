@@ -22,11 +22,6 @@ const routes = [
         component: organization
     },
 
-    // {
-    //     path: '/organization',
-    //     name: 'Organizations',
-    //     component: () => import('@/views/OrganizationPage.vue')
-    // },
     {
         path: '/organization/:id',
         name: 'Organization',

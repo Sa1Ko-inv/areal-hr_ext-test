@@ -1,12 +1,11 @@
 <template>
   <ul class="department-tree">
-    <li v-for="department in props.departments" :key="department.id" class="department-item">
+    <li v-for="department in departments" :key="department.id" class="department-item">
       <div class="department-header" @click="toggleChildren(department)">
-        <span class="department-name">{{ department.name }}</span>
-        <span v-if="hasChildren(department)" class="toggle-icon">
-          {{ department.showChildren ? '▼' : '►' }}
-        </span>
+        <span class="department-name"><strong>Название отдела:</strong>{{ department.name }}</span>
+        <span><strong>Комментарий:</strong>{{department.comment}}</span>
       </div>
+
 
       <OrganizationDepartmentTree
           v-if="department.showChildren && hasChildren(department)"
@@ -17,26 +16,32 @@
   </ul>
 </template>
 
-<script setup>
-import { defineProps } from 'vue';
-
-const props = defineProps({
-  departments: {
-    type: Array,
-    required: true,
-    default: () => []
+<script>
+export default {
+  name: 'OrganizationDepartmentTree',
+  props: {
+    departments: {
+      type: Array,
+      required: true,
+      default: () => []
+    }
+  },
+  methods: {
+    hasChildren(department) {
+      return department.children && department.children.length > 0;
+    },
+    toggleChildren(department) {
+      if (this.hasChildren(department)) {
+        department.showChildren = !department.showChildren;
+      }
+    }
+  },
+  mounted() {
+    this.departments.forEach(department => {
+      department.showChildren = false; // Initialize the showChildren property
+    });
   }
-});
-
-const hasChildren = (department) => {
-  return department.children && department.children.length > 0;
-};
-
-const toggleChildren = (department) => {
-  if (hasChildren(department)) {
-    department.showChildren = !department.showChildren;
-  }
-};
+}
 </script>
 
 <style scoped>
@@ -55,8 +60,8 @@ const toggleChildren = (department) => {
   background-color: #f8f9fa;
   border-radius: 4px;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  align-items: center;
 }
 
 .department-header:hover {
