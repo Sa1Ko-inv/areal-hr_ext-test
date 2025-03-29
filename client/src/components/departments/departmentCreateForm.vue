@@ -32,6 +32,7 @@ export default {
         await createDepartment(this.department);
         this.$emit('created');
         this.department = { name: '', comment: '', organization_id: this.organizationId, parent_id: null };
+        this.dialogVisible = false;
       } catch (error) {
         console.error('Ошибка при создании отдела:', error);
       }

@@ -36,32 +36,3 @@ export default {
 <style lang="scss" scoped>
 
 </style>
-
-<!--<template>
-  <OrganizationDepartments
-      v-if="organization"
-      :organization="organization"
-  />
-</template>
-
-<script>
-import OrganizationDepartments from '@/components/organizations/organizationDepartments.vue';
-import { fetchOrganizationWithDepartments } from '@/http/organizationAPI';
-
-export default {
-  components: { OrganizationDepartments },
-  data() {
-    return {
-      organization: null
-    }
-  },
-  async created() {
-    const orgId = this.$route.params.id;
-    try {
-      this.organization = await fetchOrganizationWithDepartments(orgId);
-    } catch (error) {
-      console.error('Ошибка загрузки организации:', error);
-    }
-  }
-}
-</script>-->

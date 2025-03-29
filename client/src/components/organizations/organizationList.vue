@@ -10,7 +10,7 @@
       >
         <div class="organization-info">
           <h3>{{ organization.name }}</h3>
-          <p v-if="organization.comment" class="organization-comment">{{ organization.comment }}</p>
+          <p class="organization-comment">{{ organization.comment }}</p>
         </div>
       </router-link>
     </div>
