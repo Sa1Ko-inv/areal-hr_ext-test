@@ -8,7 +8,9 @@
 
       <div class="department-buttons">
         <button @click="editDepartment(department)">Редактировать</button>
-        <button @click="console.log(departments)">Удалить</button>
+        <button @click="deleteDepartment(department)">Удалить</button>
+        <button @click="console.log(department.id)">Посмотреть</button>
+
       </div>
 
       <MyModalWindow v-model:show="dialogVisible">
@@ -24,6 +26,7 @@
           v-if="department.showChildren && hasChildren(department)"
           :departments="department.children"
           class="department-children"
+          @delete="deleteDepartment"
       />
     </li>
   </ul>
@@ -33,6 +36,7 @@
 import MyModalWindow from "@/components/UI/MyModalWindow.vue";
 import DepartmentEditForm from "@/components/departments/departmentEditForm.vue";
 import {fetchOrganizations} from "@/http/organizationAPI.js";
+import {deleteDepartment as apiDeleteDepartment} from "@/http/departmentAPI.js";
 
 export default {
   name: 'OrganizationDepartmentTree',
@@ -82,7 +86,17 @@ export default {
     },
     departmentUpdated() {
       this.$emit('departmentUpdated');
-    }
+    },
+
+    async deleteDepartment(department) {
+      try {
+        this.selectedDepartment = department;
+        await apiDeleteDepartment(department.id);
+        this.$emit('departmentDeleted', department.id);
+      } catch (error) {
+        console.error('Ошибка при удалении отдела:', error);
+      }
+    },
   },
 };
 </script>

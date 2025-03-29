@@ -13,6 +13,7 @@
       <organizationDepartmentTree
           :departments="departments"
           @departmentUpdated="loadOrganization"
+          @departmentDeleted="departmentDeleted"
       />
     </div>
 
@@ -74,6 +75,11 @@ export default {
         console.error('Ошибка при загрузке организации:', error);
       }
     },
+    departmentDeleted(departmentId) {
+      this.departments = this.departments.filter(department => department.id !== departmentId);
+      this.loadOrganization();
+      console.log(departmentId)
+    },
   },
 };
 </script>
@@ -118,7 +124,7 @@ export default {
     transition: color 0.2s;
 
     &:hover {
-      color: darken(#792ec9, 15%);
+      color: #792ec9;
       text-decoration: underline;
     }
   }
@@ -136,7 +142,7 @@ export default {
     transition: background-color 0.2s;
 
     &:hover {
-      background-color: darken(#792ec9, 10%);
+      background-color: #792ec9
     }
   }
 }

@@ -98,7 +98,7 @@ export default {
 
         this.cancel();
 
-        this.$emit('department-updated');
+        this.$emit('departmentUpdated');
       } catch (error) {
         console.error('Ошибка при обновлении отдела:', error);
       }

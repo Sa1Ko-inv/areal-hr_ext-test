@@ -36,7 +36,7 @@ class OrganizationController {
                 include: [{
                     model: Department,
                     as: 'departments',
-                    padaranoid: false,
+                    paranoid: false,
                     where: {parent_id: null},
                     required: false,
                     include: [
@@ -44,6 +44,7 @@ class OrganizationController {
                             model: Department,
                             as: 'children',
                             paranoid: false,
+                            hierarchy: true
                         }
                     ]
                 }]

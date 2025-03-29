@@ -8,5 +8,6 @@ export const fetchOrganizations = async () => {
 
 export const fetchOrganizationWithDepartments = async (id) => {
     const response = await $host.get(`api/organization/${id}/departments`);
+    console.log(response.data);
     return response.data;
 };
