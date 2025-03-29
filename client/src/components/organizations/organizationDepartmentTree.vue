@@ -6,6 +6,19 @@
         <span><strong>Комментарий:</strong>{{department.comment}}</span>
       </div>
 
+      <div class="">
+        <button @click="editDepartment(department)">Редактировать</button>
+        <button @click="console.log(departments)">Удалить</button>
+      </div>
+
+      <MyModalWindow v-model:show="dialogVisible">
+        <DepartmentEditForm
+            :cancel="cancelEdit"
+            :department="selectedDepartment"
+            :organizations="organizations"
+            @departmentUpdated="departmentUpdated"
+        />
+      </MyModalWindow>
 
       <OrganizationDepartmentTree
           v-if="department.showChildren && hasChildren(department)"
@@ -17,8 +30,21 @@
 </template>
 
 <script>
+import MyModalWindow from "@/components/UI/MyModalWindow.vue";
+import DepartmentEditForm from "@/components/departments/departmentEditForm.vue";
+import {fetchOrganizations} from "@/http/organizationAPI.js";
+
 export default {
   name: 'OrganizationDepartmentTree',
+  components: { DepartmentEditForm, MyModalWindow },
+  data() {
+    return {
+      dialogVisible: false,
+      selectedDepartment: null,
+      organizations: []
+
+    };
+  },
   props: {
     departments: {
       type: Array,
@@ -26,7 +52,18 @@ export default {
       default: () => []
     }
   },
+  async created() {
+    await this.loadOrganizations();
+  },
   methods: {
+    async loadOrganizations() {
+      try {
+        const response = await fetchOrganizations();
+        this.organizations = response.data;
+      } catch (error) {
+        console.error('Ошибка при загрузке организаций:', error);
+      }
+    },
     hasChildren(department) {
       return department.children && department.children.length > 0;
     },
@@ -34,15 +71,23 @@ export default {
       if (this.hasChildren(department)) {
         department.showChildren = !department.showChildren;
       }
+    },
+    editDepartment(department) {
+      this.selectedDepartment = department;
+      this.dialogVisible = true;
+    },
+    cancelEdit() {
+      this.dialogVisible = false;
+      this.selectedDepartment = null;
+    },
+    departmentUpdated() {
+      this.$emit('departmentUpdated');
     }
   },
-  mounted() {
-    this.departments.forEach(department => {
-      department.showChildren = false; // Initialize the showChildren property
-    });
-  }
-}
+};
 </script>
+
+
 
 <style scoped>
 .department-tree {

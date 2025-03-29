@@ -7,6 +7,7 @@
       <h2>Отделы</h2>
       <organizationDepartmentTree
           :departments="departments"
+          @departmentUpdated="loadOrganization"
       />
     </div>
 
@@ -62,6 +63,7 @@ export default {
         const data = await fetchOrganizationWithDepartments(organizationId);
         this.organization = data;
         this.departments = data.departments || [];
+        this.dialogVisible = false;
       } catch (error) {
         console.error('Ошибка при загрузке организации:', error);
       }

@@ -38,6 +38,7 @@ class OrganizationController {
                     as: 'departments',
                     padaranoid: false,
                     where: {parent_id: null},
+                    required: false,
                     include: [
                         {
                             model: Department,
