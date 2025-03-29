@@ -91,5 +91,21 @@ export default {
     flex-direction: column;
     gap: 8px;
   }
+  button {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #792ec9;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: darken(#792ec9, 10%);
+    }
+  }
 }
 </style>

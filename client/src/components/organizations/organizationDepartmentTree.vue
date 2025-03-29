@@ -3,10 +3,10 @@
     <li v-for="department in departments" :key="department.id" class="department-item">
       <div class="department-header" @click="toggleChildren(department)">
         <span class="department-name"><strong>Название отдела:</strong>{{ department.name }}</span>
-        <span><strong>Комментарий:</strong>{{department.comment}}</span>
+        <span class="department-comment"><strong>Комментарий:</strong>{{department.comment}}</span>
       </div>
 
-      <div class="">
+      <div class="department-buttons">
         <button @click="editDepartment(department)">Редактировать</button>
         <button @click="console.log(departments)">Удалить</button>
       </div>
@@ -89,40 +89,90 @@ export default {
 
 
 
-<style scoped>
+<style lang="scss" scoped>
 .department-tree {
   list-style-type: none;
-  padding-left: 20px;
-}
+  padding: 0;
+  margin: 0;
 
-.department-item {
-  margin: 5px 0;
-}
+  .department-item {
+    margin-bottom: 15px;
+    border-left: 2px solid #792ec9;
+    padding-left: 15px;
 
-.department-header {
-  cursor: pointer;
-  padding: 8px 10px;
-  background-color: #f8f9fa;
-  border-radius: 4px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
+    .department-header {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding: 10px 15px;
+      background-color: rgba(121, 46, 201, 0.05);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s;
 
-.department-header:hover {
-  background-color: #e9ecef;
-}
+      &:hover {
+        background-color: rgba(121, 46, 201, 0.1);
+      }
 
-.department-name {
-  flex-grow: 1;
-}
+      .department-name, .department-comment {
+        display: block;
 
-.toggle-icon {
-  margin-left: 10px;
-  font-size: 0.8em;
-}
+        strong {
+          color: #792ec9;
+          margin-right: 8px;
+          font-weight: 600;
+        }
+      }
 
-.department-children {
-  margin-top: 5px;
+      .department-name {
+        font-size: 16px;
+      }
+
+      .department-comment {
+        font-size: 14px;
+        color: #666;
+      }
+    }
+
+    .department-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+      padding-left: 15px;
+
+      button {
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:first-child {
+          background-color: #792ec9;
+          color: white;
+          border: none;
+
+          &:hover {
+            background-color: #792ec9
+          }
+        }
+
+        &:last-child {
+          background-color: white;
+          color: #d32f2f;
+          border: 1px solid #d32f2f;
+
+          &:hover {
+            background-color: #ffebee;
+          }
+        }
+      }
+    }
+
+    .department-children {
+      margin-top: 10px;
+      margin-left: 20px;
+    }
+  }
 }
 </style>
