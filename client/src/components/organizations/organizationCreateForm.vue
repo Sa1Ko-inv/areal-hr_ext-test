@@ -21,6 +21,12 @@
 
 <script>
 export default {
+  props: {
+    cancel: {
+      type: Function,
+      required: true
+    }
+  },
   data() {
     return {
       name: '',
@@ -36,9 +42,7 @@ export default {
       this.name = '';
       this.comment = '';
     },
-    cancel() {
-      this.$emit('cancel');
-    }
+
   }
 }
 </script>
