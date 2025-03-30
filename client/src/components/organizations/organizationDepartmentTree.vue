@@ -92,6 +92,7 @@ export default {
         this.selectedDepartment = department;
         await apiDeleteDepartment(department.id);
         this.$emit('departmentDeleted', department.id);
+        alert("Отдел успешно удален");
       } catch (error) {
         console.error('Ошибка при удалении отдела:', error);
       }

@@ -12,20 +12,21 @@
         placeholder="Комментарий"
         type="text"
     >
-    <select v-model="editDepartment.parent_id">
-      <option :value="null">Без родительского отдела</option>
-      <option
-          v-for="dept in departments"
-          :key="dept.id"
-          :value="dept.id">
-        {{ dept.name }} из {{organizations.find(org => org.id === dept.organization_id)?.name}}
+
+    <select v-model="editDepartment.organization_id" @change="filterDepartments">
+      <option :value="null">Выберите организацию</option>
+      <option v-for="org in organizations" :key="org.id" :value="org.id">
+        {{ org.name }}
       </option>
     </select>
 
-    <select v-model="editDepartment.organization_id">
-      <option :value="null">Без переноса в организацию</option>
-      <option v-for="org in organizations" :key="org.id" :value="org.id">
-        {{ org.name }}
+    <select v-model="editDepartment.parent_id">
+      <option :value="null">Без родительского отдела</option>
+      <option
+          v-for="dept in filteredDepartments"
+          :key="dept.id"
+          :value="dept.id">
+        {{ dept.name }} ({{ getOrganizationName(dept.organization_id) }})
       </option>
     </select>
 
@@ -40,7 +41,6 @@
 import {fetchDepartments, updateDepartment} from "@/http/departmentAPI.js";
 
 export default {
-
   props: {
     cancel: {
       type: Function,
@@ -66,7 +66,8 @@ export default {
         organization_id: this.department ? this.department.organization_id : null,
         parent_id: this.department ? this.department.parent_id : null
       },
-      departments: []
+      departments: [],
+      filteredDepartments: []
     }
   },
 
@@ -75,39 +76,59 @@ export default {
       try {
         const response = await fetchDepartments();
         this.departments = response.data;
-        console.log(this.departments);
+        this.filteredDepartments = this.getAvailableParentDepartments();
       } catch (error) {
         console.error('Ошибка при получении отделов:', error);
       }
     },
+
+    getOrganizationName(orgId) {
+      const org = this.organizations.find(o => o.id === orgId);
+      return org ? org.name : 'Нет организации';
+    },
+
+    filterDepartments() {
+      this.filteredDepartments = this.getAvailableParentDepartments();
+      // Сброс parent_id при смене организации
+      this.editDepartment.parent_id = null;
+    },
+
+    getAvailableParentDepartments() {
+      // Отделы без родительского отдела
+      const rootDepartments = this.departments.filter(d => d.parent_id === null);
+
+      // Если выбрана организация, показываем только ее отделы
+      if (this.editDepartment.organization_id) {
+        return rootDepartments.filter(d =>
+            d.organization_id === this.editDepartment.organization_id
+        );
+      }
+
+      return rootDepartments;
+    },
+
     async saveDepartment() {
       try {
-        // Объект для отправки, исключая поля с null
-        const dataToSend = {
+        const departmentData = {
           id: this.editDepartment.id,
           name: this.editDepartment.name,
           comment: this.editDepartment.comment,
-          parent_id: this.editDepartment.parent_id
+          parent_id: this.editDepartment.parent_id,
+          organization_id: this.editDepartment.organization_id
         };
 
-        if (this.editDepartment.organization_id !== null) {
-          dataToSend.organization_id = this.editDepartment.organization_id;
-        }
-
-        await updateDepartment(dataToSend);
-
+        await updateDepartment(departmentData);
         this.cancel();
-
         this.$emit('departmentUpdated');
       } catch (error) {
         console.error('Ошибка при обновлении отдела:', error);
       }
     }
   },
+
   mounted() {
     this.getDepartments();
-  },
-
+  }
 };
 </script>
 

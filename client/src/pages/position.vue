@@ -46,6 +46,7 @@ export default {
         await deletePosition(id);
         this.positions = this.positions.filter(position => position.id !== id);
         this.getPositions();
+        alert("Должность успешна удалена");
       } catch (error) {
         console.error('Ошибка при удалении должности:', error);
       }

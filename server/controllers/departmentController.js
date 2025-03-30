@@ -71,7 +71,9 @@ class DepartmentController {
                     }
                 } else {
                     // Получаем организацию нового родительского отдела
-                    const newParentDepartment = await Department.findByPk(parent_id);
+                    const newParentDepartment = await Department.findOne(
+                        { where: { id: parent_id }, paranoid: false }
+                    );
                     if (!newParentDepartment) {
                         return res.status(404).json({ error: 'Новый родительский отдел не найден' });
                     }
