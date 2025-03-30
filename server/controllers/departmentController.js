@@ -51,7 +51,10 @@ class DepartmentController {
         const { parent_id, ...updateData } = req.body; // Получаем parent_id отдельно
 
         try {
-            const department = await Department.findByPk(id);
+            const department = await Department.findOne({
+                where: { id: id},
+                paranoid: false,
+            });
 
             if (!department) {
                 return res.status(404).json({ error: 'Отдел не найден' });

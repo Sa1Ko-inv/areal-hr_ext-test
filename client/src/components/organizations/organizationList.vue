@@ -1,63 +1,99 @@
 <template>
   <div class="organizationList">
-    <h2>Список организаций</h2>
+    <h3 class="organizationList__title">Список организаций</h3>
+    <button @click="showDialog" class="organizationList__create-btn">
+      Создать организацию
+    </button>
+
+    <MyModalWindow v-model:show="dialogVisible">
+      <OrganizationCreateForm
+          @create="createOrganization"
+          :cancel="cancelCreate"
+      />
+    </MyModalWindow>
+
     <div class="organizationList__items">
-      <router-link
-          v-for="organization in organizations"
-          :key="organization.id"
-          :to="`/organization/${organization.id}`"
-          class="organization-item"
-      >
-        <div class="organization-info">
-          <h3>{{ organization.name }}</h3>
-          <p class="organization-comment">{{ organization.comment }}</p>
-        </div>
-      </router-link>
+
+        <OrganizationItem
+            v-for="organization in organizations"
+            :organization="organization"
+            :key="organization.id"
+            @update="updateOrganization"
+            @delete="deleteOrganization"
+        />
+
+
     </div>
   </div>
 </template>
 
 <script>
+import OrganizationItem from "@/components/organizations/organizationItem.vue";
+import OrganizationCreateForm from "@/components/organizations/organizationCreateForm.vue";
+import MyModalWindow from "@/components/UI/MyModalWindow.vue";
+
 export default {
+  components: {MyModalWindow, OrganizationCreateForm, OrganizationItem},
   props: {
     organizations: {
       type: Array,
       required: true
     }
+  },
+  data() {
+    return {
+      dialogVisible: false
+    }
+  },
+  methods: {
+    showDialog() {
+      this.dialogVisible = true;
+    },
+    createOrganization(organization) {
+      this.$emit('create', organization);
+      this.dialogVisible = false;
+    },
+    updateOrganization(updatedOrganization) {
+      this.$emit('update', updatedOrganization);
+    },
+    deleteOrganization(id) {
+      this.$emit('delete', id);
+    },
+    cancelCreate() {
+      this.dialogVisible = false;
+    }
   }
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .organizationList {
+  max-width: 1000px;
+  margin: 0 auto;
   padding: 20px;
-}
 
-.organizationList__items {
-  margin-top: 20px;
-}
+  &__title {
+    color: #792ec9;
+    margin-bottom: 20px;
+  }
 
-.organization-item {
-  display: block;
-  padding: 15px;
-  margin: 10px 0;
-  background: #f8f9fa;
-  border-radius: 4px;
-  text-decoration: none;
-}
+  &__create-btn {
+    padding: 8px 16px;
+    background-color: #792ec9;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: all 0.2s ease;
 
-.organization-item:hover {
-  background: #e9ecef;
-}
+    &:hover {
+      background-color: #792ec9
+    }
+  }
 
-.organization-info h3 {
-  margin: 0 0 5px 0;
-  color: #792ec9;
-}
-
-.organization-comment {
-  margin: 0;
-  color: #34393b;
-  font-size: 0.9em;
+  &__items {
+    margin-top: 20px;
+  }
 }
 </style>

@@ -65,14 +65,20 @@ class OrganizationController {
         const {name, comment} = req.body;
 
         try {
-            const organization = await Organization.findByPk(id);
-            await organization.update(
-                {name, comment}
-            )
+            const organization = await Organization.findOne({
+                where: {id: id},
+                paranoid: false // Ищем даже удаленные записи
+            });
+
+            if (!organization) {
+                return res.status(404).json({ error: 'Организация не найдена' });
+            }
+
+            await organization.update({name, comment});
             return res.json(organization);
         } catch (error) {
-            console.log('Ошибка при обновлении Организации', error)
-
+            console.log('Ошибка при обновлении Организации', error);
+            return res.status(500).json({ error: 'Ошибка сервера' });
         }
     }
 

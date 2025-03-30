@@ -9,8 +9,6 @@
       <div class="department-buttons">
         <button @click="editDepartment(department)">Редактировать</button>
         <button @click="deleteDepartment(department)">Удалить</button>
-        <button @click="console.log(department.id)">Посмотреть</button>
-
       </div>
 
       <MyModalWindow v-model:show="dialogVisible">
@@ -27,6 +25,7 @@
           :departments="department.children"
           class="department-children"
           @delete="deleteDepartment"
+          @departmentUpdated="departmentUpdated"
       />
     </li>
   </ul>
