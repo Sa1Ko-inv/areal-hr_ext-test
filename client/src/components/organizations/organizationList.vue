@@ -9,6 +9,7 @@
       <OrganizationCreateForm
           @create="createOrganization"
           :cancel="cancelCreate"
+          :error="createError"
       />
     </MyModalWindow>
 
@@ -18,6 +19,7 @@
             v-for="organization in organizations"
             :organization="organization"
             :key="organization.id"
+            :error="updateError?.id === organization.id ? updateError.message : null"
             @update="updateOrganization"
             @delete="deleteOrganization"
         />
@@ -38,6 +40,14 @@ export default {
     organizations: {
       type: Array,
       required: true
+    },
+    createError: {
+      type: String,
+      default: null
+    },
+    updateError: { // Добавляем проп для ошибки обновления
+      type: Object,
+      default: null
     }
   },
   data() {
@@ -51,7 +61,7 @@ export default {
     },
     createOrganization(organization) {
       this.$emit('create', organization);
-      this.dialogVisible = false;
+      // this.dialogVisible = false;
     },
     updateOrganization(updatedOrganization) {
       this.$emit('update', updatedOrganization);

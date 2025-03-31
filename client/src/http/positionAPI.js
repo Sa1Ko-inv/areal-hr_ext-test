@@ -6,8 +6,8 @@ export const fetchPositions = async () => {
 }
 
 export const createPosition = async (name) => {
-    const response = await $host.post('api/position', { name });
-    return response;
+        const response = await $host.post('api/position', { name });
+        return response;
 }
 
 export const updatePosition = async (id, name) => {

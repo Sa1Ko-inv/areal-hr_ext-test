@@ -9,6 +9,7 @@
       <PositionCreateForm
           @create="createPosition"
           :cancel="cancelCreate"
+          :error="error"
       />
     </MyModalWindow>
 
@@ -18,7 +19,7 @@
           :position="position"
           :key="position.id"
           @update="updatePosition"
-          @delete="deletePositions"
+          @delete="deletePosition"
       />
     </div>
   </div>
@@ -35,6 +36,10 @@ export default {
     positions: {
       type: Array,
       required: true
+    },
+    error: {
+      type: String,
+      default: null
     }
   },
   data() {
@@ -47,24 +52,27 @@ export default {
       this.dialogVisible = true;
     },
 
-// Передаем данные в родительский элемент, пишем функцию, а не прямо в методе, потому что сначала нужно принять position, а потом уже передать в родительский элемент
-    createPosition(position) {
-      this.$emit('create', position);
-      this.dialogVisible = false;
+    createPosition(position, callback) {
+      this.$emit('create', position, (errors) => {
+        if (!errors || errors.length === 0) {
+          this.dialogVisible = false;
+        }
+        // Вызываем callback с ошибками или без
+        callback && callback(errors);
+      });
     },
 
-    updatePosition(updatedPosition) {
-      this.$emit('update', updatedPosition);
+    updatePosition(position, callback) {
+      this.$emit('update', position, callback);
     },
 
-    deletePositions(id) {
+    deletePosition(id) {
       this.$emit('delete', id);
     },
 
     cancelCreate() {
       this.dialogVisible = false;
     }
-
   },
 }
 </script>
@@ -83,7 +91,6 @@ export default {
     margin-top: 0;
     margin-bottom: 16px;
     padding-bottom: 10px;
-    //border-bottom: 1px solid rgba(#792ec9, 0.2);
   }
 
   &__items {
@@ -91,6 +98,7 @@ export default {
     flex-direction: column;
     gap: 8px;
   }
+
   button {
     display: inline-block;
     margin-top: 15px;

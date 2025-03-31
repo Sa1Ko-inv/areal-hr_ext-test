@@ -1,9 +1,12 @@
 const validate = (schema) => async (req, res, next) => {
     try {
-        // Добавляем stripUnknown: true для автоматического удаления не указанных в схеме полей
+        // Передаем контекст с параметрами запроса
         req.body = await schema.validateAsync(req.body, {
             abortEarly: false,
-            stripUnknown: true
+            stripUnknown: true,
+            context: {
+                params: req.params // Передаем параметры запроса в контекст
+            }
         });
         next();
     } catch (error) {

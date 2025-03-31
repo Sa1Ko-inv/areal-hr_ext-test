@@ -4,24 +4,26 @@ export default {
     cancel: {
       type: Function,
       required: true
+    },
+    error: { // Добавляем пропс для ошибки
+      type: String,
+      default: null
     }
   },
   data() {
     return {
       position: {
         name: '',
-      }
+      },
     }
   },
 
   methods: {
     createPosition() {
       this.$emit('create', this.position);
-      this.position = { name: '' };
-
+      this.position = {name: ''};
     },
-
-  },
+  }
 }
 </script>
 
@@ -29,16 +31,25 @@ export default {
   <form @submit.prevent="createPosition">
     <h4>Создание должности</h4>
 
-    <input
-        v-model="position.name"
-        placeholder="Название должности"
-        type="text"
-    >
+    <div class="form-group">
+      <input
+          v-model.number="position.name"
+          placeholder="Название должности"
+          type="text"
+      >
+    </div>
+    <!-- Отображение ошибки для поля name -->
+    <div v-if="error" class="error-message">
+      {{error}}
+    </div>
+    <!-- Отображение общих ошибок -->
+    <!--    <div v-for="(error, index) in generalErrors" :key="index" class="error-message general-error">-->
+    <!--      {{ error.message }}-->
+    <!--    </div>-->
 
-    <div class="">
-      <button @click="createPosition">Добавить должность</button>
-      <button type="button" @click="cancel()" >Отмена</button>
-
+    <div class="form-actions">
+      <button type="submit">Добавить должность</button>
+      <button type="button" @click="cancel()">Отмена</button>
     </div>
   </form>
 </template>
@@ -114,4 +125,19 @@ form {
     }
   }
 }
+
+.error-message {
+  color: #d32f2f;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.general-error {
+  background-color: #ffebee;
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  border-left: 3px solid #d32f2f;
+}
+
 </style>

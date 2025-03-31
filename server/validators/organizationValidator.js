@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const Organization = require('../models/organization');
+const {Op} = require("sequelize");
 
 const organizationSchema = Joi.object({
     name: Joi.string()
@@ -34,6 +35,22 @@ const organizationUpdateSchema = organizationSchema.keys({
         .min(2)
         .max(100)
         .optional()
+        .external(async (value, helpers) => {
+            // Получаем ID из параметров запроса
+            const id = helpers.prefs.context.params.id;
+
+            // Проверяем, существует ли должность с таким именем, исключая текущую
+            const exists = await Organization.findOne({
+                where: {
+                    name: value,
+                    id: { [Op.ne]: id } // Исключаем текущую должность из проверки
+                }
+            });
+
+            if (exists) {
+                throw new Error('Должность с таким названием уже существует');
+            }
+        })
         .messages({
             'string.base': 'Название отдела должно быть строкой',
             'string.empty': 'Название отдела не может быть пустым',

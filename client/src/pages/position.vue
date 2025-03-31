@@ -1,5 +1,4 @@
 <script>
-//вывод ошибок есть в Cody
 import {createPosition, deletePosition, fetchPositions, updatePosition} from "@/http/positionAPI.js";
 import PositionList from "@/components/positions/positionList.vue";
 
@@ -8,6 +7,7 @@ export default {
   data() {
     return {
       positions: [],
+      Error: null,
     }
   },
 
@@ -16,28 +16,65 @@ export default {
       try {
         const response = await fetchPositions();
         this.positions = response.data;
-        console.log(this.positions);
       } catch (error) {
         console.error('Ошибка при получении должностей:', error);
       }
     },
 
-    async createPosition(position) {
+    async createPosition(position, callback) {
       try {
+        this.Error = null; // Сбрасываем ошибку перед запросом
         const response = await createPosition(position.name);
         this.positions.push(response.data);
         this.getPositions();
       } catch (error) {
-        console.error('Ошибка при создании должности:', error);
+        if (error.response && error.response.data && error.response.data.errors) {
+          this.Error = error.response.data.errors[0].message; // Сохраняем сообщение об ошибке
+          console.error('Ошибка при создании должностей:', error);
+        } else {
+          this.Error = 'Произошла ошибка при создании должностей';
+        }
+        console.error('Ошибка при создании должностей:', error);
       }
     },
 
-    async updatePosition(updatedPosition) {
+    // async createPosition(position, callback) {
+    //   try {
+    //     const result = await createPosition(position.name);
+    //     if (result.success) {
+    //       // Если успешно, обновляем список должностей
+    //       await this.getPositions();
+    //       callback && callback([]); // Вызываем callback без ошибок
+    //     } else {
+    //       // Если есть ошибки, передаем их в callback
+    //       callback && callback(result.errors);
+    //     }
+    //   } catch (error) {
+    //     console.error('Ошибка при создании должности:', error);
+    //     callback && callback([{
+    //       field: 'general',
+    //       message: 'Произошла непредвиденная ошибка при создании должности'
+    //     }]);
+    //   }
+    // },
+
+    async updatePosition(updatedPosition, callback) {
       try {
-        const response = await updatePosition(updatedPosition.id, updatedPosition.name);
-        this.getPositions();
+        const result = await updatePosition(updatedPosition.id, updatedPosition.name);
+        if (result.success) {
+          // Если успешно, обновляем список должностей
+          await this.getPositions();
+          callback && callback([]); // Вызываем callback без ошибок
+        } else {
+          // Если есть ошибки, передаем их в callback
+          callback && callback(result.errors);
+        }
       } catch (error) {
         console.error('Ошибка при обновлении должности:', error);
+        callback && callback([{
+          field: 'general',
+          message: 'Произошла непредвиденная ошибка при обновлении должности'
+        }]);
       }
     },
 
@@ -49,30 +86,26 @@ export default {
         alert("Должность успешна удалена");
       } catch (error) {
         console.error('Ошибка при удалении должности:', error);
+        alert("Ошибка при удалении должности");
       }
     }
-
-
   },
 
   mounted() {
     this.getPositions();
   },
-
 }
 </script>
 
 <template>
-
   <PositionList
       :positions="positions"
+      :error="Error"
       @create="createPosition"
       @update="updatePosition"
       @delete="deletePosition"
   />
-
 </template>
 
 <style scoped>
-
 </style>

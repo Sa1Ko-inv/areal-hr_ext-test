@@ -16,7 +16,7 @@ class PositionController {
 
     async getAllPositions(req, res, next) {
         try {
-            const positions = await Position.findAll({paranoid: false});
+            const positions = await Position.findAll({});
             return res.json(positions);
         } catch (error) {
             console.log('Ошибка при получении должностей', error);
@@ -41,6 +41,24 @@ class PositionController {
             return next(ApiError.internal(error.message));
         }
     }
+
+    // async updatePosition (id, name)  {
+    //     try {
+    //         const response = await $host.put(`api/position/${id}`, { name });
+    //         return { success: true, data: response.data };
+    //     } catch (error) {
+    //         if (error.response && error.response.data && error.response.data.errors) {
+    //             return {
+    //                 success: false,
+    //                 errors: error.response.data.errors
+    //             };
+    //         }
+    //         return {
+    //             success: false,
+    //             errors: [{ field: 'general', message: 'Произошла ошибка при обновлении должности' }]
+    //         };
+    //     }
+    // }
 
     async deletePosition(req, res, next) {
         const {id} = req.params;

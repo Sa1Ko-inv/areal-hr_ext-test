@@ -23,13 +23,16 @@
 
     <div class="organization__edit" v-else>
       <div class="organization__edit-top">
-        <input v-model="editedName" type="text" class="organization__edit-input" placeholder="Название">
+        <input v-model.number="editedName" type="text" class="organization__edit-input" placeholder="Название">
         <div class="organization__edit-buttons">
           <button @click="saveEdit" class="organization__button organization__button--save">Сохранить</button>
           <button @click="cancelEdit" class="organization__button organization__button--cancel">Отмена</button>
         </div>
       </div>
       <textarea v-model="editedComment" class="organization__edit-textarea" placeholder="Комментарий"></textarea>
+      <div v-if="error" class="organization__error">
+        {{ error }}
+      </div>
     </div>
   </div>
 </template>
@@ -40,6 +43,10 @@ export default {
     organization: {
       type: Object,
       required: true
+    },
+    error: { // Добавляем проп для ошибки
+      type: String,
+      default: null
     }
   },
   data() {
@@ -64,7 +71,7 @@ export default {
         name: this.editedName,
         comment: this.editedComment
       });
-      this.isEditing = false;
+      // this.isEditing = false;
     },
     deleteOrganization() {
       this.$emit('delete', this.organization.id);
@@ -90,6 +97,12 @@ export default {
   font-weight: 500;
   background-color: rgba(#792ec9, 0.03);
   transition: all 0.2s ease;
+
+  &__error {
+    color: #d32f2f;
+    font-size: 14px;
+    margin-top: 8px;
+  }
 
   &:hover {
     box-shadow: 0 2px 8px rgba(#792ec9, 0.2);

@@ -4,7 +4,8 @@
 
     <div class="form-group">
       <label>Название организации</label>
-      <input v-model="name" type="text" required class="form-input">
+      <input v-model.number="name" type="text" class="form-input">
+      <div v-if="error" class="error-message">{{ error }}</div>
     </div>
 
     <div class="form-group">
@@ -25,6 +26,10 @@ export default {
     cancel: {
       type: Function,
       required: true
+    },
+    error: { // Добавляем пропс для ошибки
+      type: String,
+      default: null
     }
   },
   data() {
@@ -48,6 +53,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.error-message {
+  color: #d32f2f;
+  margin-top: 5px;
+  font-size: 14px;
+  font-weight: normal;
+}
 .organization-create-form {
   width: 600px;
 
