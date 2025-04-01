@@ -7,6 +7,12 @@
       @update="updateOrganization"
       @delete="deleteOrganization"
   />
+
+  <div>
+    <button :disabled="currentPage === 1" @click="changePage(currentPage - 1)">Предыдущая</button>
+    <span>Страница {{ currentPage }} из {{ totalPages }}</span>
+    <button :disabled="currentPage === totalPages" @click="changePage(currentPage + 1)">Следующая</button>
+  </div>
 </template>
 
 <script>
@@ -25,19 +31,26 @@ export default {
       organizations: [],
       createError: null,
       updateError: null, // Добавляем состояние для ошибки обновления
-      updatingOrganizationId: null // Для отслеживания какой организации показывать ошибку
+      updatingOrganizationId: null, // Для отслеживания какой организации показывать ошибку
+      currentPage: 1,
+      pageSize: 5,
+      totalItems: 0
     }
   },
   computed: {
     sortedOrganizations() {
       return [...this.organizations].sort((a, b) => a.id - b.id);
+    },
+    totalPages() {
+      return Math.ceil(this.totalItems / this.pageSize);
     }
   },
   methods: {
     async getOrganizations() {
       try {
-        const response = await fetchOrganizations();
-        this.organizations = response.data;
+        const response = await fetchOrganizations(this.currentPage, this.pageSize);
+        this.organizations = response.data.rows;
+        this.totalItems = response.data.count;
       } catch (error) {
         console.error('Ошибка при получении организаций:', error);
       }
@@ -92,10 +105,17 @@ export default {
       } catch (error) {
         console.error('Ошибка при удалении организации:', error);
       }
-    }
+    },
+    changePage(page) {
+      this.currentPage = page;
+      this.getOrganizations();
+    },
   },
+
   mounted() {
     this.getOrganizations();
-  }
+  },
+
 }
+
 </script>

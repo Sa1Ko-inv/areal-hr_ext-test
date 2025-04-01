@@ -16,8 +16,18 @@ class PositionController {
 
     async getAllPositions(req, res, next) {
         try {
-            const positions = await Position.findAll({});
-            return res.json(positions);
+            let { page, limit } = req.query;
+            page = page || 1;
+            limit = limit || 10;
+            let offset = page * limit - limit;
+
+            const { count, rows } = await Position.findAndCountAll({
+                limit,
+                offset,
+                distinct: true
+            });
+
+            return res.json({ count, rows });
         } catch (error) {
             console.log('Ошибка при получении должностей', error);
             return next(ApiError.internal(error.message));

@@ -1,7 +1,12 @@
 import {$host} from "@/http/index.js";
 
-export const fetchOrganizations = async () => {
-    const response = await $host.get('api/organization');
+export const fetchOrganizations = async (page = 1, limit = 10) => {
+    const response = await $host.get('api/organization', {
+        params: {
+            page: page,
+            limit: limit
+        }
+    });
     return response;
 
 }

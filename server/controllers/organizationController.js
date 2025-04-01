@@ -20,12 +20,20 @@ class OrganizationController {
     // Получение всех организаций
     async getAllOrganization(req, res, next) {
         try {
-            const organizations = await Organization.findAll({
-                // paranoid: false
-            });
-            return res.json(organizations);
+            let {page, limit} = req.query;
+            page = page || 1;
+            limit = limit || 10;
+            let offset = page * limit - limit;
+
+            const {count, rows} = await Organization.findAndCountAll({
+                limit,
+                offset,
+                distinct: true
+            })
+            return res.json({count, rows});
         } catch (error) {
             console.log('Ошибка при получении Организаций', error)
+            return res.status(500).json({error: 'Ошибка сервера'});
         }
     }
 
@@ -56,7 +64,7 @@ class OrganizationController {
             if (organization) {
                 return res.json(organization);
             } else {
-                return res.status(404).json({ error: 'Организация не найдена' });
+                return res.status(404).json({error: 'Организация не найдена'});
             }
         } catch (error) {
             console.log('Ошибка при получении Организации', error)
@@ -74,14 +82,14 @@ class OrganizationController {
             });
 
             if (!organization) {
-                return res.status(404).json({ error: 'Организация не найдена' });
+                return res.status(404).json({error: 'Организация не найдена'});
             }
 
             await organization.update({name, comment});
             return res.json(organization);
         } catch (error) {
             console.log('Ошибка при обновлении Организации', error);
-            return res.status(500).json({ error: 'Ошибка сервера' });
+            return res.status(500).json({error: 'Ошибка сервера'});
         }
     }
 
@@ -90,11 +98,11 @@ class OrganizationController {
         const transaction = await sequelize.transaction(); // Получаем транзакцию
 
         try {
-            const organization = await Organization.findByPk(id, { transaction });
+            const organization = await Organization.findByPk(id, {transaction});
 
             if (!organization) {
                 await transaction.rollback();
-                return res.status(404).json({ error: 'Организация не найдена' });
+                return res.status(404).json({error: 'Организация не найдена'});
             }
 
             // Находим все корневые отделы организации
@@ -110,7 +118,7 @@ class OrganizationController {
             const deleteDepartmentWithChildren = async (departmentId) => {
                 // Находим все дочерние отделы
                 const children = await Department.findAll({
-                    where: { parent_id: departmentId },
+                    where: {parent_id: departmentId},
                     transaction
                 });
 
@@ -120,9 +128,9 @@ class OrganizationController {
                 }
 
                 // Затем удаляем текущий отдел
-                const department = await Department.findByPk(departmentId, { transaction });
+                const department = await Department.findByPk(departmentId, {transaction});
                 if (department) {
-                    await department.destroy({ transaction });
+                    await department.destroy({transaction});
                 }
             };
 
@@ -132,7 +140,7 @@ class OrganizationController {
             }
 
             // Удаляем саму организацию
-            await organization.destroy({ transaction });
+            await organization.destroy({transaction});
 
             await transaction.commit();
             return res.json({message: 'Организация и все связанные отделы успешно удалены'});

@@ -1,7 +1,12 @@
 import {$host} from "./index";
 
-export const fetchPositions = async () => {
-    const response = await $host.get('api/position');
+export const fetchPositions = async (page = 1, limit = 10) => {
+    const response = await $host.get('api/position', {
+        params: {
+            page: page,
+            limit: limit
+        }
+    });
     return response;
 }
 

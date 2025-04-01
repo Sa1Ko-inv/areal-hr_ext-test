@@ -9,15 +9,19 @@ export default {
       positions: [],
       createError: null,
       updateError: null, // Добавляем состояние для ошибки обновления
-      updatingPositionId: null // Для отслеживания какой должности показывать ошибку
+      updatingPositionId: null, // Для отслеживания какой должности показывать ошибку
+      currentPage: 1,
+      pageSize: 5,
+      totalItems: 0
     }
   },
 
   methods: {
     async getPositions() {
       try {
-        const response = await fetchPositions();
-        this.positions = response.data;
+        const response = await fetchPositions(this.currentPage, this.pageSize);
+        this.positions = response.data.rows;
+        this.totalItems = response.data.count;
       } catch (error) {
         console.error('Ошибка при получении должностей:', error);
       }
@@ -73,12 +77,21 @@ export default {
         console.error('Ошибка при удалении должности:', error);
         alert("Ошибка при удалении должности");
       }
+    },
+    changePage(page) {
+      this.currentPage = page;
+      this.getPositions();
     }
   },
 
   mounted() {
     this.getPositions();
   },
+  computed: {
+    totalPages() {
+      return Math.ceil(this.totalItems / this.pageSize);
+    }
+  }
 }
 </script>
 
@@ -91,6 +104,11 @@ export default {
       @update="updatePosition"
       @delete="deletePosition"
   />
+  <div>
+    <button :disabled="currentPage === 1" @click="changePage(currentPage - 1)">Предыдущая</button>
+    <span>Страница {{ currentPage }} из {{ totalPages }}</span>
+    <button :disabled="currentPage === totalPages" @click="changePage(currentPage + 1)">Следующая</button>
+  </div>
 </template>
 
 <style scoped>
