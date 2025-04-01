@@ -7,7 +7,9 @@ export default {
   data() {
     return {
       positions: [],
-      Error: null,
+      createError: null,
+      updateError: null, // Добавляем состояние для ошибки обновления
+      updatingPositionId: null // Для отслеживания какой должности показывать ошибку
     }
   },
 
@@ -23,58 +25,41 @@ export default {
 
     async createPosition(position, callback) {
       try {
-        this.Error = null; // Сбрасываем ошибку перед запросом
+        this.createError = null; // Сбрасываем ошибку перед запросом
         const response = await createPosition(position.name);
         this.positions.push(response.data);
         this.getPositions();
       } catch (error) {
         if (error.response && error.response.data && error.response.data.errors) {
-          this.Error = error.response.data.errors[0].message; // Сохраняем сообщение об ошибке
+          this.createError = error.response.data.errors[0].message; // Сохраняем сообщение об ошибке
           console.error('Ошибка при создании должностей:', error);
         } else {
-          this.Error = 'Произошла ошибка при создании должностей';
+          this.createError = 'Произошла ошибка при создании должностей';
         }
         console.error('Ошибка при создании должностей:', error);
       }
     },
 
-    // async createPosition(position, callback) {
-    //   try {
-    //     const result = await createPosition(position.name);
-    //     if (result.success) {
-    //       // Если успешно, обновляем список должностей
-    //       await this.getPositions();
-    //       callback && callback([]); // Вызываем callback без ошибок
-    //     } else {
-    //       // Если есть ошибки, передаем их в callback
-    //       callback && callback(result.errors);
-    //     }
-    //   } catch (error) {
-    //     console.error('Ошибка при создании должности:', error);
-    //     callback && callback([{
-    //       field: 'general',
-    //       message: 'Произошла непредвиденная ошибка при создании должности'
-    //     }]);
-    //   }
-    // },
-
     async updatePosition(updatedPosition, callback) {
       try {
-        const result = await updatePosition(updatedPosition.id, updatedPosition.name);
-        if (result.success) {
-          // Если успешно, обновляем список должностей
-          await this.getPositions();
-          callback && callback([]); // Вызываем callback без ошибок
-        } else {
-          // Если есть ошибки, передаем их в callback
-          callback && callback(result.errors);
-        }
+        this.updateError = null;
+        this.updatingPositionId = updatedPosition.id; // Запоминаем ID должности
+        await updatePosition(updatedPosition.id, updatedPosition.name);
+        this.getPositions();
+        this.updatingPositionId = null; // Сбрасываем ID после обновления
       } catch (error) {
-        console.error('Ошибка при обновлении должности:', error);
-        callback && callback([{
-          field: 'general',
-          message: 'Произошла непредвиденная ошибка при обновлении должности'
-        }]);
+        if (error.response && error.response.data && error.response.data.errors) {
+          this.updateError = {
+            id: updatedPosition.id,
+            message: error.response.data.errors[0].message
+          };
+        } else {
+          this.updateError = {
+            id: updatedPosition.id,
+            message: 'Произошла ошибка при обновлении должности'
+          };
+        }
+      console.log('Ошибка при обновлении должности:', error);
       }
     },
 
@@ -100,7 +85,8 @@ export default {
 <template>
   <PositionList
       :positions="positions"
-      :error="Error"
+      :createError="createError"
+      :updateError="updateError"
       @create="createPosition"
       @update="updatePosition"
       @delete="deletePosition"

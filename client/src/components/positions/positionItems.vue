@@ -9,17 +9,10 @@
             v-model="editedName"
             type="text"
             class="position__edit-input"
-            :class="{ 'input-error': getFieldError('name') }"
         >
-        <!-- Отображение ошибки для поля name -->
-        <div v-if="getFieldError('name')" class="error-message">
-          {{ getFieldError('name') }}
+        <div v-if="error" class="position__error">
+          {{ error }}
         </div>
-      </div>
-
-      <!-- Отображение общих ошибок -->
-      <div v-for="(error, index) in generalErrors" :key="index" class="error-message general-error">
-        {{ error.message }}
       </div>
 
       <button @click="saveEdit" class="position__button position__button--save">Сохранить</button>
@@ -42,13 +35,16 @@ export default {
     position: {
       type: Object,
       required: true
+    },
+    error: {
+      type: String,
+      default: null
     }
   },
   data() {
     return {
       isEditing: false,
       editedName: this.position.name,
-      errors: [] // Массив ошибок
     }
   },
   methods: {
@@ -66,12 +62,6 @@ export default {
       this.$emit('update', {
         id: this.position.id,
         name: this.editedName
-      }, (errors) => {
-        if (errors && errors.length > 0) {
-          this.errors = errors;
-        } else {
-          this.isEditing = false;
-        }
       });
     },
     deletePositions() {
@@ -80,20 +70,6 @@ export default {
       }
     }
   },
-  computed: {
-    // Получаем ошибку для конкретного поля
-    getFieldError() {
-      return (fieldName) => {
-        const error = this.errors.find(err => err.field === fieldName);
-        return error ? error.message : null;
-      };
-    },
-
-    // Получаем общие ошибки (не привязанные к полям)
-    generalErrors() {
-      return this.errors.filter(err => err.field === 'Общая ошибка' || err.field === 'general');
-    }
-  }
 }
 </script>
 
@@ -118,7 +94,11 @@ export default {
   &__info {
     flex: 1;
   }
-
+  &__error {
+    color: #d32f2f;
+    font-size: 14px;
+    margin-top: 8px;
+  }
   &__name {
     strong {
       color: #792ec9;
@@ -167,6 +147,7 @@ export default {
     &--edit {
       background-color: transparent;
       color: #792ec9;
+
       &:hover {
         background-color: rgba(#792ec9, 0.1);
       }
@@ -176,6 +157,7 @@ export default {
       background-color: transparent;
       color: #d32f2f;
       border-color: #d32f2f;
+
       &:hover {
         background-color: rgba(#d32f2f, 0.1);
       }
@@ -185,6 +167,7 @@ export default {
       background-color: transparent;
       color: #792ec9;
       border-color: #792ec9;
+
       &:hover {
         background-color: rgba(#792ec9, 0.1);
       }
@@ -194,6 +177,7 @@ export default {
       background-color: transparent;
       color: #d32f2f;
       border-color: #d32f2f;
+
       &:hover {
         background-color: rgba(#d32f2f, 0.1);
       }

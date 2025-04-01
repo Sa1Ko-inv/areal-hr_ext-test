@@ -59,7 +59,6 @@ export default {
       }
     },
     async updateOrganization(updatedOrganization) {
-      console.log('Updating organization with data:', updatedOrganization);
       try {
         this.updateError = null; // Сбрасываем ошибку
         this.updatingOrganizationId = updatedOrganization.id; // Запоминаем ID организации
@@ -71,8 +70,6 @@ export default {
         this.getOrganizations();
         this.updatingOrganizationId = null; // Сбрасываем после успеха
       } catch (error) {
-        console.log('Full error object:', error);
-        console.log('Error response data:', error.response?.data);
         if (error.response && error.response.data && error.response.data.errors) {
           this.updateError = {
             id: updatedOrganization.id,

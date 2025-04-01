@@ -9,7 +9,7 @@
       <PositionCreateForm
           @create="createPosition"
           :cancel="cancelCreate"
-          :error="error"
+          :error="createError"
       />
     </MyModalWindow>
 
@@ -18,6 +18,7 @@
           v-for="position in positions"
           :position="position"
           :key="position.id"
+          :error="updateError?.id === position.id ? updateError.message : null"
           @update="updatePosition"
           @delete="deletePosition"
       />
@@ -37,8 +38,12 @@ export default {
       type: Array,
       required: true
     },
-    error: {
+    createError: {
       type: String,
+      default: null
+    },
+    updateError: { // Добавляем проп для ошибки обновления
+      type: Object,
       default: null
     }
   },
@@ -53,17 +58,11 @@ export default {
     },
 
     createPosition(position, callback) {
-      this.$emit('create', position, (errors) => {
-        if (!errors || errors.length === 0) {
-          this.dialogVisible = false;
-        }
-        // Вызываем callback с ошибками или без
-        callback && callback(errors);
-      });
+      this.$emit('create', position)
     },
 
-    updatePosition(position, callback) {
-      this.$emit('update', position, callback);
+    updatePosition(position) {
+      this.$emit('update', position);
     },
 
     deletePosition(id) {
