@@ -29,7 +29,7 @@
           <button @click="cancelEdit" class="organization__button organization__button--cancel">Отмена</button>
         </div>
       </div>
-      <textarea v-model="editedComment" class="organization__edit-textarea" placeholder="Комментарий"></textarea>
+      <textarea v-model.number="editedComment" class="organization__edit-textarea" placeholder="Комментарий"></textarea>
       <div v-if="error" class="organization__error">
         {{ error }}
       </div>

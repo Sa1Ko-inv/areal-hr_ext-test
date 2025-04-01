@@ -42,10 +42,6 @@ export default {
     <div v-if="error" class="error-message">
       {{error}}
     </div>
-    <!-- Отображение общих ошибок -->
-    <!--    <div v-for="(error, index) in generalErrors" :key="index" class="error-message general-error">-->
-    <!--      {{ error.message }}-->
-    <!--    </div>-->
 
     <div class="form-actions">
       <button type="submit">Добавить должность</button>

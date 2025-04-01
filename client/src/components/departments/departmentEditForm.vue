@@ -1,14 +1,14 @@
 <template>
   <form @submit.prevent="saveDepartment">
     <h4>Редактирование Отдела</h4>
-
+    <div v-if="updateError" class="error-message">{{ updateError.message }}</div>
     <input
-        v-model="editDepartment.name"
+        v-model.number="editDepartment.name"
         placeholder="Название отдела"
         type="text"
     >
     <input
-        v-model="editDepartment.comment"
+        v-model.number="editDepartment.comment"
         placeholder="Комментарий"
         type="text"
     >
@@ -67,7 +67,9 @@ export default {
         parent_id: this.department ? this.department.parent_id : null
       },
       departments: [],
-      filteredDepartments: []
+      filteredDepartments: [],
+      updateError: null, // Добавляем состояние для ошибки обновления
+      updatingDepartmentId: null // Для отслеживания какой отдела показывать ошибку
     }
   },
 
@@ -109,6 +111,8 @@ export default {
 
     async saveDepartment() {
       try {
+        this.updateError = null; // Сбрасываем ошибку перед запросом
+        this.updatingDepartmentId = this.editDepartment.id; // Запоминаем ID отдела
         const departmentData = {
           id: this.editDepartment.id,
           name: this.editDepartment.name,
@@ -118,9 +122,21 @@ export default {
         };
 
         await updateDepartment(departmentData);
+        this.updatingDepartmentId = null;
         this.cancel();
         this.$emit('departmentUpdated');
       } catch (error) {
+        if (error.response && error.response.data && error.response.data.errors) {
+          this.updateError = {
+            id: this.editDepartment,
+            message: error.response.data.errors[0].message
+          };
+        } else {
+          this.updateError = {
+            id: this.editDepartment,
+            message: 'Произошла ошибка при обновлении отдела'
+          };
+        }
         console.error('Ошибка при обновлении отдела:', error);
       }
     }
@@ -133,6 +149,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.error-message {
+  color: #d32f2f;
+  font-size: 14px;
+  margin-top: 8px;
+}
 form {
   max-width: 500px;
   margin: 0 auto;

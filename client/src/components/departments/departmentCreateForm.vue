@@ -1,5 +1,5 @@
 <script>
-import { createDepartment } from "@/http/departmentAPI.js";
+import {createDepartment} from "@/http/departmentAPI.js";
 
 export default {
   props: {
@@ -23,18 +23,27 @@ export default {
         comment: '',
         organization_id: this.organizationId,
         parent_id: null
-      }
+      },
+      createError: null,
     }
   },
   methods: {
     async createDepartment() {
       try {
+        this.createError = null; // Сбрасываем ошибку перед запросом
         await createDepartment(this.department);
         this.$emit('created');
-        this.department = { name: '', comment: '', organization_id: this.organizationId, parent_id: null };
+        this.department = {name: '', comment: '', organization_id: this.organizationId, parent_id: null};
         this.dialogVisible = false;
       } catch (error) {
-        console.error('Ошибка при создании отдела:', error);
+        if (error.response && error.response.data && error.response.data.errors) {
+          this.createError = error.response.data.errors[0].message; // Сохраняем сообщение об ошибке
+          console.error('Ошибка при создании организации:', error);
+        } else {
+          this.createError = 'Произошла ошибка при создании организации';
+        }
+        console.error('Ошибка при создании организации:', error);
+
       }
     }
   }
@@ -44,14 +53,14 @@ export default {
 <template>
   <form @submit.prevent="createDepartment">
     <h4>Создание Отдела</h4>
-
+    <div v-if="createError" class="error-message">{{ createError }}</div>
     <input
-        v-model="department.name"
+        v-model.number="department.name"
         placeholder="Название отдела"
         type="text"
     >
     <input
-        v-model="department.comment"
+        v-model.number="department.comment"
         placeholder="Комментарий"
         type="text"
     >
@@ -70,6 +79,11 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+.error-message {
+  color: #d32f2f;
+  font-size: 14px;
+  margin-top: 8px;
+}
 form {
   max-width: 500px;
   margin: 0 auto;
