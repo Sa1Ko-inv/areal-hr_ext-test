@@ -18,7 +18,6 @@ module.exports = {
       number: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true,
         comment: 'Номер паспорта',
       },
       issued_by: {
