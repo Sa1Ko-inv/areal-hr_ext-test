@@ -31,7 +31,7 @@ class DepartmentController {
                 where: {
                     parent_id: null
                 },
-                paranoid: false,
+                // paranoid: false,
                 include: [
                     {
                         model: Department,
@@ -53,7 +53,7 @@ class DepartmentController {
         try {
             const department = await Department.findOne({
                 where: { id: id},
-                paranoid: false,
+                // paranoid: false,
             });
 
             if (!department) {
@@ -71,8 +71,10 @@ class DepartmentController {
                     }
                 } else {
                     // Получаем организацию нового родительского отдела
-                    const newParentDepartment = await Department.findOne(
-                        { where: { id: parent_id }, paranoid: false }
+                    const newParentDepartment = await Department.findOne({
+                        where: { id: parent_id },
+                        // paranoid: false
+                    }
                     );
                     if (!newParentDepartment) {
                         return res.status(404).json({ error: 'Новый родительский отдел не найден' });
@@ -101,13 +103,37 @@ class DepartmentController {
         try {
             const department = await Department.findByPk(id);
 
+            if (!department) {
+                return res.status(404).json({ error: 'Отдел не найден' });
+            }
 
-            await department.destroy()
+            // Находим все дочерние отделы (включая вложенные)
+            const findAllChildren = async (parentId) => {
+                const children = await Department.findAll({ where: { parent_id: parentId } });
+                let allChildren = [...children];
 
-            return res.json({message: 'Отдел успешно удален'});
+                for (const child of children) {
+                    const nestedChildren = await findAllChildren(child.id);
+                    allChildren = [...allChildren, ...nestedChildren];
+                }
+
+                return allChildren;
+            };
+
+            const children = await findAllChildren(id);
+
+            // Удаляем все дочерние отделы
+            for (const child of children) {
+                await child.destroy();
+            }
+
+            // Удаляем сам отдел
+            await department.destroy();
+
+            return res.json({message: 'Отдел и все дочерние отделы успешно удалены'});
         } catch (error) {
             console.log('Ошибка при удалении отдела', error);
-
+            return res.status(500).json({ error: 'Ошибка сервера' });
         }
     }
 }
