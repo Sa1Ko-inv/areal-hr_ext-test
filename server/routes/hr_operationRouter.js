@@ -10,5 +10,7 @@ router.put('/salary/:employee_id', validate(salaryChangeSchema), hrOperationsCon
 router.put('/department/:employee_id', validate(departmentChangeSchema), hrOperationsController.changeDepartment); // Перевести сотрудника в другой отдел
 router.post('/fire/:employee_id', hrOperationsController.fireEmployee); // Уволить сотрудника
 router.get('/', hrOperationsController.getAllOperations);
+router.get('/:employee_id/history', hrOperationsController.getHROperationHistory); // Получение истории для конкретной должности
+
 
 module.exports = router;
