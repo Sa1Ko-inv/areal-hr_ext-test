@@ -7,6 +7,7 @@ const path = require('path');
 const sequelize = require('../db');
 const fs = require('fs');
 const uuid = require('uuid');
+const historyService = require('./historyService'); // Импортируем historyService
 
 class EmployeeController {
     async createEmployee(req, res, next) {
@@ -88,6 +89,23 @@ class EmployeeController {
                 ]
             });
 
+            // Записываем в историю
+            await historyService.createHistoryEntry(
+                'Сотрудник',
+                employee.id,
+                'create',
+                {
+                    last_name: { old: null, new: last_name },
+                    first_name: { old: null, new: first_name },
+                    middle_name: { old: null, new: middle_name },
+                    birth_date: { old: null, new: birth_date },
+                    passport: passport ? { old: null, new: passport.number } : {old: null, new: null}, // simplified for history
+                    address: address ? { old: null, new: address.street } : {old: null, new: null}, // simplified
+                    files: {old: null, new: uploadedFiles.map(f => f.name)}
+                },
+                null // Пока нет авторизации
+            );
+
             return res.status(201).json(createdEmployee);
         } catch (error) {
             console.log('Ошибка при создании сотрудника', error);
@@ -150,6 +168,15 @@ class EmployeeController {
                 return res.status(404).json({ error: 'Сотрудник не найден' });
             }
 
+            // Сохраняем старые значения для истории
+            const oldLastName = employee.last_name;
+            const oldFirstName = employee.first_name;
+            const oldMiddleName = employee.middle_name;
+            const oldBirthDate = employee.birth_date;
+            const oldPassport = employee.passport ? employee.passport.number : null;
+            const oldAddress = employee.address ? employee.address.street : null; // simplified
+            const oldFiles = employee.files.map(f => f.name);
+
             // Обновляем данные сотрудника
             const { last_name, first_name, middle_name, birth_date, passport, address } = req.body;
 
@@ -181,6 +208,7 @@ class EmployeeController {
             }
 
             // Обрабатываем новые файлы
+            const uploadedFiles = [];
             if (req.files) {
                 const files = Array.isArray(req.files.files) ? req.files.files : [req.files.files];
 
@@ -199,11 +227,12 @@ class EmployeeController {
                     await file.mv(filePath);
 
                     // Создаем запись о файле в БД
-                    await Files.create({
+                    const fileRecord = await Files.create({
                         name: file.name,
                         file_url: fileName,
                         employee_id: employee.id
                     });
+                    uploadedFiles.push(fileRecord);
                 }
             }
 
@@ -216,6 +245,23 @@ class EmployeeController {
                     { model: Files }
                 ]
             });
+
+            // Записываем в историю
+            await historyService.createHistoryEntry(
+                'Сотрудник',
+                id,
+                'update',
+                {
+                    last_name: { old: oldLastName, new: last_name || oldLastName },
+                    first_name: { old: oldFirstName, new: first_name || oldFirstName },
+                    middle_name: { old: oldMiddleName, new: middle_name || oldMiddleName },
+                    birth_date: { old: oldBirthDate, new: birth_date || oldBirthDate },
+                    passport: { old: oldPassport, new: passport ? passport.number : oldPassport }, // упростил
+                    address: { old: oldAddress, new: address? address.street : oldAddress }, // упростил
+                    files: {old: oldFiles, new: uploadedFiles.map(f => f.name)}
+                },
+                null // Пока нет авторизации
+            );
 
             return res.json(updatedEmployee);
         } catch (error) {
@@ -245,6 +291,14 @@ class EmployeeController {
                 await transaction.rollback();
                 return res.status(404).json({ error: 'Сотрудник не найден' });
             }
+            // Сохраняем старые значения для истории
+            const oldLastName = employee.last_name;
+            const oldFirstName = employee.first_name;
+            const oldMiddleName = employee.middle_name;
+            const oldBirthDate = employee.birth_date;
+            const oldPassport = employee.passport ? employee.passport.number : null;
+            const oldAddress = employee.address ? employee.address.street : null; // simplified
+            const oldFiles = employee.files.map(f => f.name);
 
             // Удаляем связанные записи (мягкое удаление)
             // Паспорт
@@ -269,6 +323,21 @@ class EmployeeController {
 
             // Фиксируем транзакцию
             await transaction.commit();
+            await historyService.createHistoryEntry(
+                'Сотрудник',
+                id,
+                'delete',
+                {
+                    last_name: { old: oldLastName, new: null },
+                    first_name: { old: oldFirstName, new: null },
+                    middle_name: { old: oldMiddleName, new: null },
+                    birth_date: { old: oldBirthDate, new: null },
+                    passport: { old: oldPassport, new: null },
+                    address: { old: oldAddress, new: null },
+                    files: {old: oldFiles, new: null}
+                },
+                null // Пока нет авторизации
+            );
 
             return res.json({
                 message: 'Сотрудник и все связанные данные успешно удалены (мягкое удаление)',
@@ -400,6 +469,21 @@ class EmployeeController {
                     { model: Files }
                 ]
             });
+            await historyService.createHistoryEntry(
+                'Сотрудник',
+                id,
+                'restore',
+                {
+                    last_name: { old: null, new: restoredEmployee.last_name },
+                    first_name: { old: null, new: restoredEmployee.first_name },
+                    middle_name: { old: null, new: restoredEmployee.middle_name },
+                    birth_date: { old: null, new: restoredEmployee.birth_date },
+                    passport: restoredEmployee.passport ? { old: null, new:  restoredEmployee.passport.number } : {old: null, new: null}, // Упростил
+                    address:  restoredEmployee.address ? { old: null, new:  restoredEmployee.address.street } : {old: null, new: null}, // Упростил
+                    files: {old: null, new: restoredEmployee.files.map(f => f.name)}
+                },
+                null // Пока нет авторизации
+            );
 
             return res.json({
                 message: 'Сотрудник и все связанные данные успешно восстановлены',
@@ -438,6 +522,18 @@ class EmployeeController {
         } catch (error) {
             console.log('Ошибка при восстановлении файла', error);
             return res.status(500).json({ error: 'Ошибка сервера' });
+        }
+    }
+
+    async getEmployeeHistory(req, res, next) {
+        const { id } = req.params;
+        const { page, limit } = req.query;
+        try {
+            const { count, rows } = await historyService.getHistoryForObject('Сотрудник', id, page, limit);
+            return res.json({ count, rows });
+        } catch (error) {
+            console.error("Ошибка при получении истории сотрудника", error);
+            return next(error);
         }
     }
 }

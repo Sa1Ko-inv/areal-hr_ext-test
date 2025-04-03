@@ -127,7 +127,7 @@ class OrganizationController {
                 await transaction.rollback();
                 return res.status(404).json({error: 'Организация не найдена'});
             }
-            const oldName = organization.name; // Получаем старое значение
+            const oldName = organization.name; // Получаем старое значени
             const oldComment = organization.comment; // Получаем старое значение комментария
 
             // Находим все корневые отделы организации
@@ -187,6 +187,18 @@ class OrganizationController {
                 error: 'Ошибка сервера',
                 details: error.message
             });
+        }
+    }
+
+    async getOrganizationHistory(req, res, next) {
+        const {id} = req.params;
+        const {page, limit} = req.query;
+        try {
+            const {count, rows} = await historyService.getHistoryForObject('Организация', id, page, limit);
+            return res.json({count, rows});
+        } catch (error) {
+            console.error('Ошибка при получении истории организации:', error);
+            return next(error)
         }
     }
 }

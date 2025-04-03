@@ -8,6 +8,7 @@ const {employeeSchema, employeeUpdateSchema } = require('../validators/employeeV
 router.post('/', validate(employeeSchema), employeeController.createEmployee);
 router.get('/', employeeController.getAllEmployees);
 router.get('/:id', employeeController.getOneEmployee);
+router.get('/:id/history', employeeController.getEmployeeHistory); // Получение истории для конкретной должности
 router.put('/:id', validate(employeeUpdateSchema), employeeController.updateEmployee);
 router.delete('/:id', employeeController.deleteEmployee);
 
