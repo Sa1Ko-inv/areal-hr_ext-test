@@ -1,14 +1,20 @@
 const HR_Operation = require("../models/hr_operation");
+const Employees = require('../models/employees');
+const Passport = require('../models/passport');
+const Address = require('../models/address');
+const Files = require('../models/file');
+const sequelize = require('../db');
 
 class HROperationsController {
     // Приём сотрудника на работу
     async hireEmployee(req, res, next) {
-        const {employeeId, departmentId,     salary} = req.body;
+        const {employee_id, department_id, position_id, salary} = req.body;
         try {
             const operation = await HR_Operation.create({
                 type: 'hire',
-                employeeId,
-                departmentId,
+                employee_id,
+                department_id,
+                position_id,
                 salary
             });
 
@@ -22,14 +28,14 @@ class HROperationsController {
 
     // Изменение зарплаты сотрудника
     async changeSalary(req, res, next) {
-        const {employeeId} = req.params;
-        const {newSalary} = req.body;
+        const {employee_id} = req.params;
+        const {salary} = req.body;
 
         try {
             const operation = await HR_Operation.create({
                 type: 'salary_change',
-                employeeId,
-                salary: newSalary
+                employee_id,
+                salary: salary
             });
 
             console.log('Зарплата изменена:', operation.toJSON());
@@ -42,15 +48,15 @@ class HROperationsController {
 
     // Перевод сотрудника в другой отдел
     async changeDepartment(req, res, next) {
-        const {employeeId} = req.params;
-        const {newDepartmentId, newPositionId} = req.body;
+        const {employee_id} = req.params;
+        const {department_id, position_id} = req.body;
 
         try {
             const operation = await HR_Operation.create({
                 type: 'department_change',
-                employeeId,
-                departmentId: newDepartmentId,
-                positionId: newPositionId
+                employee_id,
+                department_id: department_id,
+                position_id: position_id
             });
 
             console.log('Отдел изменен:', operation.toJSON());
@@ -61,21 +67,75 @@ class HROperationsController {
         }
     }
 
-    // Увольнение сотрудника
+    // Увольнение сотрудника (с мягким удалением и всех связанных данных)
     async fireEmployee(req, res, next) {
-        const {employeeId} = req.params;
+        const { employee_id } = req.params;
+        const transaction = await sequelize.transaction();
 
         try {
+            // Сначала создаем запись о кадровой операции
             const operation = await HR_Operation.create({
                 type: 'fire',
-                employeeId
+                employee_id
+            }, { transaction });
+
+            // Находим сотрудника и связанные данные
+            const employee = await Employees.findOne({
+                where: { id: employee_id },
+                include: [
+                    { model: Passport },
+                    { model: Address },
+                    { model: Files },
+                    // Добавьте другие связанные модели при необходимости
+                ],
+                transaction
             });
 
-            console.log('Сотрудник уволен:', operation.toJSON());
-            return res.json(operation);
+            if (!employee) {
+                await transaction.rollback();
+                return res.status(404).json({ error: 'Сотрудник не найден' });
+            }
+
+            // Мягкое удаление связанных данных
+            // Паспорт
+            if (employee.passport) {
+                await employee.passport.destroy({ transaction });
+            }
+
+            // Адрес
+            if (employee.address) {
+                await employee.address.destroy({ transaction });
+            }
+
+            // Файлы
+            if (employee.files && employee.files.length > 0) {
+                for (const file of employee.files) {
+                    await file.destroy({ transaction });
+                }
+            }
+
+            // Мягкое удаление самого сотрудника
+            await employee.destroy({ transaction });
+
+            // Фиксируем транзакцию
+            await transaction.commit();
+
+            console.log('Сотрудник уволен (мягкое удаление):', {
+                employee_id: employee_id,
+                operationId: operation.id
+            });
+
+            return res.json({
+                message: 'Сотрудник уволен. Все данные помечены как удаленные.',
+                operation: operation.toJSON()
+            });
         } catch (error) {
+            await transaction.rollback();
             console.log('Ошибка при увольнении сотрудника', error);
-            return res.status(500).json({error: 'Ошибка сервера'});
+            return res.status(500).json({
+                error: 'Ошибка при увольнении сотрудника',
+                details: error.message
+            });
         }
     }
     // Получение всех кадровых операций

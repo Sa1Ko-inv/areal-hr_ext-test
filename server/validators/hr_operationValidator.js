@@ -4,7 +4,7 @@ const Department = require('../models/department');
 const Position = require('../models/position');
 
 const hireSchema = Joi.object({
-    employeeId: Joi.number()
+    employee_id: Joi.number()
         .integer()
         .positive()
         .required()
@@ -14,7 +14,7 @@ const hireSchema = Joi.object({
             'number.positive': 'ID сотрудника должен быть положительным числом',
             'any.required': 'ID сотрудника является обязательным полем'
         }),
-    departmentId: Joi.number()
+    department_id: Joi.number()
         .integer()
         .positive()
         .required()
@@ -24,7 +24,7 @@ const hireSchema = Joi.object({
             'number.positive': 'ID отдела должен быть положительным числом',
             'any.required': 'ID отдела является обязательным полем'
         }),
-    positionId: Joi.number()
+    position_id: Joi.number()
         .integer()
         .positive()
         .required()
@@ -45,7 +45,7 @@ const hireSchema = Joi.object({
 });
 
 const salaryChangeSchema = Joi.object({
-    newSalary: Joi.number()
+    salary: Joi.number()
         .positive()
         .required()
         .messages({
@@ -56,7 +56,7 @@ const salaryChangeSchema = Joi.object({
 });
 
 const departmentChangeSchema = Joi.object({
-    newDepartmentId: Joi.number()
+    department_id: Joi.number()
         .integer()
         .positive()
         .required()

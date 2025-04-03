@@ -1,5 +1,8 @@
 // Исправить ошибку при созданни пользователя в Postman
-const { Employees, Passport, Address, Files } = require('../models/index');
+const Employees = require('../models/employees');
+const Passport = require('../models/passport');
+const Address = require('../models/address');
+const Files = require('../models/file');
 const path = require('path');
 const sequelize = require('../db');
 const fs = require('fs');

@@ -25,13 +25,13 @@ const HR_Operation = sequelize.define("hr_operation", {
 })
 
 // Связь с сотрудником
-Employee.hasMany(HR_Operation, { foreignKey: 'employeeId' });
-HR_Operation.belongsTo(Employee, { foreignKey: 'employeeId' });
+Employee.hasMany(HR_Operation, { foreignKey: 'employee_id' });
+HR_Operation.belongsTo(Employee, { foreignKey: 'employee_id' });
 
 // Связь с отделом
-HR_Operation.belongsTo(Department, { foreignKey: 'departmentId' });
+HR_Operation.belongsTo(Department, { foreignKey: 'department_id' });
 
 // Связь с должностью
-HR_Operation.belongsTo(Position, { foreignKey: 'positionId' });
+HR_Operation.belongsTo(Position, { foreignKey: 'position_id' });
 
 module.exports = HR_Operation
