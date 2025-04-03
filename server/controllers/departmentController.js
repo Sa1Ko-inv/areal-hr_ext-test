@@ -1,8 +1,10 @@
 const Department = require("../models/department");
+const historyService = require('./historyService'); // Импортируем historyService
 
 class DepartmentController {
     async createDepartment(req, res, next) {
         let organizationId = req.body.organization_id;
+        const { name, parent_id } = req.body; // Получаем name и parent_id
 
         try {
             if (req.body.parent_id) {
@@ -18,6 +20,19 @@ class DepartmentController {
                 organization_id: organizationId,
             });
 
+            // Записываем в историю
+            await historyService.createHistoryEntry(
+                'Отдел',
+                department.id,
+                'create',
+                {
+                    name: { old: null, new: name }, // Логируем name
+                    parent_id: { old: null, new: parent_id || null }, // Логируем parent_id
+                    organization_id: {old: null, new: organizationId}
+                },
+                null // Пока нет авторизации
+            );
+
             return res.json(department);
         } catch (error) {
             console.log('Ошибка при создании отдела', error);
@@ -31,7 +46,6 @@ class DepartmentController {
                 where: {
                     parent_id: null
                 },
-                // paranoid: false,
                 include: [
                     {
                         model: Department,
@@ -52,13 +66,17 @@ class DepartmentController {
 
         try {
             const department = await Department.findOne({
-                where: { id: id},
-                // paranoid: false,
+                where: { id: id },
             });
 
             if (!department) {
                 return res.status(404).json({ error: 'Отдел не найден' });
             }
+
+            // Сохраняем старые значения для истории
+            const oldName = department.name;
+            const oldParentId = department.parent_id;
+            const oldOrganizationId = department.organization_id;
 
             let newOrganizationId = updateData.organization_id; // Используем organization_id из запроса
 
@@ -73,9 +91,7 @@ class DepartmentController {
                     // Получаем организацию нового родительского отдела
                     const newParentDepartment = await Department.findOne({
                         where: { id: parent_id },
-                        // paranoid: false
-                    }
-                    );
+                    });
                     if (!newParentDepartment) {
                         return res.status(404).json({ error: 'Новый родительский отдел не найден' });
                     }
@@ -90,6 +106,19 @@ class DepartmentController {
                 organization_id: newOrganizationId,
             });
 
+            // Записываем в историю
+            await historyService.createHistoryEntry(
+                'Отдел',
+                id,
+                'update',
+                {
+                    name: { old: oldName, new: updateData.name || oldName }, // Логируем name
+                    parent_id: { old: oldParentId, new: parent_id }, // Логируем parent_id
+                    organization_id: {old: oldOrganizationId, new: newOrganizationId }
+                },
+                null // Пока нет авторизации
+            );
+
             return res.json(department);
         } catch (error) {
             console.log('Ошибка при обновлении отдела', error);
@@ -98,7 +127,7 @@ class DepartmentController {
     }
 
     async deleteDepartment(req, res, next) {
-        const {id} = req.params;
+        const { id } = req.params;
 
         try {
             const department = await Department.findByPk(id);
@@ -106,6 +135,11 @@ class DepartmentController {
             if (!department) {
                 return res.status(404).json({ error: 'Отдел не найден' });
             }
+
+            // Сохраняем старые значения для истории
+            const oldName = department.name;
+            const oldParentId = department.parent_id;
+            const oldOrganizationId = department.organization_id;
 
             // Находим все дочерние отделы (включая вложенные)
             const findAllChildren = async (parentId) => {
@@ -130,10 +164,34 @@ class DepartmentController {
             // Удаляем сам отдел
             await department.destroy();
 
-            return res.json({message: 'Отдел и все дочерние отделы успешно удалены'});
+            // Записываем в историю
+            await historyService.createHistoryEntry(
+                'Отдел',
+                id,
+                'delete',
+                {
+                    name: { old: oldName, new: null },
+                    parent_id: { old: oldParentId, new: null },
+                    organization_id: {old: oldOrganizationId, new: null}
+                },
+                null // Пока нет авторизации
+            );
+
+            return res.json({ message: 'Отдел и все дочерние отделы успешно удалены' });
         } catch (error) {
             console.log('Ошибка при удалении отдела', error);
             return res.status(500).json({ error: 'Ошибка сервера' });
+        }
+    }
+    async getEmployeeHistory(req, res, next) {
+        const { id } = req.params;
+        const { page, limit } = req.query;
+        try {
+            const { count, rows } = await historyService.getHistoryForObject('Сотрудник', id, page, limit);
+            return res.json({ count, rows });
+        } catch (error) {
+            console.error("Ошибка при получении истории сотрудника", error);
+            return next(error);
         }
     }
 }

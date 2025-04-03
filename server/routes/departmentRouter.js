@@ -7,6 +7,7 @@ const {departmentSchema, departmentUpdateSchema } = require('../validators/depar
 
 router.post('/',validate(departmentSchema) ,departmentController.createDepartment) // Добавить новую организацию
 router.get('/', departmentController.getAllDepartment) // Получить всех организаций
+router.get('/:id/history', departmentController.getEmployeeHistory); // Получение истории для конкретной должности
 router.put('/:id',validate(departmentUpdateSchema) ,departmentController.updateDepartment) // Редактировать организацию по ID
 router.delete('/:id', departmentController.deleteDepartment) // Удалить организацию по ID
 
