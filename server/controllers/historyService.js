@@ -1,14 +1,59 @@
-// services/historyService.js
 const History = require('../models/history');
 
 class HistoryService {
+    // Вспомогательная функция для очистки объекта от служебных полей
+    _cleanObjectForHistory(obj) {
+        if (!obj) return null;
+        if (typeof obj !== 'object') return obj;
+
+        // Создаем копию объекта, чтобы не изменять оригинал
+        const cleanObj = { ...obj };
+
+        // Удаляем служебные поля
+        delete cleanObj.createdAt;
+        delete cleanObj.updatedAt;
+        delete cleanObj.deletedAt;
+
+        // Обрабатываем вложенные объекты
+        for (const key in cleanObj) {
+            if (cleanObj.hasOwnProperty(key) && typeof cleanObj[key] === 'object' && cleanObj[key] !== null) {
+                cleanObj[key] = this._cleanObjectForHistory(cleanObj[key]);
+            }
+        }
+
+        return cleanObj;
+    }
+
+    // Очищает поля changed_fields от служебных полей
+    _cleanChangedFields(changed_fields) {
+        if (!changed_fields) return null;
+
+        const cleanedFields = {};
+
+        for (const key in changed_fields) {
+            if (changed_fields.hasOwnProperty(key)) {
+                const field = changed_fields[key];
+
+                cleanedFields[key] = {
+                    old: this._cleanObjectForHistory(field.old),
+                    new: this._cleanObjectForHistory(field.new)
+                };
+            }
+        }
+
+        return cleanedFields;
+    }
+
     async createHistoryEntry(object_type, object_id, operation_type, changed_fields, changed_by = null) {
         try {
+            // Очищаем поля changed_fields от служебных полей
+            const cleanedChangedFields = this._cleanChangedFields(changed_fields);
+
             const historyEntry = await History.create({
                 object_type,
                 object_id,
                 operation_type,
-                changed_fields,
+                changed_fields: cleanedChangedFields,
                 changed_by,
             });
             return historyEntry;

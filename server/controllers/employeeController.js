@@ -8,7 +8,7 @@ const sequelize = require('../db');
 const fs = require('fs');
 const uuid = require('uuid');
 const historyService = require('./historyService'); // Импортируем historyService
-
+//Топ версия
 class EmployeeController {
     async createEmployee(req, res, next) {
         try {
@@ -27,16 +27,18 @@ class EmployeeController {
             });
 
             // Создаем запись паспорта
+            let passportInstance = null;
             if (passport) {
-                await Passport.create({
+                passportInstance = await Passport.create({
                     ...passport,
                     employee_id: employee.id
                 });
             }
 
             // Создаем запись адреса
+            let addressInstance = null;
             if (address) {
-                await Address.create({
+                addressInstance = await Address.create({
                     ...address,
                     employee_id: employee.id
                 });
@@ -99,9 +101,9 @@ class EmployeeController {
                     first_name: { old: null, new: first_name },
                     middle_name: { old: null, new: middle_name },
                     birth_date: { old: null, new: birth_date },
-                    passport: passport ? { old: null, new: passport.number } : {old: null, new: null}, // simplified for history
-                    address: address ? { old: null, new: address.street } : {old: null, new: null}, // simplified
-                    files: {old: null, new: uploadedFiles.map(f => f.name)}
+                    passport: passport ? { old: null, new: passport } : { old: null, new: null }, // Полные данные паспорта
+                    address: address ? { old: null, new: address } : { old: null, new: null }, // Полные данные адреса
+                    files: { old: null, new: uploadedFiles.map(f => f.name) }
                 },
                 null // Пока нет авторизации
             );
@@ -173,8 +175,8 @@ class EmployeeController {
             const oldFirstName = employee.first_name;
             const oldMiddleName = employee.middle_name;
             const oldBirthDate = employee.birth_date;
-            const oldPassport = employee.passport ? employee.passport.number : null;
-            const oldAddress = employee.address ? employee.address.street : null; // simplified
+            const oldPassport = employee.passport ? { ...employee.passport.dataValues } : null; // Получаем все данные паспорта
+            const oldAddress = employee.address ? { ...employee.address.dataValues } : null; // Получаем все данные адреса
             const oldFiles = employee.files.map(f => f.name);
 
             // Обновляем данные сотрудника
@@ -256,9 +258,9 @@ class EmployeeController {
                     first_name: { old: oldFirstName, new: first_name || oldFirstName },
                     middle_name: { old: oldMiddleName, new: middle_name || oldMiddleName },
                     birth_date: { old: oldBirthDate, new: birth_date || oldBirthDate },
-                    passport: { old: oldPassport, new: passport ? passport.number : oldPassport }, // упростил
-                    address: { old: oldAddress, new: address? address.street : oldAddress }, // упростил
-                    files: {old: oldFiles, new: uploadedFiles.map(f => f.name)}
+                    passport: { old: oldPassport, new: passport ? passport : oldPassport }, // Все данные паспорта
+                    address: { old: oldAddress, new: address ? address : oldAddress }, // Все данные адреса
+                    files: { old: oldFiles, new: uploadedFiles.map(f => f.name) }
                 },
                 null // Пока нет авторизации
             );
@@ -296,8 +298,8 @@ class EmployeeController {
             const oldFirstName = employee.first_name;
             const oldMiddleName = employee.middle_name;
             const oldBirthDate = employee.birth_date;
-            const oldPassport = employee.passport ? employee.passport.number : null;
-            const oldAddress = employee.address ? employee.address.street : null; // simplified
+            const oldPassport = employee.passport ? { ...employee.passport.dataValues } : null;  // Получаем все данные
+            const oldAddress = employee.address ? { ...employee.address.dataValues } : null;    // Получаем все данные
             const oldFiles = employee.files.map(f => f.name);
 
             // Удаляем связанные записи (мягкое удаление)
@@ -332,9 +334,9 @@ class EmployeeController {
                     first_name: { old: oldFirstName, new: null },
                     middle_name: { old: oldMiddleName, new: null },
                     birth_date: { old: oldBirthDate, new: null },
-                    passport: { old: oldPassport, new: null },
-                    address: { old: oldAddress, new: null },
-                    files: {old: oldFiles, new: null}
+                    passport: { old: oldPassport, new: null }, // Все данные паспорта
+                    address: { old: oldAddress, new: null }, // Все данные адреса
+                    files: { old: oldFiles, new: null }
                 },
                 null // Пока нет авторизации
             );
@@ -478,9 +480,9 @@ class EmployeeController {
                     first_name: { old: null, new: restoredEmployee.first_name },
                     middle_name: { old: null, new: restoredEmployee.middle_name },
                     birth_date: { old: null, new: restoredEmployee.birth_date },
-                    passport: restoredEmployee.passport ? { old: null, new:  restoredEmployee.passport.number } : {old: null, new: null}, // Упростил
-                    address:  restoredEmployee.address ? { old: null, new:  restoredEmployee.address.street } : {old: null, new: null}, // Упростил
-                    files: {old: null, new: restoredEmployee.files.map(f => f.name)}
+                    passport: restoredEmployee.passport ? { old: null, new: { ...restoredEmployee.dataValues } } : { old: null, new: null }, // Все данные
+                    address: restoredEmployee.address ? { old: null, new: { ...restoredEmployee.dataValues } } : { old: null, new: null }, // Все данные
+                    files: { old: null, new: restoredEmployee.files.map(f => f.name) }
                 },
                 null // Пока нет авторизации
             );
@@ -539,3 +541,4 @@ class EmployeeController {
 }
 
 module.exports = new EmployeeController();
+
