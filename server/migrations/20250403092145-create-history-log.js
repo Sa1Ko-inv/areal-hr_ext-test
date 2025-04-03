@@ -2,66 +2,57 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('histories', { // Имя таблицы во множественном числе
+    await queryInterface.createTable('histories', { // Исправлено имя таблицы
       id: {
+        type: Sequelize.INTEGER,
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
       },
-      operationDate: {
+      operation_date: { // Переименовано
         type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.NOW
+        defaultValue: Sequelize.literal('NOW()'),
+        comment: "Дата и время операции"
       },
-      actionType: {
+      changed_by: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        comment: "ID пользователя, выполнившего изменение (пока null)"
+      },
+      object_type: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
+        comment: "Тип объекта (Организация, Отдел, Должность, Сотрудник, Кадровая операция)"
       },
-      operationObject: {
-        // Убедитесь, что значения ENUM совпадают с моделью
-        type: Sequelize.ENUM('Organization', 'Department', 'Position', 'Employee', 'HROperation'),
-        allowNull: false
+      object_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        comment: "ID измененного объекта"
       },
-      objectId: {
-        type: Sequelize.INTEGER, // Или Sequelize.UUID
-        allowNull: false
-      },
-      changedFields: {
-        type: Sequelize.JSONB, // Используем JSONB
-        allowNull: true
-      },
-      // --- Автор изменения ---
-      // Раскомментируйте после добавления таблицы Users
-      /*
-      authorId: {
-        type: Sequelize.INTEGER, // Или Sequelize.UUID
-        allowNull: true, // Сделать false позже
-        // references: { model: 'Users', key: 'id' },
-        // onUpdate: 'CASCADE',
-        // onDelete: 'SET NULL'
-      },
-      */
-      context: {
+      changed_fields: {
         type: Sequelize.JSONB,
-        allowNull: true
-      },
-      createdAt: { // Стандартное поле Sequelize
         allowNull: false,
-        type: Sequelize.DATE
+        comment: "JSON-объект с измененными полями (ключ: имя поля, значение: {old: 'старое значение', new: 'новое значение'})"
       },
-      updatedAt: { // Стандартное поле Sequelize
+      operation_type: {
+        type: Sequelize.STRING,
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        comment: "Тип операции ('create', 'update', 'delete')"
+      },
+      createdAt: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.literal('NOW()')
+      },
+      // updatedAt: {  //Удалено, так как мы отключили его в модели
+      //     type: Sequelize.DATE,
+      //     allowNull: false,
+      //     defaultValue: Sequelize.literal('NOW()')
+      // },
     });
-
-    // Опционально: Добавить индексы для ускорения поиска по истории
-    await queryInterface.addIndex('histories', ['operationObject', 'objectId']);
-    await queryInterface.addIndex('histories', ['operationDate']);
-    // await queryInterface.addIndex('Histories', ['authorId']); // После добавления authorId
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('histories');
+    await queryInterface.dropTable('histories'); // Исправлено имя таблицы
   }
 };

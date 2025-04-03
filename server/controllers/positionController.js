@@ -1,12 +1,22 @@
 const Position = require('../models/position');
 const ApiError = require('../error/ApiError');
+const historyService = require('./historyService');
 
 class PositionController {
     async createPosition(req, res, next) {
         const {name} = req.body;
 
         try {
+
             const position = await Position.create({name});
+            // Записываем в историю
+            await historyService.createHistoryEntry(
+                'Должность',
+                position.id,
+                'create',
+                { name: { old: null, new: name } }, // old: null для создания
+                null // Пока нет авторизации
+            );
             return res.json(position);
         } catch (error) {
             console.log('Ошибка при создании должности', error);
@@ -43,8 +53,18 @@ class PositionController {
                 return next(ApiError.badRequest('Должность не найдена'));
             }
 
+            const oldName = position.name; // Получаем старое значение
+
             await position.update({name});
 
+            // Записываем в историю
+            await historyService.createHistoryEntry(
+                'Должность',
+                id,
+                'update',
+                { name: { old: oldName, new: name } }, // old: oldName, new: name
+                null // Пока нет авторизации
+            );
             return res.json(position);
         } catch (error) {
             console.log('Ошибка при обновлении должности', error);
@@ -78,12 +98,33 @@ class PositionController {
             if (!position) {
                 return next(ApiError.badRequest('Должность не найдена'));
             }
-
+            const oldName = position.name;
             await position.destroy();
+
+            // Записываем в историю
+            await historyService.createHistoryEntry(
+                'Должность',
+                id,
+                'delete',
+                { name: {old: oldName, new: null} }, //При удалении новое значение null
+                null // Пока нет авторизации
+            );
+
             return res.json({message: 'Должность удалена'});
         } catch (error) {
             console.log('Ошибка при удалении должности', error);
             return next(ApiError.internal(error.message));
+        }
+    }
+    async getPositionHistory(req, res, next) {
+        const { id } = req.params;
+        const { page, limit } = req.query;
+        try {
+            const { count, rows } = await historyService.getHistoryForObject('Должность', id, page, limit);
+            return res.json({ count, rows });
+        } catch (error) {
+            console.error("Ошибка при получении истории должности", error);
+            return next(error); // Передаем ошибку дальше, централизованный обработчик её обработает
         }
     }
 }

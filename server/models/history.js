@@ -1,19 +1,20 @@
-const sequelize = require('../db')
-const {DataTypes} = require("sequelize");
+// models/history.js
+const sequelize = require('../db');
+const { DataTypes } = require('sequelize');
 
 const History = sequelize.define('history', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    operationDate: { type: DataTypes.DATE, defaultValue: DataTypes.NOW }, // Дата и время операции
-    operationObject: {
-        type: DataTypes.ENUM('Organization', 'Department', 'Position', 'Employee', 'HROperation'),
-        allowNull: false
-    }, // Объект операции
-    objectId: { type: DataTypes.INTEGER, allowNull: false }, // ID объекта
-    changedFields: { type: DataTypes.JSON, allowNull: false }, // Измененные поля
-    // authorId: { type: DataTypes.INTEGER, allowNull: false }
-    // Автор изменения (пользователь)
+    operation_date: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, comment: "Дата и время операции" },
+    changed_by: { type: DataTypes.INTEGER, allowNull: true, comment: "ID пользователя, выполнившего изменение (пока null)" }, // Будет связано с User model позже
+    object_type: { type: DataTypes.STRING, allowNull: false, comment: "Тип объекта (Организация, Отдел, Должность, Сотрудник, Кадровая операция)" },
+    object_id: { type: DataTypes.INTEGER, allowNull: false, comment: "ID измененного объекта" },
+    changed_fields: { type: DataTypes.JSONB, allowNull: false, comment: "JSON-объект с измененными полями (ключ: имя поля, значение: {old: 'старое значение', new: 'новое значение'})" },
+    operation_type: { type: DataTypes.STRING, allowNull: false, comment: "Тип операции ('create', 'update', 'delete')" }
+}, {
+    tableName: 'histories', // Явно задаем имя таблицы
+    timestamps: true, // Добавляет createdAt и updatedAt
+    createdAt: 'operation_date', // Переименовываем createdAt в operationDate
+    updatedAt: false // Отключаем поле updatedAt, оно не нужно
 });
 
-// Связь с пользователем (автор изменения)
-// User.hasMany(History, { foreignKey: 'authorId' });
-// History.belongsTo(User, { foreignKey: 'authorId' });
+module.exports = History;
