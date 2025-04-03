@@ -2,6 +2,8 @@ const Organization = require('../models/organization')
 // const {department} = require('../models/department')
 const Department = require("../models/department");
 const sequelize = require('../db');
+const historyService = require('./historyService');
+
 
 class OrganizationController {
     async createOrganization(req, res, next) {
@@ -9,7 +11,13 @@ class OrganizationController {
         try {
             const organization = await Organization.create(
                 {name, comment})
-
+            await historyService.createHistoryEntry(
+                'Организация',
+                organization.id,
+                'create',
+                {name: {old: null, new: name}, comment: {old: null, new: comment}}, // old: null для создания// old: null для создания
+                null // Пока нет авторизации
+            );
             return res.json(organization);
 
         } catch (error) {
@@ -85,6 +93,21 @@ class OrganizationController {
                 return res.status(404).json({error: 'Организация не найдена'});
             }
 
+            const oldName = organization.name; // Получаем старое значение
+            const oldComment = organization.comment; // Получаем старое значение комментария
+
+            // Записываем в историю
+            await historyService.createHistoryEntry(
+                'Организация',
+                id,
+                'update',
+                {
+                    name: {old: oldName, new: name},
+                    comment: {old: oldComment, new: comment}
+                }, // old: oldName, new: name
+                null // Пока нет авторизации
+            )
+
             await organization.update({name, comment});
             return res.json(organization);
         } catch (error) {
@@ -104,6 +127,8 @@ class OrganizationController {
                 await transaction.rollback();
                 return res.status(404).json({error: 'Организация не найдена'});
             }
+            const oldName = organization.name; // Получаем старое значение
+            const oldComment = organization.comment; // Получаем старое значение комментария
 
             // Находим все корневые отделы организации
             const rootDepartments = await Department.findAll({
@@ -141,6 +166,17 @@ class OrganizationController {
 
             // Удаляем саму организацию
             await organization.destroy({transaction});
+
+            await historyService.createHistoryEntry(
+                'Организация',
+                id,
+                'delete',
+                {
+                    name: {old: oldName, new: null},
+                    comment: {old: oldComment, new: null}
+                }, // old: oldName, new: name
+                null // Пока нет авторизации
+            )
 
             await transaction.commit();
             return res.json({message: 'Организация и все связанные отделы успешно удалены'});
