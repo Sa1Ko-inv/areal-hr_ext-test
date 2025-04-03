@@ -1,7 +1,7 @@
 const sequelize = require('../db')
 const {DataTypes} = require("sequelize");
 
-const Passport = sequelize.define("passport", {
+const Passport = sequelize.define("passports", {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     series: {type: DataTypes.STRING, allowNull: false, comment: "Серия паспорта"},
     number: {type: DataTypes.STRING, allowNull: false,

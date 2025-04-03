@@ -2,8 +2,9 @@ require('dotenv').config({path: '../.env'});
 const express = require('express');
 const sequelize = require('./db');
 const cors = require('cors');
+const fileUpload = require('express-fileupload');
 const router = require('./routes/index');
-const errorHandler = require('./middleware/ErrorHandlingMiddleware');
+// const errorHandler = require('./middleware/ErrorHandlingMiddleware');
 
 
 
@@ -13,6 +14,8 @@ const app = express();
 app.use(cors());
 // Чтобы наше приложение могло парсить json
 app.use(express.json());
+
+app.use(fileUpload({}));
 
 // Подключаем роутер, первый параметр - это префикс, по которому будет доступен наш роутер
 app.use('/api', router);
@@ -25,7 +28,7 @@ const start = async () => {
     try {
         // Подключение к БД
         await sequelize.authenticate();
-        await sequelize.sync();
+        // await sequelize.sync();
         app.listen(PORT, () => {
             console.log(`Server started on port ${PORT}`)
         });
