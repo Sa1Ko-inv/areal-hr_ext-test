@@ -105,7 +105,7 @@ class HROperationsController {
                 type: 'department_change',
                 employee_id,
                 department_id: department_id,
-                position_id: position_id,
+                position_id: lastOperation.position_id,
                 salary: lastOperation.salary // Сохраняем текущую зарплату
             });
 
@@ -116,7 +116,6 @@ class HROperationsController {
                 'Перевод в другой отдел',
                 {
                     department_id: { old: lastOperation.department_id, new: department_id },
-                    position_id: { old: lastOperation.position_id, new: position_id }
                 },
                 null // Пока нет авторизации
             );
@@ -135,10 +134,20 @@ class HROperationsController {
         const transaction = await sequelize.transaction();
 
         try {
+            // Получаем последнюю HR операцию для сохранения текущих значений
+            const lastOperation = await HR_Operation.findOne({
+                where: { employee_id },
+                order: [['createdAt', 'DESC']]
+            });
+
             // Сначала создаем запись о кадровой операции
             const operation = await HR_Operation.create({
                 type: 'fire',
-                employee_id
+                employee_id,
+                // Сохраняем текущие значения, если они есть
+                department_id: lastOperation ? lastOperation.department_id : null,
+                position_id: lastOperation ? lastOperation.position_id : null,
+                salary: lastOperation ? lastOperation.salary : null
             }, { transaction });
 
             // Находим сотрудника и связанные данные

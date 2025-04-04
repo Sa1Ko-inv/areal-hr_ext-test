@@ -74,7 +74,7 @@
           :cancel="cancelEdit"
       />
     </MyModalWindow>
-    <!--    Модальное окно для изменения зарплаты-->
+    <!--Модальное окно для изменения зарплаты-->
     <MyModalWindow v-model:show="dialogVisibleSalary">
       <EmployeeEditSalary
           :employeeId="employee.id"
@@ -83,18 +83,28 @@
           :cancel="cancelEdit"
       />
     </MyModalWindow>
+    <!--Модальное окно для принятия на работу-->
+    <MyModalWindow v-model:show="dialogVisibleHire">
+      <EmployeeHire
+          :employeeId="employee.id"
+          :cancel="cancelEdit"
+          @hireEmployee="handleHireEmployee"
+      />
+    </MyModalWindow>
   </div>
 </template>
 
 <script>
 import MyModalWindow from "@/components/UI/MyModalWindow.vue";
-import WatchFileEmployee from "@/components/employees/watchFileEmloyee.vue";
-import EmployeeEditDepartment from "@/components/employees/employeeEditDepartment.vue";
-import {fetchEmployeeHRInfo, fireEmployee} from "@/http/employeeAPI.js";
-import EmployeeEditSalary from "@/components/employees/employeeEditSalary.vue";
+import WatchFileEmployee from "@/components/employees/emloyeeModal/watchFileEmloyee.vue";
+import EmployeeEditDepartment from "@/components/employees/emloyeeModal/employeeEditDepartment.vue";
+import {fetchEmployeeHRInfo, fireEmployee, hireEmployee} from "@/http/employeeAPI.js";
+import EmployeeEditSalary from "@/components/employees/emloyeeModal/employeeEditSalary.vue";
+import EmployeeHire from "@/components/employees/emloyeeModal/employeeHire.vue";
 
 export default {
   components: {
+    EmployeeHire,
     EmployeeEditSalary,
     MyModalWindow,
     WatchFileEmployee,
@@ -152,6 +162,17 @@ export default {
         alert("Произошла ошибка при увольнении сотрудника");
       }
     },
+
+    async handleHireEmployee(hireEmployeeData) {
+      try {
+        await hireEmployee(hireEmployeeData);
+        await this.loadHRInfo();
+        this.dialogVisibleHire = false;
+      } catch (error) {
+        console.error("Ошибка при принятии на работу:", error);
+      }
+    },
+
     async loadHRInfo() {
       try {
         this.hrInfo = await fetchEmployeeHRInfo(this.employee.id);

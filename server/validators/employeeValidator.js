@@ -1,7 +1,7 @@
 const Joi = require('joi');
 
 // Валидация даты в формате YYYY-MM-DD
-const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
 
 // Основные данные сотрудника
 const employeeSchema = Joi.object({
@@ -43,7 +43,7 @@ const employeeSchema = Joi.object({
         .required()
         .messages({
             'string.base': 'Дата рождения должна быть строкой',
-            'string.pattern.base': 'Дата рождения должна быть в формате YYYY-MM-DD',
+            'string.pattern.base': 'Дата рождения должна быть в формате DD-MM-YYYY',
             'any.required': 'Дата рождения является обязательным полем'
         }),
     passport: Joi.object({  // Вложенный объект для паспорта
@@ -85,7 +85,7 @@ const employeeSchema = Joi.object({
             .required()
             .messages({
                 'string.base': 'Дата выдачи должна быть строкой',
-                'string.pattern.base': 'Дата выдачи должна быть в формате YYYY-MM-DD',
+                'string.pattern.base': 'Дата выдачи должна быть в формате DD-MM-YYYY',
                 'any.required': 'Дата выдачи является обязательным полем'
             }),
         division_code: Joi.string()

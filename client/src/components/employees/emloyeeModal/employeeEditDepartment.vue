@@ -15,7 +15,7 @@
 
     <div class="form-group">
       <label>Отдел</label>
-      <select v-model="formData.department_id" @change="loadPositions">
+      <select v-model="formData.department_id">
         <option :value="null">Выберите отдел</option>
         <option v-for="dept in filteredDepartments" :key="dept.id" :value="dept.id">
           {{ dept.name }}

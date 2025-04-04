@@ -16,6 +16,11 @@ export const updateEmployees = async (employeeData) => {
     return response.data;
 }
 
+export const hireEmployee = async (data) => {
+    const response = await $host.post('api/hr_operation/hire', data);
+    return response.data;
+}
+
 // Изменение отдела сотрудника
 export const changeDepartment = async (employeeId, data) => {
     const response = await $host.put(`api/hr_operation/department/${employeeId}`, data);
