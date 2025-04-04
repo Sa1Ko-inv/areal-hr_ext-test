@@ -51,7 +51,7 @@ export default {
       type: Function,
       default: () => {}
     },
-    onCancel: {
+    cancel: {
       type: Function,
       default: () => {}
     }
@@ -96,37 +96,25 @@ export default {
             this.selectedOrganizationId = currentDept.organization_id;
           }
         }
-      } catch (err) {
-        console.error('Ошибка при загрузке отделов:', err);
-        this.error = 'Не удалось загрузить список отделов';
+      } catch (error) {
+        console.log('Ошибка при загрузке отделов:', error);
+
       }
     },
     filterDepartments() {
       this.formData.department_id = null;
     },
     async saveDepartmentChange() {
-      if (!this.formData.department_id) {
-        this.error = 'Выберите отдел';
-        return;
-      }
-      this.error = null;
       try {
         await changeDepartment(this.employeeId, {
           department_id: this.formData.department_id
         });
-        this.$emit('success', this.onSuccess);
-      } catch (err) {
-        console.error('Ошибка при изменении отдела:', err);
-        if (err.response && err.response.data && err.response.data.error) {
-          this.error = err.response.data.error;
-        } else {
-          this.error = 'Произошла ошибка при изменении отдела';
-        }
+        this.cancel()
+        this.$emit('updateDepartment');
+      } catch (error) {
+        console.error('Ошибка при изменении отдела:', error);
       }
     },
-    cancel() {
-      this.$emit('cancel', this.onCancel);
-    }
   },
   mounted() {
     this.loadOrganizations();

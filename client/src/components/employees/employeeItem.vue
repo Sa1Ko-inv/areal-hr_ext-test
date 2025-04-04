@@ -70,8 +70,8 @@
       <EmployeeEditDepartment
           :employeeId="employee.id"
           :currentDepartmentId="hrInfo?.department_id"
-          @success="onDepartmentChangeSuccess"
-          @cancel="dialogVisibleDepartment = false"
+          @updateDepartment="onDepartmentChangeSuccess"
+          :cancel="cancelEdit"
       />
     </MyModalWindow>
   </div>
@@ -140,6 +140,10 @@ export default {
       } catch (error) {
         console.error("Ошибка при загрузке HR информации:", error);
       }
+    },
+
+    cancelEdit() {
+      this.dialogVisibleDepartment = false;
     },
   },
   mounted() {
