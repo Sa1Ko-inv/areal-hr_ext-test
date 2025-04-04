@@ -45,23 +45,33 @@ class HROperationsController {
     async changeSalary(req, res, next) {
         const { employee_id } = req.params;
         const { salary } = req.body;
-
         try {
+            // Получаем последнюю HR операцию для сохранения текущих значений
+            const lastOperation = await HR_Operation.findOne({
+                where: { employee_id },
+                order: [['createdAt', 'DESC']]
+            });
+
+            if (!lastOperation) {
+                return res.status(404).json({ error: 'Не найдена информация о сотруднике' });
+            }
+
+            // Создаем новую операцию, сохраняя текущие значения department_id и position_id
             const operation = await HR_Operation.create({
                 type: 'salary_change',
                 employee_id,
-                salary: salary
+                salary: salary,
+                department_id: lastOperation.department_id,
+                position_id: lastOperation.position_id
             });
-            const oldOperation = await HR_Operation.findOne({ where: { employee_id } });
 
             // Записываем в историю
             await historyService.createHistoryEntry(
-                'Сотрудник', // Изменено на 'Сотрудник'
-                employee_id,  // Используем employee_id
-                'Изменение зарплаты', // Используем 'update', так как это изменение
+                'Сотрудник',
+                employee_id,
+                'Изменение зарплаты',
                 {
-                    // operation_type: 'salary_change', // Добавлено для ясности
-                    salary: { old: oldOperation ? oldOperation.salary : null, new: salary }
+                    salary: { old: lastOperation.salary, new: salary }
                 },
                 null // Пока нет авторизации
             );
@@ -74,29 +84,39 @@ class HROperationsController {
         }
     }
 
+
     // Перевод сотрудника в другой отдел
     async changeDepartment(req, res, next) {
         const { employee_id } = req.params;
         const { department_id, position_id } = req.body;
-
         try {
+            // Получаем последнюю HR операцию для сохранения текущей зарплаты
+            const lastOperation = await HR_Operation.findOne({
+                where: { employee_id },
+                order: [['createdAt', 'DESC']]
+            });
+
+            if (!lastOperation) {
+                return res.status(404).json({ error: 'Не найдена информация о сотруднике' });
+            }
+
+            // Создаем новую операцию, сохраняя текущую зарплату
             const operation = await HR_Operation.create({
                 type: 'department_change',
                 employee_id,
                 department_id: department_id,
-                position_id: position_id
+                position_id: position_id,
+                salary: lastOperation.salary // Сохраняем текущую зарплату
             });
-            const oldOperation = await HR_Operation.findOne({ where: { employee_id } });
 
             // Записываем в историю
             await historyService.createHistoryEntry(
-                'Сотрудник', // Изменено на 'Сотрудник'
-                employee_id,  // Используем employee_id
-                'Перевод в другой отдел', // Используем 'update'
+                'Сотрудник',
+                employee_id,
+                'Перевод в другой отдел',
                 {
-                    // operation_type: 'department_change', // добавлено
-                    department_id: { old: oldOperation ? oldOperation.department_id : null, new: department_id },
-                    // position_id: { old: oldOperation ? oldOperation.position_id : null, new: position_id }
+                    department_id: { old: lastOperation.department_id, new: department_id },
+                    position_id: { old: lastOperation.position_id, new: position_id }
                 },
                 null // Пока нет авторизации
             );
@@ -217,6 +237,48 @@ class HROperationsController {
             return next(error);
         }
     }
+
+    // Добавьте этот метод в класс HROperationsController
+    async getEmployeeHRInfo(req, res, next) {
+        const { employee_id } = req.params;
+
+        try {
+            // Находим последнюю HR операцию для сотрудника
+            const latestOperation = await HR_Operation.findOne({
+                where: { employee_id },
+                order: [['createdAt', 'DESC']],
+                include: [
+                    { model: require('../models/department'), as: 'department' },
+                    { model: require('../models/position'), as: 'position' }
+                ]
+            });
+
+            if (!latestOperation) {
+                return res.json({ status: 'not_hired', message: 'Не принят' });
+            }
+
+            // Если сотрудник был уволен (последняя операция - увольнение)
+            if (latestOperation.type === 'fire') {
+                return res.json({ status: 'fired', message: 'Уволен' });
+            }
+
+            // Формируем информацию о сотруднике
+            const hrInfo = {
+                status: 'hired',
+                salary: latestOperation.salary,
+                department: latestOperation.department ? latestOperation.department.name : null,
+                position: latestOperation.position ? latestOperation.position.name : null,
+                department_id: latestOperation.department_id,
+                position_id: latestOperation.position_id
+            };
+
+            return res.json(hrInfo);
+        } catch (error) {
+            console.log('Ошибка при получении HR информации о сотруднике', error);
+            return res.status(500).json({ error: 'Ошибка сервера' });
+        }
+    }
+
 }
 
 module.exports = new HROperationsController();

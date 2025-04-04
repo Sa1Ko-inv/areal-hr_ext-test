@@ -117,14 +117,30 @@ class EmployeeController {
 
     async getAllEmployees(req, res, next) {
         try {
-            const employees = await Employees.findAll({
+            let {page, limit} = req.query;
+            page = page || 1;
+            limit = limit || 10;
+            let offset = page * limit - limit;
+
+            const {count, rows} = await Employees.findAndCountAll({
+                limit,
+                offset,
+                distinct: true,
                 include: [
                     { model: Passport },
                     { model: Address },
                     { model: Files }
                 ]
-            });
-            return res.json(employees);
+            })
+            return res.json({count, rows});
+            // const employees = await Employees.findAll({
+            //     include: [
+            //         { model: Passport },
+            //         { model: Address },
+            //         { model: Files }
+            //     ]
+            // });
+            // return res.json(employees);
         } catch (error) {
             console.log('Ошибка при получении всех сотрудников', error);
             return res.status(500).json({ error: 'Ошибка сервера' });

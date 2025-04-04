@@ -12,5 +12,8 @@ router.post('/fire/:employee_id', hrOperationsController.fireEmployee); // Ув�
 router.get('/', hrOperationsController.getAllOperations);
 router.get('/:employee_id/history', hrOperationsController.getHROperationHistory); // Получение истории для конкретной должности
 
+router.get('/employee/:employee_id', hrOperationsController.getEmployeeHRInfo); // Получение HR информации о сотруднике
+
+
 
 module.exports = router;

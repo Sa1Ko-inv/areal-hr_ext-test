@@ -4,6 +4,7 @@ const sequelize = require('./db');
 const cors = require('cors');
 const fileUpload = require('express-fileupload');
 const router = require('./routes/index');
+const path = require('path');
 // const errorHandler = require('./middleware/ErrorHandlingMiddleware');
 
 
@@ -16,7 +17,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use(fileUpload({}));
-
+app.use(express.static(path.resolve(__dirname, 'static')));
 // Подключаем роутер, первый параметр - это префикс, по которому будет доступен наш роутер
 app.use('/api', router);
 

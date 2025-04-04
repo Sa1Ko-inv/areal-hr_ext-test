@@ -1,7 +1,7 @@
 import {MAIN_ROUTE, ORGANIZATION_ROUTE, POSITION_ROUTE} from "@/utils/consts";
 import {createRouter, createWebHistory} from "vue-router";
 import position from "@/pages/position.vue";
-import main from "@/pages/main.vue";
+import Employee from "@/pages/employee.vue";
 import organization from "@/pages/organization.vue";
 import organizationInfo from "@/components/organizations/organizationInfo.vue";
 
@@ -14,7 +14,7 @@ const routes = [
 
     {
         path: MAIN_ROUTE,
-        component: main
+        component: Employee
     },
 
     {
