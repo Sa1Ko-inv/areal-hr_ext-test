@@ -16,6 +16,18 @@ export const updateEmployees = async (employeeData) => {
     return response.data;
 }
 
+// Добавьте этот метод в файл employeeAPI.js
+export const changeDepartment = async (employeeId, data) => {
+    const response = await $host.put(`api/hr_operation/department/${employeeId}`, data);
+    return response.data;
+}
+
+export const fireEmployee = async (employeeId) => {
+    const response = await $host.post(`api/hr_operation/fire/${employeeId}`);
+    return response.data;
+}
+
+
 // Добавьте этот метод в файл
 export const fetchEmployeeHRInfo = async (employeeId) => {
     const response = await $host.get(`api/hr_operation/employee/${employeeId}`);
