@@ -47,16 +47,11 @@ export default {
       type: [Number, String],
       default: null
     },
-    onSuccess: {
-      type: Function,
-      default: () => {}
-    },
     cancel: {
       type: Function,
       default: () => {}
     }
   },
-  // emits: ['success', 'cancel'],
   data() {
     return {
       organizations: [],

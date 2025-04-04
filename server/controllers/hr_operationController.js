@@ -237,8 +237,7 @@ class HROperationsController {
             return next(error);
         }
     }
-
-    // Добавьте этот метод в класс HROperationsController
+    // Получение HR информации о сотруднике
     async getEmployeeHRInfo(req, res, next) {
         const { employee_id } = req.params;
 

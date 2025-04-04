@@ -33,22 +33,22 @@
       <div class="employee__passport">
         <strong>Данные паспорта</strong>
 
-          <div>Серия: {{ employee.passport.series }}</div>
-          <div>Номер: {{ employee.passport.number }}</div>
-          <div>Кем выдан: {{ employee.passport.issued_by }}</div>
-          <div>Дата выдачи: {{ employee.passport.division_code }}</div>
-          <div>Код подразделения: {{ employee.passport.division_code }}</div>
+        <div>Серия: {{ employee.passport.series }}</div>
+        <div>Номер: {{ employee.passport.number }}</div>
+        <div>Кем выдан: {{ employee.passport.issued_by }}</div>
+        <div>Дата выдачи: {{ employee.passport.division_code }}</div>
+        <div>Код подразделения: {{ employee.passport.division_code }}</div>
 
       </div>
 
       <div class="employee__address">
         <strong>Адрес сотрудника</strong>
-          <div>Регион: {{ employee.address.region}}</div>
-          <div>Населенный пункт: {{ employee.address.locality }}</div>
-          <div>Улица: {{ employee.address.street }}</div>
-          <div>Дом: {{ employee.address.house }}</div>
-          <div>Корпус: {{ employee.address.building }}</div>
-          <div>Квартира: {{ employee.address.apartment }}</div>
+        <div>Регион: {{ employee.address.region }}</div>
+        <div>Населенный пункт: {{ employee.address.locality }}</div>
+        <div>Улица: {{ employee.address.street }}</div>
+        <div>Дом: {{ employee.address.house }}</div>
+        <div>Корпус: {{ employee.address.building }}</div>
+        <div>Квартира: {{ employee.address.apartment }}</div>
       </div>
     </div>
 
@@ -61,16 +61,25 @@
       <button>Редактировать</button>
       <button>Просмотреть историю сотрудника</button>
     </div>
-<!--Модальное окно для просмотра файлов-->
+    <!--Модальное окно для просмотра файлов-->
     <MyModalWindow v-model:show="dialogVisibleFiles">
-      <WatchFileEmployee :employee="employee" />
+      <WatchFileEmployee :employee="employee"/>
     </MyModalWindow>
-<!--Модальное окно для редактирования отдела сотрудника-->
+    <!--Модальное окно для редактирования отдела сотрудника-->
     <MyModalWindow v-model:show="dialogVisibleDepartment">
       <EmployeeEditDepartment
           :employeeId="employee.id"
           :currentDepartmentId="hrInfo?.department_id"
           @updateDepartment="onDepartmentChangeSuccess"
+          :cancel="cancelEdit"
+      />
+    </MyModalWindow>
+    <!--    Модальное окно для изменения зарплаты-->
+    <MyModalWindow v-model:show="dialogVisibleSalary">
+      <EmployeeEditSalary
+          :employeeId="employee.id"
+          :currentSalary="hrInfo?.salary"
+          @updateSalary="onSalaryChangeSuccess"
           :cancel="cancelEdit"
       />
     </MyModalWindow>
@@ -81,10 +90,12 @@
 import MyModalWindow from "@/components/UI/MyModalWindow.vue";
 import WatchFileEmployee from "@/components/employees/watchFileEmloyee.vue";
 import EmployeeEditDepartment from "@/components/employees/employeeEditDepartment.vue";
-import { fetchEmployeeHRInfo, fireEmployee } from "@/http/employeeAPI.js";
+import {fetchEmployeeHRInfo, fireEmployee} from "@/http/employeeAPI.js";
+import EmployeeEditSalary from "@/components/employees/employeeEditSalary.vue";
 
 export default {
   components: {
+    EmployeeEditSalary,
     MyModalWindow,
     WatchFileEmployee,
     EmployeeEditDepartment,
@@ -105,6 +116,7 @@ export default {
     };
   },
   methods: {
+    // Открытие модальных окон
     showFilesDialog() {
       this.dialogVisibleFiles = true;
     },
@@ -122,6 +134,12 @@ export default {
       this.dialogVisibleDepartment = false;
       await this.loadHRInfo();
     },
+
+    async onSalaryChangeSuccess() {
+      this.dialogVisibleSalary = false;
+      await this.loadHRInfo();
+    },
+
     async fire_Employee() {
       if (!confirm("Вы уверены, что хотите уволить сотрудника?")) {
         return;
@@ -175,7 +193,7 @@ export default {
     transition: background-color 0.2s;
 
     &:hover {
-      background-color:#792ec9
+      background-color: #792ec9
     }
 
     &:disabled {

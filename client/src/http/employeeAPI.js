@@ -16,19 +16,26 @@ export const updateEmployees = async (employeeData) => {
     return response.data;
 }
 
-// Добавьте этот метод в файл employeeAPI.js
+// Изменение отдела сотрудника
 export const changeDepartment = async (employeeId, data) => {
     const response = await $host.put(`api/hr_operation/department/${employeeId}`, data);
     return response.data;
 }
 
+// Изменение зарплаты сотрудника
+export const changeSalary = async (employeeId, data) => {
+    const response = await $host.put(`api/hr_operation/salary/${employeeId}`, data);
+    return response.data;
+}
+
+// Уволить сотрудника
 export const fireEmployee = async (employeeId) => {
     const response = await $host.post(`api/hr_operation/fire/${employeeId}`);
     return response.data;
 }
 
 
-// Добавьте этот метод в файл
+// Получить историю HR операций для конкретного сотрудника
 export const fetchEmployeeHRInfo = async (employeeId) => {
     const response = await $host.get(`api/hr_operation/employee/${employeeId}`);
     return response.data;
