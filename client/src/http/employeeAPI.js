@@ -39,6 +39,17 @@ export const fireEmployee = async (employeeId) => {
     return response.data;
 }
 
+// Получение истории сотрудника
+export const fetchEmployeeHistory = async (employeeId,page = 1, limit = 10) => {
+    const response = await $host.get(`api/hr_operation/${employeeId}/history`, {
+        params: {
+            page: page,
+            limit: limit
+        }
+    });
+    return response.data;
+}
+
 
 // Получить историю HR операций для конкретного сотрудника
 export const fetchEmployeeHRInfo = async (employeeId) => {

@@ -3,32 +3,78 @@ const Employees = require('../models/employees');
 const Passport = require('../models/passport');
 const Address = require('../models/address');
 const Files = require('../models/file');
+const Department = require('../models/department');
+const Position = require('../models/position');
+const Organization = require('../models/organization');
 const sequelize = require('../db');
 const historyService = require('./historyService'); // Импортируем historyService
 
 class HROperationsController {
     // Приём сотрудника на работу
     async hireEmployee(req, res, next) {
+        // Получаем данные из тела запроса
         const { employee_id, department_id, position_id, salary } = req.body;
+
+        // Проверка обязательных полей (пример, можно расширить)
+        if (!employee_id || !department_id || !position_id || salary === undefined || salary === null) {
+            return res.status(400).json({ error: 'Не все обязательные поля (employee_id, department_id, position_id, salary) предоставлены' });
+        }
+
         try {
+            // --- Получение названий для истории ---
+            let departmentNameString = 'N/A';
+            let positionNameString = 'N/A';
+
+            // Получаем отдел и организацию
+            if (department_id) {
+                const dept = await Department.findOne({
+                    where: { id: department_id },
+                    include: [{ model: Organization, attributes: ['name'] }]
+                });
+                if (dept) {
+                    departmentNameString = `${dept.name}${dept.organization ? ` (${dept.organization.name})` : ''}`;
+                } else {
+                    console.warn(`Department with ID ${department_id} not found during hire logging.`);
+
+                }
+            }
+
+            // Получаем должность
+            if (position_id) {
+                const pos = await Position.findOne({
+                    where: { id: position_id }
+                });
+                if (pos) {
+                    positionNameString = pos.name;
+                } else {
+                    console.warn(`Position with ID ${position_id} not found during hire logging.`);
+                    // Можно вернуть ошибку, если должность обязательна и должна существовать
+                    // return res.status(404).json({ error: `Должность с ID ${position_id} не найдена` });
+                }
+            }
+            // --- Конец получения названий ---
+
+            // Создаем операцию приема на работу
             const operation = await HR_Operation.create({
                 type: 'hire',
                 employee_id,
-                department_id,
-                position_id,
+                department_id, // Сохраняем ID в самой операции
+                position_id,   // Сохраняем ID в самой операции
                 salary
             });
 
-            // Записываем в историю
+            // Записываем в историю названия
             await historyService.createHistoryEntry(
-                'Сотрудник', // Изменено на 'Сотрудник'
-                employee_id,  // Используем employee_id
+                'Сотрудник',
+                employee_id,
                 'Принятие на работу',
                 {
-                    operation_type: 'hire', // Добавлено для ясности
-                    department_id: { old: null, new: department_id },
-                    position_id: { old: null, new: position_id },
-                    salary: { old: null, new: salary }
+                    department: { old: null, new: departmentNameString }, // Используем название отдела
+                    position:   { old: null, new: positionNameString },   // Используем название должности
+                    salary:     { old: null, new: salary }
+                    // Если нужно также логировать ID:
+                    // department_id: { old: null, new: department_id },
+                    // position_id: { old: null, new: position_id },
                 },
                 null // Пока нет авторизации
             );
@@ -37,7 +83,11 @@ class HROperationsController {
             return res.json(operation);
         } catch (error) {
             console.log('Ошибка при приёме сотрудника', error);
-            return res.status(500).json({ error: 'Ошибка сервера' });
+            console.error('Stack trace:', error.stack); // Логируем стек ошибки
+            return res.status(500).json({
+                error: 'Ошибка сервера при приёме сотрудника',
+                details: error.message
+            });
         }
     }
 
@@ -88,34 +138,80 @@ class HROperationsController {
     // Перевод сотрудника в другой отдел
     async changeDepartment(req, res, next) {
         const { employee_id } = req.params;
-        const { department_id, position_id } = req.body;
+        // Убедитесь, что department_id приходит в теле запроса
+        const { department_id } = req.body;
+
+        // Проверка наличия нового department_id
+        if (department_id === undefined || department_id === null) {
+            return res.status(400).json({ error: 'Не указан ID нового отдела (department_id)' });
+        }
+
         try {
-            // Получаем последнюю HR операцию для сохранения текущей зарплаты
+            // Получаем последнюю HR операцию для сохранения текущей зарплаты и старого отдела
             const lastOperation = await HR_Operation.findOne({
                 where: { employee_id },
                 order: [['createdAt', 'DESC']]
             });
 
             if (!lastOperation) {
-                return res.status(404).json({ error: 'Не найдена информация о сотруднике' });
+                return res.status(404).json({ error: 'Не найдена информация о сотруднике или его предыдущих операциях' });
             }
 
-            // Создаем новую операцию, сохраняя текущую зарплату
+            // --- Получение информации о старом и новом отделах ---
+            let oldDepartmentInfo = null;
+            let newDepartmentInfo = null;
+            let oldDepartmentName = 'N/A'; // Значение по умолчанию
+            let newDepartmentName = 'N/A'; // Значение по умолчанию
+
+            // Получаем старый отдел и организацию
+            if (lastOperation.department_id) {
+                const oldDept = await Department.findOne({
+                    where: { id: lastOperation.department_id },
+                    include: [{ model: Organization, attributes: ['name'] }] // Включаем организацию
+                });
+                if (oldDept) {
+                    oldDepartmentInfo = oldDept; // Сохраняем для создания новой операции
+                    oldDepartmentName = `${oldDept.name}${oldDept.organization ? ` (${oldDept.organization.name})` : ''}`;
+                }
+            }
+
+            // Получаем новый отдел и организацию
+            const newDept = await Department.findOne({
+                where: { id: department_id },
+                include: [{ model: Organization, attributes: ['name'] }] // Включаем организацию
+            });
+
+            if (!newDept) {
+                // Если новый отдел не найден, возвращаем ошибку
+                return res.status(404).json({ error: `Отдел с ID ${department_id} не найден` });
+            }
+            newDepartmentInfo = newDept; // Сохраняем для создания новой операции
+            newDepartmentName = `${newDept.name}${newDept.organization ? ` (${newDept.organization.name})` : ''}`;
+            // --- Конец получения информации об отделах ---
+
+
+            // Создаем новую операцию, сохраняя текущую зарплату и должность
+            // Используем department_id из запроса
             const operation = await HR_Operation.create({
                 type: 'department_change',
                 employee_id,
-                department_id: department_id,
-                position_id: lastOperation.position_id,
+                department_id: department_id, // Используем новый ID отдела
+                position_id: lastOperation.position_id, // Сохраняем текущую должность
                 salary: lastOperation.salary // Сохраняем текущую зарплату
             });
 
-            // Записываем в историю
+            // Записываем в историю названия отделов
             await historyService.createHistoryEntry(
                 'Сотрудник',
                 employee_id,
                 'Перевод в другой отдел',
                 {
-                    department_id: { old: lastOperation.department_id, new: department_id },
+                    department: { // Используем ключ 'department' для ясности
+                        old: oldDepartmentName, // Название старого отдела (и организации)
+                        new: newDepartmentName  // Название нового отдела (и организации)
+                    },
+                    // Если нужно также логировать ID, можно добавить их отдельно:
+                    // department_id: { old: lastOperation.department_id, new: department_id },
                 },
                 null // Пока нет авторизации
             );
@@ -124,7 +220,12 @@ class HROperationsController {
             return res.json(operation);
         } catch (error) {
             console.log('Ошибка при переводе сотрудника', error);
-            return res.status(500).json({ error: 'Ошибка сервера' });
+            // Логируем более подробную информацию об ошибке
+            console.error('Stack trace:', error.stack);
+            return res.status(500).json({
+                error: 'Ошибка сервера при переводе сотрудника',
+                details: error.message // Добавляем сообщение об ошибке для отладки
+            });
         }
     }
 
@@ -255,8 +356,9 @@ class HROperationsController {
             const latestOperation = await HR_Operation.findOne({
                 where: { employee_id },
                 order: [['createdAt', 'DESC']],
+                // Убедимся, что модели Department и Position импортированы или используем require здесь
                 include: [
-                    { model: require('../models/department'), as: 'department' },
+                    { model: require('../models/department'), as: 'department', include: [Organization] }, // Включаем организацию
                     { model: require('../models/position'), as: 'position' }
                 ]
             });
@@ -274,7 +376,10 @@ class HROperationsController {
             const hrInfo = {
                 status: 'hired',
                 salary: latestOperation.salary,
-                department: latestOperation.department ? latestOperation.department.name : null,
+                // Формируем название отдела с организацией
+                department: latestOperation.department
+                    ? `${latestOperation.department.name}${latestOperation.department.organization ? ` (${latestOperation.department.organization.name})` : ''}`
+                    : null,
                 position: latestOperation.position ? latestOperation.position.name : null,
                 department_id: latestOperation.department_id,
                 position_id: latestOperation.position_id

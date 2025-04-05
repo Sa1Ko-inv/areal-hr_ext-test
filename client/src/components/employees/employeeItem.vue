@@ -1,3 +1,4 @@
+<!--TODO: Реализовать просмотр истории у сотрудников, редактирование и вывод ошибок на экран-->
 <template>
   <div class="employee">
     <div class="employee__info">
@@ -36,7 +37,7 @@
         <div>Серия: {{ employee.passport.series }}</div>
         <div>Номер: {{ employee.passport.number }}</div>
         <div>Кем выдан: {{ employee.passport.issued_by }}</div>
-        <div>Дата выдачи: {{ employee.passport.division_code }}</div>
+        <div>Дата выдачи: {{ employee.passport.issued_date }}</div>
         <div>Код подразделения: {{ employee.passport.division_code }}</div>
 
       </div>
@@ -59,7 +60,7 @@
       <button v-if="hrInfo && hrInfo.status === 'hired'" @click="showChangeSalaryDialog">Изменить зарплату</button>
       <button v-if="hrInfo && hrInfo.status === 'hired'" @click="showChangeDepartmentDialog">Изменить отдел</button>
       <button>Редактировать</button>
-      <button>Просмотреть историю сотрудника</button>
+      <button @click="showHistoryDialog">Просмотреть историю сотрудника</button>
     </div>
     <!--Модальное окно для просмотра файлов-->
     <MyModalWindow v-model:show="dialogVisibleFiles">
@@ -91,6 +92,13 @@
           @hireEmployee="handleHireEmployee"
       />
     </MyModalWindow>
+    <!--Модальное окно для просмотра истории пользователя-->
+    <MyModalWindow  v-model:show="dialogVisibleHistory">
+      <EmplyeeWathHistory
+          :employeeId="employee.id"
+          :cancel="cancelEdit"
+      />
+    </MyModalWindow>
   </div>
 </template>
 
@@ -101,9 +109,11 @@ import EmployeeEditDepartment from "@/components/employees/emloyeeModal/employee
 import {fetchEmployeeHRInfo, fireEmployee, hireEmployee} from "@/http/employeeAPI.js";
 import EmployeeEditSalary from "@/components/employees/emloyeeModal/employeeEditSalary.vue";
 import EmployeeHire from "@/components/employees/emloyeeModal/employeeHire.vue";
+import EmplyeeWathHistory from "@/components/employees/emloyeeModal/emplyeeWathHistory.vue";
 
 export default {
   components: {
+    EmplyeeWathHistory,
     EmployeeHire,
     EmployeeEditSalary,
     MyModalWindow,
@@ -122,6 +132,7 @@ export default {
       dialogVisibleDepartment: false,
       dialogVisibleHire: false,
       dialogVisibleSalary: false,
+      dialogVisibleHistory: false,
       hrInfo: null,
     };
   },
@@ -138,6 +149,9 @@ export default {
     },
     showChangeSalaryDialog() {
       this.dialogVisibleSalary = true;
+    },
+    showHistoryDialog() {
+      this.dialogVisibleHistory = true;
     },
 
     async onDepartmentChangeSuccess() {
