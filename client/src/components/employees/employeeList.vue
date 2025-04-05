@@ -1,9 +1,9 @@
-
-
 <template>
   <div class="employeeList">
     <h3>Список сотрудников</h3>
     <button>Создать сотрудника</button>
+    <button>просмотр уволенных сотрудников</button>
+
 
     <MyModalWindow>
 <!--      <EmployeeCreateForm-->

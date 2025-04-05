@@ -13,11 +13,11 @@ class HROperationsController {
     // Приём сотрудника на работу
     async hireEmployee(req, res, next) {
         // Получаем данные из тела запроса
-        const { employee_id, department_id, position_id, salary } = req.body;
+        const {employee_id, department_id, position_id, salary} = req.body;
 
         // Проверка обязательных полей (пример, можно расширить)
         if (!employee_id || !department_id || !position_id || salary === undefined || salary === null) {
-            return res.status(400).json({ error: 'Не все обязательные поля (employee_id, department_id, position_id, salary) предоставлены' });
+            return res.status(400).json({error: 'Не все обязательные поля (employee_id, department_id, position_id, salary) предоставлены'});
         }
 
         try {
@@ -28,8 +28,8 @@ class HROperationsController {
             // Получаем отдел и организацию
             if (department_id) {
                 const dept = await Department.findOne({
-                    where: { id: department_id },
-                    include: [{ model: Organization, attributes: ['name'] }]
+                    where: {id: department_id},
+                    include: [{model: Organization, attributes: ['name']}]
                 });
                 if (dept) {
                     departmentNameString = `${dept.name}${dept.organization ? ` (${dept.organization.name})` : ''}`;
@@ -42,7 +42,7 @@ class HROperationsController {
             // Получаем должность
             if (position_id) {
                 const pos = await Position.findOne({
-                    where: { id: position_id }
+                    where: {id: position_id}
                 });
                 if (pos) {
                     positionNameString = pos.name;
@@ -69,9 +69,9 @@ class HROperationsController {
                 employee_id,
                 'Принятие на работу',
                 {
-                    department: { old: null, new: departmentNameString }, // Используем название отдела
-                    position:   { old: null, new: positionNameString },   // Используем название должности
-                    salary:     { old: null, new: salary }
+                    department: {old: null, new: departmentNameString}, // Используем название отдела
+                    position: {old: null, new: positionNameString},   // Используем название должности
+                    salary: {old: null, new: salary}
                     // Если нужно также логировать ID:
                     // department_id: { old: null, new: department_id },
                     // position_id: { old: null, new: position_id },
@@ -93,17 +93,17 @@ class HROperationsController {
 
     // Изменение зарплаты сотрудника
     async changeSalary(req, res, next) {
-        const { employee_id } = req.params;
-        const { salary } = req.body;
+        const {employee_id} = req.params;
+        const {salary} = req.body;
         try {
             // Получаем последнюю HR операцию для сохранения текущих значений
             const lastOperation = await HR_Operation.findOne({
-                where: { employee_id },
+                where: {employee_id},
                 order: [['createdAt', 'DESC']]
             });
 
             if (!lastOperation) {
-                return res.status(404).json({ error: 'Не найдена информация о сотруднике' });
+                return res.status(404).json({error: 'Не найдена информация о сотруднике'});
             }
 
             // Создаем новую операцию, сохраняя текущие значения department_id и position_id
@@ -121,7 +121,7 @@ class HROperationsController {
                 employee_id,
                 'Изменение зарплаты',
                 {
-                    salary: { old: lastOperation.salary, new: salary }
+                    salary: {old: lastOperation.salary, new: salary}
                 },
                 null // Пока нет авторизации
             );
@@ -130,31 +130,31 @@ class HROperationsController {
             return res.json(operation);
         } catch (error) {
             console.log('Ошибка при изменении зарплаты', error);
-            return res.status(500).json({ error: 'Ошибка сервера' });
+            return res.status(500).json({error: 'Ошибка сервера'});
         }
     }
 
 
     // Перевод сотрудника в другой отдел
     async changeDepartment(req, res, next) {
-        const { employee_id } = req.params;
+        const {employee_id} = req.params;
         // Убедитесь, что department_id приходит в теле запроса
-        const { department_id } = req.body;
+        const {department_id} = req.body;
 
         // Проверка наличия нового department_id
         if (department_id === undefined || department_id === null) {
-            return res.status(400).json({ error: 'Не указан ID нового отдела (department_id)' });
+            return res.status(400).json({error: 'Не указан ID нового отдела (department_id)'});
         }
 
         try {
             // Получаем последнюю HR операцию для сохранения текущей зарплаты и старого отдела
             const lastOperation = await HR_Operation.findOne({
-                where: { employee_id },
+                where: {employee_id},
                 order: [['createdAt', 'DESC']]
             });
 
             if (!lastOperation) {
-                return res.status(404).json({ error: 'Не найдена информация о сотруднике или его предыдущих операциях' });
+                return res.status(404).json({error: 'Не найдена информация о сотруднике или его предыдущих операциях'});
             }
 
             // --- Получение информации о старом и новом отделах ---
@@ -166,8 +166,8 @@ class HROperationsController {
             // Получаем старый отдел и организацию
             if (lastOperation.department_id) {
                 const oldDept = await Department.findOne({
-                    where: { id: lastOperation.department_id },
-                    include: [{ model: Organization, attributes: ['name'] }] // Включаем организацию
+                    where: {id: lastOperation.department_id},
+                    include: [{model: Organization, attributes: ['name']}] // Включаем организацию
                 });
                 if (oldDept) {
                     oldDepartmentInfo = oldDept; // Сохраняем для создания новой операции
@@ -177,13 +177,13 @@ class HROperationsController {
 
             // Получаем новый отдел и организацию
             const newDept = await Department.findOne({
-                where: { id: department_id },
-                include: [{ model: Organization, attributes: ['name'] }] // Включаем организацию
+                where: {id: department_id},
+                include: [{model: Organization, attributes: ['name']}] // Включаем организацию
             });
 
             if (!newDept) {
                 // Если новый отдел не найден, возвращаем ошибку
-                return res.status(404).json({ error: `Отдел с ID ${department_id} не найден` });
+                return res.status(404).json({error: `Отдел с ID ${department_id} не найден`});
             }
             newDepartmentInfo = newDept; // Сохраняем для создания новой операции
             newDepartmentName = `${newDept.name}${newDept.organization ? ` (${newDept.organization.name})` : ''}`;
@@ -241,17 +241,7 @@ class HROperationsController {
                 order: [['createdAt', 'DESC']]
             });
 
-            // Сначала создаем запись о кадровой операции
-            const operation = await HR_Operation.create({
-                type: 'fire',
-                employee_id,
-                // Сохраняем текущие значения, если они есть
-                department_id: lastOperation ? lastOperation.department_id : null,
-                position_id: lastOperation ? lastOperation.position_id : null,
-                salary: lastOperation ? lastOperation.salary : null
-            }, { transaction });
-
-            // Находим сотрудника и связанные данные
+            // Находим сотрудника и связанные данные (ДО создания операции!)
             const employee = await Employees.findOne({
                 where: { id: employee_id },
                 include: [
@@ -267,6 +257,17 @@ class HROperationsController {
                 await transaction.rollback();
                 return res.status(404).json({ error: 'Сотрудник не найден' });
             }
+
+            // Сначала создаем запись о кадровой операции
+            const operation = await HR_Operation.create({
+                type: 'fire',
+                employee_id,
+                // Сохраняем текущие значения, если они есть
+                department_id: lastOperation ? lastOperation.department_id : null,
+                position_id: lastOperation ? lastOperation.position_id : null,
+                salary: lastOperation ? lastOperation.salary : null
+            }, { transaction });
+
 
             // Мягкое удаление связанных данных
             // Паспорт
@@ -289,24 +290,28 @@ class HROperationsController {
             // Мягкое удаление самого сотрудника
             await employee.destroy({ transaction });
 
-            // Фиксируем транзакцию
-            await transaction.commit();
-
             // Записываем в историю
             await historyService.createHistoryEntry(
-                'Сотрудник',  // Изменено на 'Сотрудник'
-                employee_id, // Используем employee_id
-                'Увольнение',      // Операция 'create' для записи увольнения
+                'Сотрудник',
+                employee_id,
+                'Увольнение',
                 {
-                    operation_type: 'fire', // добавлено
+                    firstName: { old: employee.firstName, new: null },
+                    lastName: { old: employee.lastName, new: null },
+                    middleName: { old: employee.middleName, new: null },
+                    passportSeries: { old: employee.passport ? employee.passport.series : null, new: null },
+                    passportNumber: { old: employee.passport ? employee.passport.number : null, new: null },
+                    region: { old: employee.address ? employee.address.region : null, new: null },
+                    street: { old: employee.address ? employee.address.street : null, new: null },
+                    house: { old: employee.address ? employee.address.house : null, new: null },
+                    apartment: { old: employee.address ? employee.address.apartment : null, new: null },
+                    operation_type: { old: null, new: 'fire' }  // Правильный формат для operation_type
                 },
                 null // Пока нет авторизации
             );
 
-            console.log('Сотрудник уволен (мягкое удаление):', {
-                employee_id: employee_id,
-                operationId: operation.id
-            });
+            // Фиксируем транзакцию
+            await transaction.commit();
 
             return res.json({
                 message: 'Сотрудник уволен. Все данные помечены как удаленные.',
@@ -321,6 +326,8 @@ class HROperationsController {
             });
         }
     }
+
+
     // Получение всех кадровых операций
     async getAllOperations(req, res, next) {
         try {
@@ -332,44 +339,45 @@ class HROperationsController {
             return res.json(operations);
         } catch (error) {
             console.log('Ошибка при получении кадровых операций', error);
-            return res.status(500).json({ error: 'Ошибка сервера' });
+            return res.status(500).json({error: 'Ошибка сервера'});
         }
     }
 
     async getHROperationHistory(req, res, next) {
-        const { employee_id } = req.params; // Изменено на employee_id
-        const { page, limit } = req.query;
+        const {employee_id} = req.params; // Изменено на employee_id
+        const {page, limit} = req.query;
         try {
-            const { count, rows } = await historyService.getHistoryForObject('Сотрудник', employee_id, page, limit); // Изменено на 'Сотрудник' и employee_id
-            return res.json({ count, rows });
+            const {count, rows} = await historyService.getHistoryForObject('Сотрудник', employee_id, page, limit); // Изменено на 'Сотрудник' и employee_id
+            return res.json({count, rows});
         } catch (error) {
             console.error("Ошибка при получении истории кадровой операции", error);
             return next(error);
         }
     }
+
     // Получение HR информации о сотруднике
     async getEmployeeHRInfo(req, res, next) {
-        const { employee_id } = req.params;
+        const {employee_id} = req.params;
 
         try {
             // Находим последнюю HR операцию для сотрудника
             const latestOperation = await HR_Operation.findOne({
-                where: { employee_id },
+                where: {employee_id},
                 order: [['createdAt', 'DESC']],
                 // Убедимся, что модели Department и Position импортированы или используем require здесь
                 include: [
-                    { model: require('../models/department'), as: 'department', include: [Organization] }, // Включаем организацию
-                    { model: require('../models/position'), as: 'position' }
+                    {model: require('../models/department'), as: 'department', include: [Organization]}, // Включаем организацию
+                    {model: require('../models/position'), as: 'position'}
                 ]
             });
 
             if (!latestOperation) {
-                return res.json({ status: 'not_hired', message: 'Не принят' });
+                return res.json({status: 'not_hired', message: 'Не принят'});
             }
 
             // Если сотрудник был уволен (последняя операция - увольнение)
             if (latestOperation.type === 'fire') {
-                return res.json({ status: 'fired', message: 'Уволен' });
+                return res.json({status: 'fired', message: 'Уволен'});
             }
 
             // Формируем информацию о сотруднике
@@ -388,7 +396,7 @@ class HROperationsController {
             return res.json(hrInfo);
         } catch (error) {
             console.log('Ошибка при получении HR информации о сотруднике', error);
-            return res.status(500).json({ error: 'Ошибка сервера' });
+            return res.status(500).json({error: 'Ошибка сервера'});
         }
     }
 

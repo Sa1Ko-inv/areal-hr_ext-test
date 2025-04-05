@@ -1,5 +1,9 @@
 <template>
-  <h3>Файлы сотрудника</h3>
+  <div class="file-header">
+    <h3>Файлы сотрудника</h3>
+    <button class="close-btn" @click="cancel">×</button>
+  </div>
+
   <div v-if="employee.files && employee.files.length > 0" class="employee__file">
     <div v-for="file in employee.files" key="file.id" class="file__item">
       <div class=""><strong>Имя файла</strong>{{ file.name }}</div>
@@ -22,6 +26,10 @@ defineProps({
     type: Object,
     required: true
   },
+  cancel: {
+    type: Function,
+    required: true
+  }
 })
 
 const getImageUrl = (fileName) => {
