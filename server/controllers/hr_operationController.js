@@ -231,23 +231,23 @@ class HROperationsController {
 
     // Увольнение сотрудника (с мягким удалением и всех связанных данных)
     async fireEmployee(req, res, next) {
-        const { employee_id } = req.params;
+        const {employee_id} = req.params;
         const transaction = await sequelize.transaction();
 
         try {
             // Получаем последнюю HR операцию для сохранения текущих значений
             const lastOperation = await HR_Operation.findOne({
-                where: { employee_id },
+                where: {employee_id},
                 order: [['createdAt', 'DESC']]
             });
 
             // Находим сотрудника и связанные данные (ДО создания операции!)
             const employee = await Employees.findOne({
-                where: { id: employee_id },
+                where: {id: employee_id},
                 include: [
-                    { model: Passport },
-                    { model: Address },
-                    { model: Files },
+                    {model: Passport},
+                    {model: Address},
+                    {model: Files},
                     // Добавьте другие связанные модели при необходимости
                 ],
                 transaction
@@ -255,7 +255,7 @@ class HROperationsController {
 
             if (!employee) {
                 await transaction.rollback();
-                return res.status(404).json({ error: 'Сотрудник не найден' });
+                return res.status(404).json({error: 'Сотрудник не найден'});
             }
 
             // Сначала создаем запись о кадровой операции
@@ -266,29 +266,29 @@ class HROperationsController {
                 department_id: lastOperation ? lastOperation.department_id : null,
                 position_id: lastOperation ? lastOperation.position_id : null,
                 salary: lastOperation ? lastOperation.salary : null
-            }, { transaction });
+            }, {transaction});
 
 
             // Мягкое удаление связанных данных
             // Паспорт
             if (employee.passport) {
-                await employee.passport.destroy({ transaction });
+                await employee.passport.destroy({transaction});
             }
 
             // Адрес
             if (employee.address) {
-                await employee.address.destroy({ transaction });
+                await employee.address.destroy({transaction});
             }
 
             // Файлы
             if (employee.files && employee.files.length > 0) {
                 for (const file of employee.files) {
-                    await file.destroy({ transaction });
+                    await file.destroy({transaction});
                 }
             }
 
             // Мягкое удаление самого сотрудника
-            await employee.destroy({ transaction });
+            await employee.destroy({transaction});
 
             // Записываем в историю
             await historyService.createHistoryEntry(
@@ -296,16 +296,16 @@ class HROperationsController {
                 employee_id,
                 'Увольнение',
                 {
-                    firstName: { old: employee.firstName, new: null },
-                    lastName: { old: employee.lastName, new: null },
-                    middleName: { old: employee.middleName, new: null },
-                    passportSeries: { old: employee.passport ? employee.passport.series : null, new: null },
-                    passportNumber: { old: employee.passport ? employee.passport.number : null, new: null },
-                    region: { old: employee.address ? employee.address.region : null, new: null },
-                    street: { old: employee.address ? employee.address.street : null, new: null },
-                    house: { old: employee.address ? employee.address.house : null, new: null },
-                    apartment: { old: employee.address ? employee.address.apartment : null, new: null },
-                    operation_type: { old: null, new: 'fire' }  // Правильный формат для operation_type
+                    first_name: {old: employee.first_name, new: null},
+                    last_name: {old: employee.last_name, new: null},
+                    middle_name: {old: employee.middle_name, new: null},
+                    passportSeries: {old: employee.passport ? employee.passport.series : null, new: null},
+                    passportNumber: {old: employee.passport ? employee.passport.number : null, new: null},
+                    region: {old: employee.address ? employee.address.region : null, new: null},
+                    street: {old: employee.address ? employee.address.street : null, new: null},
+                    house: {old: employee.address ? employee.address.house : null, new: null},
+                    apartment: {old: employee.address ? employee.address.apartment : null, new: null},
+                    operation_type: {old: null, new: 'fire'}  // Правильный формат для operation_type
                 },
                 null // Пока нет авторизации
             );
@@ -400,6 +400,21 @@ class HROperationsController {
         }
     }
 
+    // Получение истории увольнений сотрудников
+    async getFiredHistory(req, res, next) {
+        try {
+            // Получаем параметры пагинации из запроса (с значениями по умолчанию)
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10; // Или другое значение по умолчанию
+
+            const historyData = await historyService.getFiredEmployeesHistory(page, limit);
+
+            return res.json(historyData); // Отправляем данные клиенту { count, rows }
+        } catch (error) {
+            // Передаем ошибку в централизованный обработчик ошибок
+            next(error);
+        }
+    }
 }
 
 module.exports = new HROperationsController();

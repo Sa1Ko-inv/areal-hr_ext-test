@@ -123,7 +123,7 @@
     <MyModalWindow v-model:show="dialogVisibleFiles">
       <WatchFileEmployee
           :employee="employee"
-          :cancel="cancelEdit"
+          :cancel="cancelModal"
       />
     </MyModalWindow>
 
@@ -132,7 +132,7 @@
           :employeeId="employee.id"
           :currentDepartmentId="hrInfo?.department_id"
           @updateDepartment="onDepartmentChangeSuccess"
-          :cancel="cancelEdit"
+          :cancel="cancelModal"
       />
     </MyModalWindow>
     <MyModalWindow v-model:show="dialogVisibleSalary">
@@ -140,20 +140,20 @@
           :employeeId="employee.id"
           :currentSalary="hrInfo?.salary"
           @updateSalary="onSalaryChangeSuccess"
-          :cancel="cancelEdit"
+          :cancel="cancelModal"
       />
     </MyModalWindow>
     <MyModalWindow v-model:show="dialogVisibleHire">
       <EmployeeHire
           :employeeId="employee.id"
-          :cancel="cancelEdit"
+          :cancel="cancelModal"
           @hireEmployee="handleHireEmployee"
       />
     </MyModalWindow>
     <MyModalWindow v-model:show="dialogVisibleHistory">
-      <EmplyeeWathHistory
+      <EmployeeWatchHistory
           :employeeId="employee.id"
-          :cancel="cancelEdit"
+          :cancel="cancelModal"
       />
     </MyModalWindow>
   </div>
@@ -167,12 +167,12 @@ import EmployeeEditDepartment from "@/components/employees/emloyeeModal/employee
 import {fetchEmployeeHRInfo, fireEmployee, hireEmployee} from "@/http/employeeAPI.js";
 import EmployeeEditSalary from "@/components/employees/emloyeeModal/employeeEditSalary.vue";
 import EmployeeHire from "@/components/employees/emloyeeModal/employeeHire.vue";
-import EmplyeeWathHistory from "@/components/employees/emloyeeModal/emplyeeWathHistory.vue";
+import EmployeeWatchHistory from "@/components/employees/emloyeeModal/employeeWatchHistory.vue";
 
 export default {
   name: 'EmployeeDetailCard', // Добавлено имя компонента
   components: {
-    EmplyeeWathHistory,
+    EmployeeWatchHistory,
     EmployeeHire,
     EmployeeEditSalary,
     MyModalWindow,
@@ -258,7 +258,7 @@ export default {
     },
 
     // Закрытие модальных окон (универсальный метод)
-    cancelEdit() {
+    cancelModal() {
       this.dialogVisibleFiles = false;
       this.dialogVisibleDepartment = false;
       this.dialogVisibleSalary = false;

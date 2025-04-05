@@ -1,7 +1,4 @@
-<!--Данный компонент потом будет employees-->
 <script>
-
-import {defineComponent} from "vue";
 import EmployeeList from "@/components/employees/employeeList.vue";
 import {fetchEmployees} from "@/http/employeeAPI.js";
 

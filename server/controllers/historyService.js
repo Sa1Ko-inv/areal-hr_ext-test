@@ -97,6 +97,29 @@ class HistoryService {
             throw error;
         }
     }
+
+    // Новый метод для получения истории увольнений
+    async getFiredEmployeesHistory(page = 1, limit = 10) {
+        try {
+            const offset = (page - 1) * limit;
+            // Ищем записи с конкретным типом объекта и типом операции
+            const { count, rows } = await History.findAndCountAll({
+                where: {
+                    object_type: 'Сотрудник', // Убедитесь, что строка точно совпадает с той, что используется при записи
+                    operation_type: 'Увольнение' // Убедитесь, что строка точно совпадает с той, что используется при записи
+                },
+                order: [['operation_date', 'DESC']], // Сортируем по дате увольнения (дата записи в историю)
+                limit,
+                offset,
+                distinct: true // Обычно полезно с findAndCountAll
+            });
+            // Очистка данных не требуется здесь, так как мы читаем уже очищенное
+            return { count, rows };
+        } catch (error) {
+            console.error('Ошибка при получении истории уволенных сотрудников:', error);
+            throw error; // Пробрасываем ошибку для обработки выше
+        }
+    }
 }
 
 module.exports = new HistoryService();

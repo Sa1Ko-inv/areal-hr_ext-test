@@ -2,16 +2,7 @@
   <div class="employeeList">
     <h3>Список сотрудников</h3>
     <button>Создать сотрудника</button>
-    <button>просмотр уволенных сотрудников</button>
-
-
-    <MyModalWindow>
-<!--      <EmployeeCreateForm-->
-<!--        @create="createEmployee"-->
-<!--        :cancel="cancelCreate"-->
-<!--        :error="createError"-->
-<!--      />-->
-    </MyModalWindow>
+    <button @click="showFireHistory">Просмотр уволенных сотрудников</button>
 
     <div class="positionList__items">
       <EmployeeItem
@@ -25,27 +16,48 @@
     </div>
 
   </div>
+
+  <!-- Модальное окно истории просмотра уволенных сотрудников -->
+  <MyModalWindow v-model:show="dialogFireHistory" >
+    <EmployeeFireHistory
+        :cancel="cancelModal"
+    />
+  </MyModalWindow>
 </template>
 
-<script setup>
+<script>
 
 import MyModalWindow from "@/components/UI/MyModalWindow.vue";
 import EmployeeItem from "@/components/employees/employeeItem.vue";
+import EmployeeFireHistory from "@/components/employees/emloyeeModal/employeeFireHistory.vue";
 
-defineProps({
-  employees: {
-    type: Array,
-    required: true
+export default {
+  components: {
+    MyModalWindow,
+    EmployeeItem,
+    EmployeeFireHistory
   },
-  // createError: {
-  //   type: String,
-  //   default: null
-  // },
-  // updateError: { // Добавляем проп для ошибки обновления
-  //   type: Object,
-  //   default: null
-  // }
-})
+  props: {
+    employees: {
+      type: Array,
+      required: true
+    },
+  },
+  data() {
+    return {
+      dialogFireHistory: false,
+    }
+  },
+  methods: {
+    showFireHistory() {
+      this.dialogFireHistory = true;
+    },
+    cancelModal() {
+      this.dialogFireHistory = false;
+    },
+  }
+
+}
 </script>
 
 <style scoped lang="scss">
