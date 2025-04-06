@@ -134,6 +134,8 @@
       <WatchFileEmployee
           :employee="employee"
           :cancel="cancelModal"
+          @files-uploaded="handleFilesUploaded"
+          @file-deleted="handleFileDeleted"
       />
     </MyModalWindow>
 
@@ -275,6 +277,20 @@ export default {
       this.dialogVisibleHire = false;
       this.dialogVisibleHistory = false;
     },
+    // Обработка события загрузки файлов
+    async handleFilesUploaded(newFiles) {
+      // Обновляем локальные данные без запроса к серверу
+      if (!this.employee.files) {
+        this.employee.files = [];
+      }
+      this.employee.files = [...this.employee.files, ...newFiles];
+    },
+
+    // Обработка события удаления файла
+    async handleFileDeleted(fileId) {
+      this.employee.files = this.employee.files.filter(file => file.id !== fileId);
+    }
+
   },
   mounted() {
     this.loadHRInfo();
@@ -304,7 +320,7 @@ $button-padding: 10px 18px;
 $button-gap: 10px;
 
 .employee-card {
-  max-width: 1000px;
+  max-width: 1300px;
   margin: 20px auto;
   padding: 20px;
   font-family: $font-family;

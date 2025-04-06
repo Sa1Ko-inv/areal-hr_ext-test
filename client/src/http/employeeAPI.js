@@ -24,6 +24,12 @@ export const uploadEmployeeFiles = async (employeeId, formData) => {
             'Content-Type': 'multipart/form-data'
         }
     });
+    return response;
+};
+
+// Удаление файла
+export const deleteEmployeeFile = async (fileId) => {
+    const response = await $host.delete(`api/employee/file/${fileId}`);
     return response.data;
 };
 

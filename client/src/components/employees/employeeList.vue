@@ -11,6 +11,7 @@
           :error="updateError?.id === employee.id ? employee.message : null"
           @update=""
           @delete=""
+          @refresh-employee="refreshEmployee(employee.id)"
       />
     </div>
   </div>
@@ -36,6 +37,7 @@ import MyModalWindow from "@/components/UI/MyModalWindow.vue";
 import EmployeeItem from "@/components/employees/employeeItem.vue";
 import EmployeeFireHistory from "@/components/employees/emloyeeModal/employeeFireHistory.vue";
 import EmployeeCreate from "@/components/employees/emloyeeModal/employeeCreate.vue";
+import {fetchEmployees} from "@/http/employeeAPI.js";
 
 export default {
   components: {
@@ -74,6 +76,23 @@ export default {
     createdEmployee() {
       this.$emit('created');
       this.dialogCreateEmployee = false;
+    },
+    // Новый метод для обновления данных сотрудника
+    async refreshEmployee(employee_id) {
+      try {
+        // Получаем обновленные данные сотрудника
+        const updatedEmployee = await fetchEmployees  (employee_id);
+
+        // Находим индекс сотрудника в массиве
+        const index = this.employees.findIndex(emp => emp.id === employee_id);
+
+        if (index !== -1) {
+          // Обновляем сотрудника в массиве
+          this.$set(this.employees, index, updatedEmployee);
+        }
+      } catch (error) {
+        console.error('Ошибка при обновлении данных сотрудника:', error);
+      }
     }
   }
 }
