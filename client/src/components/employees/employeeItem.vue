@@ -6,7 +6,9 @@
         <div class="section__content">
           <div class="info-item">
             <strong class="info-item__key">ФИО:</strong>
-            <span class="info-item__value">{{ employee.last_name }} {{ employee.first_name }} {{ employee.middle_name }}</span>
+            <span class="info-item__value">{{ employee.last_name }} {{ employee.first_name }} {{
+                employee.middle_name
+              }}</span>
           </div>
           <div class="info-item">
             <strong class="info-item__key">Дата рождения:</strong>
@@ -14,7 +16,6 @@
           </div>
         </div>
       </section>
-
       <section class="employee-card__section">
         <h2 class="section__title">Информация о работе</h2>
         <div class="section__content">
@@ -42,7 +43,6 @@
           </div>
         </div>
       </section>
-
       <section class="employee-card__section">
         <h2 class="section__title">Данные паспорта</h2>
         <div class="section__content">
@@ -74,7 +74,6 @@
           </div>
         </div>
       </section>
-
       <section class="employee-card__section">
         <h2 class="section__title">Адрес сотрудника</h2>
         <div class="section__content">
@@ -111,7 +110,6 @@
         </div>
       </section>
     </div>
-
     <div class="employee-card__actions">
       <button class="action-button" @click="showFilesDialog">Просмотреть файлы</button>
       <button class="action-button action-button--danger" v-if="hrInfo && hrInfo.status === 'hired'"
@@ -126,10 +124,11 @@
       <button class="action-button" v-if="hrInfo && hrInfo.status === 'hired'" @click="showChangeDepartmentDialog">
         Изменить отдел
       </button>
-      <button class="action-button">Редактировать</button>
+      <button class="action-button" @click="showEditDialog">Редактировать</button>
       <button class="action-button" @click="showHistoryDialog">История</button>
     </div>
-<!--Модальное окно просмотра файлов сотрудника-->
+
+    <!--Модальное окно просмотра файлов сотрудника-->
     <MyModalWindow v-model:show="dialogVisibleFiles">
       <WatchFileEmployee
           :employee="employee"
@@ -139,6 +138,7 @@
       />
     </MyModalWindow>
 
+    <!-- Модальное окно для изменения отдела HR_Operation -->
     <MyModalWindow v-model:show="dialogVisibleDepartment">
       <EmployeeEditDepartment
           :employeeId="employee.id"
@@ -147,6 +147,8 @@
           :cancel="cancelModal"
       />
     </MyModalWindow>
+
+    <!-- Модальное окно для изменения зарплаты HR_Operation -->
     <MyModalWindow v-model:show="dialogVisibleSalary">
       <EmployeeEditSalary
           :employeeId="employee.id"
@@ -155,6 +157,8 @@
           :cancel="cancelModal"
       />
     </MyModalWindow>
+
+    <!-- Модальное окно для принятия на работу HR_Operation -->
     <MyModalWindow v-model:show="dialogVisibleHire">
       <EmployeeHire
           :employeeId="employee.id"
@@ -162,10 +166,22 @@
           @hireEmployee="handleHireEmployee"
       />
     </MyModalWindow>
+
+    <!-- Модальное окно для просмотра истории сотрудника -->
     <MyModalWindow v-model:show="dialogVisibleHistory">
       <EmployeeWatchHistory
           :employeeId="employee.id"
           :cancel="cancelModal"
+      />
+    </MyModalWindow>
+
+    <!-- Модальное окно для редактирования сотрудника -->
+    <MyModalWindow v-model:show="dialogVisibleEdit">
+      <EmployeeEdit
+          :employee="employee"
+          :cancel="cancelEdit"
+          @employee-updated="handleEmployeeUpdated"
+          @update-error="handleUpdateError"
       />
     </MyModalWindow>
   </div>
@@ -180,10 +196,12 @@ import {fetchEmployeeHRInfo, fireEmployee, hireEmployee} from "@/http/employeeAP
 import EmployeeEditSalary from "@/components/employees/emloyeeModal/employeeEditSalary.vue";
 import EmployeeHire from "@/components/employees/emloyeeModal/employeeHire.vue";
 import EmployeeWatchHistory from "@/components/employees/emloyeeModal/employeeWatchHistory.vue";
+import EmployeeEdit from "@/components/employees/emloyeeModal/employeeEdit.vue";
 
 export default {
-  name: 'EmployeeDetailCard', // Добавлено имя компонента
+  name: 'EmployeeDetailCard',
   components: {
+    EmployeeEdit,
     EmployeeWatchHistory,
     EmployeeHire,
     EmployeeEditSalary,
@@ -196,6 +214,10 @@ export default {
       type: Object,
       required: true,
     },
+    error: {
+      type: String,
+      default: null
+    }
   },
   data() {
     return {
@@ -204,6 +226,7 @@ export default {
       dialogVisibleHire: false,
       dialogVisibleSalary: false,
       dialogVisibleHistory: false,
+      dialogVisibleEdit: false,
       hrInfo: null, // Инициализировано как null для лучшей обработки состояния загрузки
     };
   },
@@ -224,7 +247,9 @@ export default {
     showHistoryDialog() {
       this.dialogVisibleHistory = true;
     },
-
+    showEditDialog() {
+      this.dialogVisibleEdit = true;
+    },
     async onDepartmentChangeSuccess() {
       this.dialogVisibleDepartment = false;
       await this.loadHRInfo();
@@ -233,7 +258,6 @@ export default {
       this.dialogVisibleSalary = false;
       await this.loadHRInfo();
     },
-
     // Увольнение сотрудника
     async fire_Employee() {
       if (!confirm("Вы уверены, что хотите уволить сотрудника?")) {
@@ -247,7 +271,6 @@ export default {
         alert("Произошла ошибка при увольнении сотрудника");
       }
     },
-
     // Принятие на работу
     async handleHireEmployee(hireEmployeeData) {
       try {
@@ -258,7 +281,6 @@ export default {
         console.error("Ошибка при принятии на работу:", error);
       }
     },
-
     // Загрузка HR информации
     async loadHRInfo() {
       this.hrInfo = null; // Сброс перед загрузкой для отображения индикатора
@@ -268,7 +290,6 @@ export default {
         console.error("Ошибка при загрузке HR информации:", error);
       }
     },
-
     // Закрытие модальных окон (универсальный метод)
     cancelModal() {
       this.dialogVisibleFiles = false;
@@ -276,6 +297,10 @@ export default {
       this.dialogVisibleSalary = false;
       this.dialogVisibleHire = false;
       this.dialogVisibleHistory = false;
+    },
+    // Закрытие модального окна редактирования
+    cancelEdit() {
+      this.dialogVisibleEdit = false;
     },
     // Обработка события загрузки файлов
     async handleFilesUploaded(newFiles) {
@@ -285,12 +310,23 @@ export default {
       }
       this.employee.files = [...this.employee.files, ...newFiles];
     },
-
     // Обработка события удаления файла
     async handleFileDeleted(fileId) {
       this.employee.files = this.employee.files.filter(file => file.id !== fileId);
-    }
+    },
 
+    handleEmployeeUpdated(updatedEmployee) {
+      // Обновляем локальные данные
+      Object.assign(this.employee, updatedEmployee);
+      // Прокидываем событие выше
+      this.$emit('update', updatedEmployee);
+      this.dialogVisibleEdit = false;
+    },
+
+    // Обработка ошибки обновления
+    handleUpdateError(error) {
+      this.$emit('update-error', error);
+    }
   },
   mounted() {
     this.loadHRInfo();
@@ -299,7 +335,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
 $primary-color: #792ec9;
 $primary-color-dark: #6525a7;
 $primary-color-light: rgba(121, 46, 201, 0.1);

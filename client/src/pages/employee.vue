@@ -9,7 +9,8 @@ export default {
       employees: [],
       currentPage: 1,
       pageSize: 5, // Увеличил размер страницы для удобства
-      totalItems: 0
+      totalItems: 0,
+      updateError: null // Добавляем для хранения ошибок обновления
     }
   },
   methods: {
@@ -36,7 +37,15 @@ export default {
       // После создания сотрудника переходим на первую страницу и обновляем список
       this.currentPage = 1;
       this.getEmployees();
-    }
+    },
+    // Обработчик обновления ошибки
+    handleUpdateError(error) {
+      this.updateError = error;
+    },
+    // Обработчик обновления списка сотрудников
+    handleUpdateEmployees(updatedEmployees) {
+      this.employees = updatedEmployees;
+    },
   },
   mounted() {
     this.getEmployees();
@@ -53,7 +62,10 @@ export default {
   <div class="">
     <EmployeeList
         :employees="employees"
+        :updateError="updateError"
         @created="handleEmployeeCreated"
+        @update-error="handleUpdateError"
+        @update-employees="handleUpdateEmployees"
     />
 
     <!-- Пагинация -->

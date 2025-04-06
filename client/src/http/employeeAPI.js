@@ -34,8 +34,8 @@ export const deleteEmployeeFile = async (fileId) => {
 };
 
 // Редактирование сотрудника
-export const updateEmployees = async (employeeData) => {
-    const response = await $host.get(`api/employee/${employeeData.id}`, employeeData);
+export const updateEmployees = async (employeeId, employeeData) => {
+    const response = await $host.put(`api/employee/${employeeId}`, employeeData);
     return response.data;
 }
 

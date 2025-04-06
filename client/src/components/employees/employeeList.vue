@@ -6,12 +6,11 @@
     <div class="positionList__items">
       <EmployeeItem
           v-for="employee in employees"
-          :employee="employee"
           :key="employee.id"
-          :error="updateError?.id === employee.id ? employee.message : null"
-          @update=""
-          @delete=""
-          @refresh-employee="refreshEmployee(employee.id)"
+          :employee="employee"
+          :error="localUpdateError?.id === employee.id ? localUpdateError.message : null"
+          @update="updateEmployee"
+          @update-error="handleUpdateError"
       />
     </div>
   </div>
@@ -37,7 +36,7 @@ import MyModalWindow from "@/components/UI/MyModalWindow.vue";
 import EmployeeItem from "@/components/employees/employeeItem.vue";
 import EmployeeFireHistory from "@/components/employees/emloyeeModal/employeeFireHistory.vue";
 import EmployeeCreate from "@/components/employees/emloyeeModal/employeeCreate.vue";
-import {fetchEmployees} from "@/http/employeeAPI.js";
+import {fetchEmployees, updateEmployees} from "@/http/employeeAPI.js";
 
 export default {
   components: {
@@ -59,7 +58,14 @@ export default {
   data() {
     return {
       dialogFireHistory: false,
-      dialogCreateEmployee: false
+      dialogCreateEmployee: false,
+      localUpdateError: this.updateError // Создаем локальную копию для изменения
+    }
+  },
+  watch: {
+    // Следим за изменениями входного параметра updateError
+    updateError(newVal) {
+      this.localUpdateError = newVal;
     }
   },
   methods: {
@@ -77,23 +83,22 @@ export default {
       this.$emit('created');
       this.dialogCreateEmployee = false;
     },
-    // Новый метод для обновления данных сотрудника
-    async refreshEmployee(employee_id) {
-      try {
-        // Получаем обновленные данные сотрудника
-        const updatedEmployee = await fetchEmployees  (employee_id);
+    // Обработчик обновления сотрудника
+    updateEmployee(updatedEmployee) {
+      // Обновляем локальный список сотрудников
+      const updatedEmployees = this.employees.map(emp =>
+          emp.id === updatedEmployee.id ? updatedEmployee : emp
+      );
+      // Прокидываем событие в родительский компонент
+      this.$emit('update-employees', updatedEmployees);
+    },
+    // Обработчик ошибки обновления
+    handleUpdateError(error) {
+      this.localUpdateError = error;
+      // Уведомляем родительский компонент об ошибке
+      this.$emit('update-error', error);
+    },
 
-        // Находим индекс сотрудника в массиве
-        const index = this.employees.findIndex(emp => emp.id === employee_id);
-
-        if (index !== -1) {
-          // Обновляем сотрудника в массиве
-          this.$set(this.employees, index, updatedEmployee);
-        }
-      } catch (error) {
-        console.error('Ошибка при обновлении данных сотрудника:', error);
-      }
-    }
   }
 }
 </script>
