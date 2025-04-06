@@ -285,7 +285,7 @@ export default {
   display: flex;
   flex-direction: column;
   max-height: 80vh;
-  width: 100%;
+  width: 700px;
   max-width: 800px;
   overflow: hidden;
 }

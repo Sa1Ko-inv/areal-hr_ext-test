@@ -58,9 +58,6 @@
 </template>
 
 <script>
-// Предполагаем, что у вас есть настроенный axios или другой http-клиент
-// import api from '@/api'; // Пример импорта вашего API-клиента
-import axios from 'axios';
 import {fetchFiredHistory} from "@/http/employeeAPI.js"; // Или используйте fetch
 
 export default {
@@ -72,10 +69,10 @@ export default {
   },
   data() {
     return {
-      firedHistory: [], // Массив для хранения записей истории
+      firedHistory: [],
       currentPage: 1,
-      pageSize: 10,          // Количество записей на странице
-      totalItems: 0       // Общее количество записей (для пагинации)
+      pageSize: 10,
+      totalItems: 0
     };
   },
   methods: {

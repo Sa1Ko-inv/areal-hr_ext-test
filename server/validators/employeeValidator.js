@@ -43,7 +43,8 @@ const employeeSchema = Joi.object({
         .required()
         .messages({
             'string.base': 'Дата рождения должна быть строкой',
-            'string.pattern.base': 'Дата рождения должна быть в формате DD-MM-YYYY',
+            'string.empty': 'Дата рождения не может быть пустой',
+            'string.pattern.base': 'Дата рождения должна быть в формате DD/MM/YYYY',
             'any.required': 'Дата рождения является обязательным полем'
         }),
     passport: Joi.object({  // Вложенный объект для паспорта
@@ -84,6 +85,7 @@ const employeeSchema = Joi.object({
             .pattern(dateRegex)
             .required()
             .messages({
+                'string.empty': 'Дата выдачи не может быть пустым',
                 'string.base': 'Дата выдачи должна быть строкой',
                 'string.pattern.base': 'Дата выдачи должна быть в формате DD-MM-YYYY',
                 'any.required': 'Дата выдачи является обязательным полем'
@@ -151,9 +153,10 @@ const employeeSchema = Joi.object({
             .allow('')
             .optional()
             .messages({
-                'string.base': 'Здание должно быть строкой',
-                'string.min': 'Здание должно содержать минимум {#limit} символ',
-                'string.max': 'Здание должно содержать максимум {#limit} символов'
+                'string.empty': 'Корпус не может быть пустым',
+                'string.base': 'Корпус должно быть строкой',
+                'string.min': 'Корпус должно содержать минимум {#limit} символ',
+                'string.max': 'Корпус должно содержать максимум {#limit} символов'
             }),
         apartment: Joi.string()
             .min(1)

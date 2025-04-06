@@ -16,7 +16,11 @@ app.use(cors());
 // Чтобы наше приложение могло парсить json
 app.use(express.json());
 
-app.use(fileUpload({}));
+app.use(fileUpload({
+    limits: { fileSize: 10 * 1024 * 1024 }, // Ограничение размера файла (10MB)
+    useTempFiles: true,
+    tempFileDir: '/tmp/'
+}));
 app.use(express.static(path.resolve(__dirname, 'static')));
 // Подключаем роутер, первый параметр - это префикс, по которому будет доступен наш роутер
 app.use('/api', router);

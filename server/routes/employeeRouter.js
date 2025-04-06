@@ -6,6 +6,9 @@ const {employeeSchema, employeeUpdateSchema } = require('../validators/employeeV
 
 // CRUD операции для сотрудников
 router.post('/', validate(employeeSchema), employeeController.createEmployee);
+// Новый маршрут для загрузки файлов
+router.post('/:id/files', employeeController.uploadEmployeeFiles);
+
 router.get('/', employeeController.getAllEmployees);
 router.get('/:id', employeeController.getOneEmployee);
 router.get('/:id/history', employeeController.getEmployeeHistory); // Получение истории для конкретной должности

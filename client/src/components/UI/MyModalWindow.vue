@@ -33,18 +33,22 @@ export default {
   background: rgba(0, 0, 0, 0.5);
   position: fixed;
   display: flex;
+  z-index: 1000;
+  overflow-y: auto;
+  padding: 20px;
 }
 
 .dialog__content {
   margin: auto;
-
   background: white;
   border-radius: 12px;
-
-  min-height: 50px;
   min-width: 300px;
-
+  max-width: 800px;
+  width: 100%;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
   padding: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  position: relative;
 }
 </style>

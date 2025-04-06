@@ -7,10 +7,27 @@ export const fetchEmployees = async (page = 1, limit = 10) => {
             limit: limit
         }
     });
-    console.log(response);
     return response;
 }
 
+// Создание сотрудника
+export const createEmployees = async (employeeData) => {
+    const response = await $host.post("api/employee/", employeeData);
+    return response.data;
+};
+
+
+// Загрузка файлов для существующего сотрудника
+export const uploadEmployeeFiles = async (employeeId, formData) => {
+    const response = await $host.post(`api/employee/${employeeId}/files`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+    return response.data;
+};
+
+// Редактирование сотрудника
 export const updateEmployees = async (employeeData) => {
     const response = await $host.get(`api/employee/${employeeData.id}`, employeeData);
     return response.data;
@@ -57,7 +74,6 @@ export const fetchFiredHistory = async (page = 1, limit = 10) => {
             limit: limit
         }
     });
-    console.log(response);
     return response.data;
 }
 

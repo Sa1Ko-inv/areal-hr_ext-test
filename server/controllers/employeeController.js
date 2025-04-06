@@ -570,6 +570,75 @@ const historyService = require('./historyService'); // Импортируем hi
 
 //Топ версия
 class EmployeeController {
+    // Добавляем новый метод для загрузки файлов
+    async uploadEmployeeFiles(req, res, next) {
+        try {
+            const employeeId = req.params.id;
+
+            // Проверяем, существует ли сотрудник
+            const employee = await Employees.findByPk(employeeId);
+            if (!employee) {
+                return res.status(404).json({ error: 'Сотрудник не найден' });
+            }
+
+            // Обрабатываем загрузку файлов
+            const uploadedFiles = [];
+            if (req.files && req.files.files) {
+                // Преобразуем в массив, даже если это один файл
+                const files = Array.isArray(req.files.files) ? req.files.files : [req.files.files];
+
+                for (const file of files) {
+                    try {
+                        // Проверяем расширение файла
+                        const fileExt = path.extname(file.name).toLowerCase();
+                        if (fileExt !== '.jpg' && fileExt !== '.jpeg') {
+                            console.log('Неподдерживаемый формат файла:', file.name);
+                            continue;
+                        }
+
+                        // Создаем уникальное имя файла
+                        const fileName = uuid.v4() + fileExt;
+                        const filePath = path.resolve(__dirname, '..', 'static', fileName);
+
+                        // Сохраняем файл
+                        await file.mv(filePath);
+
+                        // Создаем запись о файле в БД
+                        const fileRecord = await Files.create({
+                            name: file.name,
+                            file_url: fileName,
+                            employee_id: employeeId
+                        });
+
+                        uploadedFiles.push(fileRecord);
+                    } catch (fileError) {
+                        console.log('Ошибка при обработке файла', fileError);
+                    }
+                }
+            }
+
+            // Записываем в историю
+            await historyService.createHistoryEntry(
+                'Сотрудник',
+                employeeId,
+                'update',
+                {
+                    files: { old: null, new: uploadedFiles.map(f => f.name) }
+                },
+                null // Пока нет авторизации
+            );
+
+            return res.status(200).json({
+                success: true,
+                files: uploadedFiles
+            });
+        } catch (error) {
+            console.log('Ошибка при загрузке файлов', error);
+            return res.status(500).json({ error: 'Ошибка сервера' });
+        }
+    }
+
+// Изменяем метод createEmployee, убирая из него обработку файлов
     async createEmployee(req, res, next) {
         try {
             // Получаем данные сотрудника из запроса
@@ -604,43 +673,6 @@ class EmployeeController {
                 });
             }
 
-            /// Обрабатываем загрузку файлов
-            const uploadedFiles = [];
-            if (req.files && req.files.files) {
-                // Преобразуем в массив, даже если это один файл
-                const files = Array.isArray(req.files.files) ? req.files.files : [req.files.files];
-
-                for (const file of files) {
-                    try {
-                        // Проверяем расширение файла
-                        const fileExt = path.extname(file.name).toLowerCase();
-                        if (fileExt !== '.jpg' && fileExt !== '.jpeg') {
-                            console.log('Неподдерживаемый формат файла:', file.name);
-                            continue;
-                        }
-
-                        // Создаем уникальное имя файла
-                        const fileName = uuid.v4() + fileExt;
-                        const filePath = path.resolve(__dirname, '..', 'static', fileName);
-
-                        // Сохраняем файл
-                        await file.mv(filePath);
-
-                        // Создаем запись о файле в БД
-                        const fileRecord = await Files.create({
-                            name: file.name,
-                            file_url: fileName,
-                            employee_id: employee.id
-                        });
-
-                        uploadedFiles.push(fileRecord);
-                    } catch (fileError) {
-                        console.log('Ошибка при обработке файла', fileError);
-                    }
-                }
-            }
-
-
             // Получаем созданного сотрудника со всеми связанными данными
             const createdEmployee = await Employees.findOne({
                 where: { id: employee.id },
@@ -661,9 +693,8 @@ class EmployeeController {
                     first_name: { old: null, new: first_name },
                     middle_name: { old: null, new: middle_name },
                     birth_date: { old: null, new: birth_date },
-                    passport: passport ? { old: null, new: passport } : { old: null, new: null }, // Полные данные паспорта
-                    address: address ? { old: null, new: address } : { old: null, new: null }, // Полные данные адреса
-                    files: { old: null, new: uploadedFiles.map(f => f.name) }
+                    passport: passport ? { old: null, new: passport } : { old: null, new: null },
+                    address: address ? { old: null, new: address } : { old: null, new: null }
                 },
                 null // Пока нет авторизации
             );

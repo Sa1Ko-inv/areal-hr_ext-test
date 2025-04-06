@@ -6,9 +6,7 @@
         <div class="section__content">
           <div class="info-item">
             <strong class="info-item__key">ФИО:</strong>
-            <span class="info-item__value">{{ employee.last_name }} {{ employee.first_name }} {{
-                employee.middle_name
-              }}</span>
+            <span class="info-item__value">{{ employee.last_name }} {{ employee.first_name }} {{ employee.middle_name }}</span>
           </div>
           <div class="info-item">
             <strong class="info-item__key">Дата рождения:</strong>
@@ -48,25 +46,31 @@
       <section class="employee-card__section">
         <h2 class="section__title">Данные паспорта</h2>
         <div class="section__content">
-          <div class="info-item">
-            <strong class="info-item__key">Серия:</strong>
-            <span class="info-item__value">{{ employee.passport.series }}</span>
+          <!-- Добавляем проверку на наличие passport -->
+          <div v-if="employee.passport">
+            <div class="info-item">
+              <strong class="info-item__key">Серия:</strong>
+              <span class="info-item__value">{{ employee.passport.series }}</span>
+            </div>
+            <div class="info-item">
+              <strong class="info-item__key">Номер:</strong>
+              <span class="info-item__value">{{ employee.passport.number }}</span>
+            </div>
+            <div class="info-item">
+              <strong class="info-item__key">Кем выдан:</strong>
+              <span class="info-item__value">{{ employee.passport.issued_by }}</span>
+            </div>
+            <div class="info-item">
+              <strong class="info-item__key">Дата выдачи:</strong>
+              <span class="info-item__value">{{ employee.passport.issued_date }}</span>
+            </div>
+            <div class="info-item">
+              <strong class="info-item__key">Код подразделения:</strong>
+              <span class="info-item__value">{{ employee.passport.division_code }}</span>
+            </div>
           </div>
-          <div class="info-item">
-            <strong class="info-item__key">Номер:</strong>
-            <span class="info-item__value">{{ employee.passport.number }}</span>
-          </div>
-          <div class="info-item">
-            <strong class="info-item__key">Кем выдан:</strong>
-            <span class="info-item__value">{{ employee.passport.issued_by }}</span>
-          </div>
-          <div class="info-item">
-            <strong class="info-item__key">Дата выдачи:</strong>
-            <span class="info-item__value">{{ employee.passport.issued_date }}</span>
-          </div>
-          <div class="info-item">
-            <strong class="info-item__key">Код подразделения:</strong>
-            <span class="info-item__value">{{ employee.passport.division_code }}</span>
+          <div v-else class="info-item info-item--status">
+            <span class="info-item__value">Данные паспорта отсутствуют</span>
           </div>
         </div>
       </section>
@@ -74,29 +78,35 @@
       <section class="employee-card__section">
         <h2 class="section__title">Адрес сотрудника</h2>
         <div class="section__content">
-          <div class="info-item">
-            <strong class="info-item__key">Регион:</strong>
-            <span class="info-item__value">{{ employee.address.region }}</span>
+          <!-- Добавляем проверку на наличие address -->
+          <div v-if="employee.address">
+            <div class="info-item">
+              <strong class="info-item__key">Регион:</strong>
+              <span class="info-item__value">{{ employee.address.region }}</span>
+            </div>
+            <div class="info-item">
+              <strong class="info-item__key">Населенный пункт:</strong>
+              <span class="info-item__value">{{ employee.address.locality }}</span>
+            </div>
+            <div class="info-item">
+              <strong class="info-item__key">Улица:</strong>
+              <span class="info-item__value">{{ employee.address.street }}</span>
+            </div>
+            <div class="info-item">
+              <strong class="info-item__key">Дом:</strong>
+              <span class="info-item__value">{{ employee.address.house }}</span>
+            </div>
+            <div class="info-item">
+              <strong class="info-item__key">Корпус:</strong>
+              <span class="info-item__value">{{ employee.address.building || '-' }}</span>
+            </div>
+            <div class="info-item">
+              <strong class="info-item__key">Квартира:</strong>
+              <span class="info-item__value">{{ employee.address.apartment || '-' }}</span>
+            </div>
           </div>
-          <div class="info-item">
-            <strong class="info-item__key">Населенный пункт:</strong>
-            <span class="info-item__value">{{ employee.address.locality }}</span>
-          </div>
-          <div class="info-item">
-            <strong class="info-item__key">Улица:</strong>
-            <span class="info-item__value">{{ employee.address.street }}</span>
-          </div>
-          <div class="info-item">
-            <strong class="info-item__key">Дом:</strong>
-            <span class="info-item__value">{{ employee.address.house }}</span>
-          </div>
-          <div class="info-item">
-            <strong class="info-item__key">Корпус:</strong>
-            <span class="info-item__value">{{ employee.address.building || '-' }}</span>
-          </div>
-          <div class="info-item">
-            <strong class="info-item__key">Квартира:</strong>
-            <span class="info-item__value">{{ employee.address.apartment || '-' }}</span>
+          <div v-else class="info-item info-item--status">
+            <span class="info-item__value">Адрес отсутствует</span>
           </div>
         </div>
       </section>
