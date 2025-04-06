@@ -1,4 +1,4 @@
-<!--TODO: доделать загрузку файлов. попробовать код из cody-->
+
 <template>
   <div class="form-container">
     <form @submit.prevent="createEmployee" class="employee-form">

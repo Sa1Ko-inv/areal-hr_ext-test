@@ -1,6 +1,9 @@
 <template>
   <div class="employee-edit-form">
     <h2>Редактирование сотрудника</h2>
+    <div v-if="updateError" class="error-message">
+      {{ updateError.message }}
+    </div>
     <div class="form-section">
       <h3>Личная информация</h3>
       <div class="form-group">
@@ -71,11 +74,8 @@
       </div>
     </div>
     <div class="form-actions">
-      <button @click="saveEmployeeChanges" class="action-button action-button--success">Сохранить</button>
-      <button @click="cancel" class="action-button">Отмена</button>
-    </div>
-    <div v-if="error" class="error-message">
-      {{ error }}
+      <button @click="saveEmployeeChanges" class="save-button">Сохранить</button>
+      <button @click="cancel" class="cancel-button">Отмена</button>
     </div>
   </div>
 </template>
@@ -99,7 +99,7 @@ export default {
     return {
       editedEmployee: {},
       originalEmployee: {},
-      error: null
+      updateError: null
     };
   },
   methods: {
@@ -129,12 +129,18 @@ export default {
         }
         this.cancel();
       } catch (error) {
+        if (error.response && error.response.data && error.response.data.errors) {
+          this.updateError = {
+            id: this.employee.id,
+            message: error.response.data.errors[0].message
+          }
+        } else {
+          this.updateError = {
+            id: this.employee.id,
+            message: 'Произошла ошибка при обновлении сотрудника'
+          }
+        }
         console.error("Ошибка при обновлении сотрудника:", error);
-        this.error = error.response?.data?.message || 'Ошибка при обновлении сотрудника';
-        this.$emit('update-error', {
-          id: this.employee.id,
-          message: this.error
-        });
       }
     }
   },
@@ -147,39 +153,31 @@ export default {
 </script>
 
 <style scoped lang="scss">
-$primary-color: #792ec9;
-$primary-color-dark: #6525a7;
-$border-color: #e0e0e0;
-$text-color-primary: #333;
-$text-color-secondary: #555;
-$danger-color: #dc3545;
-$success-color: #28a745;
-$success-color-dark: #218838;
-$border-radius: 8px;
-
 .employee-edit-form {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(121, 46, 201, 0.1);
   background-color: #fff;
-  border-radius: $border-radius;
 
   h2 {
-    color: $primary-color;
+    color: #792ec9;
     margin-bottom: 20px;
+    font-size: 1.5rem;
     text-align: center;
   }
 
-  .form-section {
-    margin-bottom: 25px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid $border-color;
+  h3 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+  }
 
-    h3 {
-      color: $text-color-primary;
-      margin-bottom: 15px;
-      font-size: 1.1rem;
-    }
+  .form-section {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e0e0e0;
 
     &:last-child {
       border-bottom: none;
@@ -189,77 +187,95 @@ $border-radius: 8px;
   .form-group {
     margin-bottom: 15px;
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
 
     label {
-      flex: 0 0 180px;
-      font-weight: 600;
-      color: $text-color-secondary;
-      margin-right: 10px;
-      padding-top: 8px;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #555;
     }
 
     input {
-      flex: 1 1 300px;
-      padding: 8px 12px;
-      border: 1px solid $border-color;
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #e0e0e0;
       border-radius: 4px;
-      font-size: 0.95rem;
+      font-size: 14px;
+      transition: border-color 0.3s;
 
       &:focus {
         outline: none;
-        border-color: $primary-color;
-        box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+        border-color: #792ec9;
+        box-shadow: 0 0 0 2px rgba(121, 46, 201, 0.2);
+      }
+
+      &::placeholder {
+        color: #aaa;
       }
     }
   }
 
   .form-actions {
     display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 25px;
-  }
+    gap: 10px;
+    margin-top: 20px;
 
-  .action-button {
-    padding: 10px 18px;
-    background-color: $primary-color;
-    color: white;
-    border: none;
-    border-radius: calc($border-radius / 2);
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
-    font-weight: 500;
-    font-size: 0.9rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-    &:hover {
-      background-color: $primary-color-dark;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-      transform: translateY(-1px);
+    button {
+      flex: 1;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
     }
 
-    &:active {
-      transform: translateY(0);
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    }
-
-    &--success {
-      background-color: $success-color;
+    .save-button {
+      background-color: #792ec9;
+      color: white;
 
       &:hover {
-        background-color: $success-color-dark;
+        background-color: #6525a7;
+      }
+    }
+
+    .cancel-button {
+      background-color: #f5f5f5;
+      color: #333;
+      border: 1px solid #ddd;
+
+      &:hover {
+        background-color: #eaeaea;
       }
     }
   }
 
   .error-message {
-    margin-top: 15px;
+    color: #d32f2f;
+    font-size: 14px;
+    margin-bottom: 15px;
     padding: 10px;
-    color: white;
-    background-color: $danger-color;
+    background-color: rgba(211, 47, 47, 0.1);
     border-radius: 4px;
     text-align: center;
   }
+
+  @media (min-width: 768px) {
+    .form-group {
+      flex-direction: row;
+      align-items: center;
+
+      label {
+        flex: 0 0 180px;
+        margin-bottom: 0;
+        margin-right: 10px;
+      }
+
+      input {
+        flex: 1;
+      }
+    }
+  }
 }
 </style>
+
