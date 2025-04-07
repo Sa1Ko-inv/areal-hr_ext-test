@@ -19,3 +19,13 @@ export const deleteDepartment = async (id) => {
     const response = await $host.delete(`api/department/${id}`);
     return response;
 }
+
+export const fetchDepartmentHistory = async (id, page = 1, limit = 10) => {
+    const response = await $host.get(`api/department/${id}/history`, {
+        params: {
+            page: page,
+            limit: limit
+        }
+    });
+    return response.data;
+}

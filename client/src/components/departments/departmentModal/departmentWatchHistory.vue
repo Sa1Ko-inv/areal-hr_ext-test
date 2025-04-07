@@ -1,13 +1,13 @@
 <template>
   <div class="history-modal">
     <div class="history-header">
-      <h3>История должности</h3>
+      <h3>История отдела</h3>
       <button class="close-btn" @click="close">×</button>
     </div>
 
     <div class="history-list">
       <div v-if="history.length === 0" class="history-item">
-        <p>Нет данных о должности</p>
+        <p>Нет данных об отделе</p>
       </div>
 
       <div v-for="item in history" :key="item.id" class="history-item">
@@ -20,8 +20,9 @@
         <div class="changes">
 
           <ul>
-            <li v-for="field in item.changed_fields" class="change-field">
+            <li v-for="(field, fieldName) in item.changed_fields" :key="fieldName" class="change-field">
               <div class="field-values">
+                <div class="field-name">{{ getFieldName(fieldName) }}</div>
                 <div v-if="field.old !== null && field.old !== undefined" class="old-value">
                   <span>Было:</span> {{field.old}}
                 </div>
@@ -57,23 +58,23 @@
       </div>
     </div>
   </div>
+
 </template>
 
 <script>
-import {fetchPositionHistory} from "@/http/positionAPI.js";
+import {fetchDepartmentHistory} from "@/http/departmentAPI.js";
 
 export default {
   props: {
-    position: {
+    department: {
       type: Object,
       required: true
     },
-    close: {
+    cancel: {
       type: Function,
       required: true
-    },
+    }
   },
-
   data() {
     return {
       history: [],
@@ -84,19 +85,20 @@ export default {
   },
 
   methods: {
-    async getHistoryPosition() {
+
+    async getHistory() {
       try {
-        const response = await fetchPositionHistory(this.position.id, this.currentPage, this.pageSize);
+        const response = await fetchDepartmentHistory(this.department.id, this.currentPage, this.pageSize);
         this.history = response.rows;
         this.totalItems = response.count;
-        console.log(response.rows);
       } catch (error) {
-        console.error("Ошибка при получении истории должности:", error);
+        console.error('Ошибка при получении истории отделов:', error);
       }
     },
+
     changePage(page) {
       this.currentPage = page;
-      this.getHistoryPosition();
+      this.getHistory();
     },
     formatDate(dateString) {
       if (!dateString) return '';
@@ -116,17 +118,25 @@ export default {
       };
       return operations[type] || type;
     },
-  },
+    getFieldName(field) {
+      const fieldNames = {
+        'organization': 'Организация',
+        'name': 'Название',
+        'parent_department': 'Родительский отдел',
 
-  mounted() {
-    this.getHistoryPosition()
+      };
+      return fieldNames[field] || field;
+    },
   },
-
   computed: {
     totalPages() {
       return Math.ceil(this.totalItems / this.pageSize) || 1;
     }
   },
+
+  mounted() {
+    this.getHistory();
+  }
 }
 </script>
 

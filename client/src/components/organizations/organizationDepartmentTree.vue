@@ -8,6 +8,7 @@
 
       <div class="department-buttons">
         <button @click="editDepartment(department)">Редактировать</button>
+        <button @click="showHistory(department)">История</button>
         <button @click="deleteDepartment(department)">Удалить</button>
       </div>
 
@@ -17,6 +18,14 @@
             :department="selectedDepartment"
             :organizations="organizations"
             @departmentUpdated="departmentUpdated"
+        />
+      </MyModalWindow>
+
+      <!-- Модельное окно просмотра истории отдела -->
+      <MyModalWindow v-model:show="dialogVisibleHistory">
+        <DepartmentWatchHistory
+            :cancel="cancelHistory"
+            :department="selectedDepartment"
         />
       </MyModalWindow>
 
@@ -36,15 +45,17 @@ import MyModalWindow from "@/components/UI/MyModalWindow.vue";
 import DepartmentEditForm from "@/components/departments/departmentEditForm.vue";
 import {fetchOrganizations} from "@/http/organizationAPI.js";
 import {deleteDepartment as apiDeleteDepartment} from "@/http/departmentAPI.js";
+import DepartmentWatchHistory from "@/components/departments/departmentModal/departmentWatchHistory.vue";
 
 export default {
   name: 'OrganizationDepartmentTree',
-  components: { DepartmentEditForm, MyModalWindow },
+  components: {DepartmentWatchHistory, DepartmentEditForm, MyModalWindow },
   data() {
     return {
-      dialogVisible: false,
       selectedDepartment: null,
-      organizations: []
+      organizations: [],
+      dialogVisible: false,
+      dialogVisibleHistory: false,
 
     };
   },
@@ -62,7 +73,7 @@ export default {
     async loadOrganizations() {
       try {
         const response = await fetchOrganizations();
-        this.organizations = response.data;
+        this.organizations = response.data.rows;
       } catch (error) {
         console.error('Ошибка при загрузке организаций:', error);
       }
@@ -96,6 +107,15 @@ export default {
       } catch (error) {
         console.error('Ошибка при удалении отдела:', error);
       }
+    },
+
+  //   Управление модальными окнами
+    showHistory(department) {
+      this.selectedDepartment = department;
+      this.dialogVisibleHistory = true;
+    },
+    cancelHistory() {
+      this.dialogVisibleHistory = false;
     },
   },
 };

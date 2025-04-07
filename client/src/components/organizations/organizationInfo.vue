@@ -12,7 +12,7 @@
 
       <organizationDepartmentTree
           :departments="departments"
-          @departmentUpdated="loadOrganization"
+          @departmentUpdated="handleDepartmentUpdate"
           @departmentDeleted="departmentDeleted"
       />
     </div>
@@ -75,6 +75,15 @@ export default {
         console.error('Ошибка при загрузке организации:', error);
       }
     },
+
+    handleDepartmentUpdate() {
+      try {
+        this.loadOrganization();
+      } catch (error) {
+        console.error('Ошибка при обновлении отдела:', error);
+      }
+    },
+
     departmentDeleted(departmentId) {
       this.departments = this.departments.filter(department => department.id !== departmentId);
       this.loadOrganization();

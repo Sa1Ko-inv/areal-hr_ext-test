@@ -85,7 +85,7 @@ export default {
   margin-top: 8px;
 }
 form {
-  max-width: 500px;
+  max-width: 100%;
   margin: 0 auto;
   padding: 20px;
   border-radius: 8px;
@@ -100,8 +100,8 @@ form {
   }
 
   input, select {
-    width: 100%;
-    padding: 10px 12px;
+    width:740px;
+    padding: 10px 10px;
     margin-bottom: 15px;
     border: 1px solid #e0e0e0;
     border-radius: 4px;
@@ -120,11 +120,12 @@ form {
   }
 
   select {
+    width:740px;
+    padding: 10px 10px;
     appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23792ec9' d='M6 8.825L1.175 4 2.05 3.125 6 7.075 9.95 3.125 10.825 4z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 10px center;
-    padding-right: 30px;
   }
 
   div {

@@ -12,14 +12,12 @@
         placeholder="Комментарий"
         type="text"
     >
-
     <select v-model="editDepartment.organization_id" @change="filterDepartments">
       <option :value="null">Выберите организацию</option>
       <option v-for="org in organizations" :key="org.id" :value="org.id">
         {{ org.name }}
       </option>
     </select>
-
     <select v-model="editDepartment.parent_id">
       <option :value="null">Без родительского отдела</option>
       <option
@@ -29,7 +27,6 @@
         {{ dept.name }} ({{ getOrganizationName(dept.organization_id) }})
       </option>
     </select>
-
     <div class="">
       <button type="submit">Редактировать отдел</button>
       <button type="button" @click="cancel">Отмена</button>
@@ -56,7 +53,6 @@ export default {
       default: () => []
     },
   },
-
   data() {
     return {
       editDepartment: {
@@ -72,7 +68,6 @@ export default {
       updatingDepartmentId: null // Для отслеживания какой отдела показывать ошибку
     }
   },
-
   methods: {
     async getDepartments() {
       try {
@@ -83,36 +78,61 @@ export default {
         console.error('Ошибка при получении отделов:', error);
       }
     },
-
     getOrganizationName(orgId) {
       const org = this.organizations.find(o => o.id === orgId);
       return org ? org.name : 'Нет организации';
     },
-
     filterDepartments() {
       this.filteredDepartments = this.getAvailableParentDepartments();
       // Сброс parent_id при смене организации
       this.editDepartment.parent_id = null;
     },
-
     getAvailableParentDepartments() {
-      // Отделы без родительского отдела
-      const rootDepartments = this.departments.filter(d => d.parent_id === null);
+      // Исключаем текущий отдел и его дочерние отделы
+      const excludedIds = this.getChildDepartmentIds(this.editDepartment.id);
+      excludedIds.push(this.editDepartment.id); // Добавляем сам отдел в исключения
+
+      // Отделы без родительского отдела, исключая текущий и его дочерние
+      const availableDepartments = this.departments.filter(d =>
+          !excludedIds.includes(d.id)
+      );
 
       // Если выбрана организация, показываем только ее отделы
       if (this.editDepartment.organization_id) {
-        return rootDepartments.filter(d =>
+        return availableDepartments.filter(d =>
             d.organization_id === this.editDepartment.organization_id
         );
       }
-
-      return rootDepartments;
+      return availableDepartments;
     },
+    // Рекурсивно получаем все ID дочерних отделов
+    getChildDepartmentIds(parentId) {
+      const childIds = [];
+      const directChildren = this.departments.filter(d => d.parent_id === parentId);
 
+      directChildren.forEach(child => {
+        childIds.push(child.id);
+        // Рекурсивно добавляем ID дочерних отделов
+        const nestedChildIds = this.getChildDepartmentIds(child.id);
+        childIds.push(...nestedChildIds);
+      });
+
+      return childIds;
+    },
     async saveDepartment() {
       try {
         this.updateError = null; // Сбрасываем ошибку перед запросом
         this.updatingDepartmentId = this.editDepartment.id; // Запоминаем ID отдела
+
+        // Проверка на циклическую ссылку
+        if (this.editDepartment.id === this.editDepartment.parent_id) {
+          this.updateError = {
+            id: this.editDepartment.id,
+            message: 'Отдел не может быть родительским для самого себя'
+          };
+          return;
+        }
+
         const departmentData = {
           id: this.editDepartment.id,
           name: this.editDepartment.name,
@@ -141,12 +161,12 @@ export default {
       }
     }
   },
-
   mounted() {
     this.getDepartments();
   }
 };
 </script>
+
 
 <style lang="scss" scoped>
 .error-message {
