@@ -1,6 +1,7 @@
 const Position = require('../models/position');
 const ApiError = require('../error/ApiError');
 const historyService = require('./historyService');
+const History = require('../models/history');
 
 class PositionController {
     async createPosition(req, res, next) {
@@ -14,7 +15,7 @@ class PositionController {
                 'Должность',
                 position.id,
                 'create',
-                { name: { old: null, new: name } }, // old: null для создания
+                {name: {old: null, new: name}}, // old: null для создания
                 null // Пока нет авторизации
             );
             return res.json(position);
@@ -26,23 +27,25 @@ class PositionController {
 
     async getAllPositions(req, res, next) {
         try {
-            let { page, limit } = req.query;
+            let {page, limit} = req.query;
             page = page || 1;
             limit = limit || 10;
             let offset = page * limit - limit;
 
-            const { count, rows } = await Position.findAndCountAll({
+            const {count, rows} = await Position.findAndCountAll({
                 limit,
                 offset,
-                distinct: true
+                distinct: true,
+                order: [['id', 'ASC']],
             });
 
-            return res.json({ count, rows });
+            return res.json({count, rows});
         } catch (error) {
             console.log('Ошибка при получении должностей', error);
             return next(ApiError.internal(error.message));
         }
     }
+
     async updatePosition(req, res, next) {
         const {id} = req.params;
         const {name} = req.body;
@@ -62,7 +65,7 @@ class PositionController {
                 'Должность',
                 id,
                 'update',
-                { name: { old: oldName, new: name } }, // old: oldName, new: name
+                {name: {old: oldName, new: name}}, // old: oldName, new: name
                 null // Пока нет авторизации
             );
             return res.json(position);
@@ -71,24 +74,6 @@ class PositionController {
             return next(ApiError.internal(error.message));
         }
     }
-
-    // async updatePosition (id, name)  {
-    //     try {
-    //         const response = await $host.put(`api/position/${id}`, { name });
-    //         return { success: true, data: response.data };
-    //     } catch (error) {
-    //         if (error.response && error.response.data && error.response.data.errors) {
-    //             return {
-    //                 success: false,
-    //                 errors: error.response.data.errors
-    //             };
-    //         }
-    //         return {
-    //             success: false,
-    //             errors: [{ field: 'general', message: 'Произошла ошибка при обновлении должности' }]
-    //         };
-    //     }
-    // }
 
     async deletePosition(req, res, next) {
         const {id} = req.params;
@@ -106,7 +91,7 @@ class PositionController {
                 'Должность',
                 id,
                 'delete',
-                { name: {old: oldName, new: null} }, //При удалении новое значение null
+                {name: {old: oldName, new: null}}, //При удалении новое значение null
                 null // Пока нет авторизации
             );
 
@@ -116,15 +101,40 @@ class PositionController {
             return next(ApiError.internal(error.message));
         }
     }
+
     async getPositionHistory(req, res, next) {
-        const { id } = req.params;
-        const { page, limit } = req.query;
+        const {id} = req.params;
+        const {page, limit} = req.query;
         try {
-            const { count, rows } = await historyService.getHistoryForObject('Должность', id, page, limit);
-            return res.json({ count, rows });
+            const {count, rows} = await historyService.getHistoryForObject('Должность', id, page, limit);
+            return res.json({count, rows});
         } catch (error) {
             console.error("Ошибка при получении истории должности", error);
             return next(error); // Передаем ошибку дальше, централизованный обработчик её обработает
+        }
+    }
+
+    async getDeletedPositions(req, res, next) {
+        try {
+            let {page, limit} = req.query;
+            page = page || 1;
+            limit = limit || 10;
+            const offset = (page - 1) * limit;
+
+            const {count, rows} = await History.findAndCountAll({
+                limit,
+                offset,
+                distinct: true,
+                order: [['operation_date', 'DESC']],
+                where: {
+                    object_type: 'Должность',
+                    operation_type: 'delete'
+                },
+            });
+            return res.json({count, rows});
+        } catch (error) {
+            console.log('Ошибка при получении удаленных должностей', error);
+            return next(ApiError.internal(error.message));
         }
     }
 }

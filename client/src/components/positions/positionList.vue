@@ -1,17 +1,11 @@
 <template>
   <div class="positionList">
     <h3 class="positionList__title">Список должностей</h3>
-    <button @click="showDialog">
+    <button @click="showCreatePosition">
       Создать должность
     </button>
+    <button style="margin-left: 10px" @click="showDeletePosition">Просмотр удаленных должностей</button>
 
-    <MyModalWindow v-model:show="dialogVisible">
-      <PositionCreateForm
-          @create="createPosition"
-          :cancel="cancelCreate"
-          :error="createError"
-      />
-    </MyModalWindow>
 
     <div class="positionList__items">
       <PositionItems
@@ -24,15 +18,31 @@
       />
     </div>
   </div>
+  <!-- Модальное окно создания должности -->
+    <MyModalWindow v-model:show="dialogCreatePosition">
+      <PositionCreateForm
+          @create="createPosition"
+          :cancel="cancelDialog"
+          :error="createError"
+      />
+    </MyModalWindow>
+  
+<!-- Модальное окно просмотра удаленных должностей -->
+  <MyModalWindow v-model:show="dialogDeletePosition">
+    <PositionDeleteHistrory 
+    :cancel="cancelDialog"
+    />
+  </MyModalWindow>
 </template>
 
 <script>
 import PositionItems from "@/components/positions/positionItems.vue";
-import PositionCreateForm from "@/components/positions/positionCreateForm.vue";
+import PositionCreateForm from "@/components/positions/positionModal/positionCreateForm.vue";
 import MyModalWindow from "@/components/UI/MyModalWindow.vue";
+import PositionDeleteHistrory from "@/components/positions/positionModal/positionDeleteHistrory.vue";
 
 export default {
-  components: {MyModalWindow, PositionCreateForm, PositionItems},
+  components: {PositionDeleteHistrory, MyModalWindow, PositionCreateForm, PositionItems},
   props: {
     positions: {
       type: Array,
@@ -49,16 +59,21 @@ export default {
   },
   data() {
     return {
-      dialogVisible: false
+      dialogCreatePosition: false,
+      dialogDeletePosition: false
     }
   },
   methods: {
-    showDialog() {
-      this.dialogVisible = true;
+    showCreatePosition() {
+      this.dialogCreatePosition = true;
+    },
+    showDeletePosition() {
+      this.dialogDeletePosition = true;
     },
 
     createPosition(position, callback) {
       this.$emit('create', position)
+      this.dialogCreatePosition = false;
     },
 
     updatePosition(position) {
@@ -69,8 +84,9 @@ export default {
       this.$emit('delete', id);
     },
 
-    cancelCreate() {
-      this.dialogVisible = false;
+    cancelDialog() {
+      this.dialogCreatePosition = false;
+      this.dialogDeletePosition = false;
     }
   },
 }

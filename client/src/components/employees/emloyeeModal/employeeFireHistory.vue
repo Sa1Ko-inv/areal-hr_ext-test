@@ -3,15 +3,8 @@
     <h4>История увольнений</h4>
     <button class="close-btn" @click="cancel" title="Закрыть">×</button>
 
-    <div v-if="isLoading" class="loading-indicator">
-      Загрузка...
-    </div>
 
-    <div v-else-if="error" class="error-message">
-      Ошибка загрузки: {{ error }}
-    </div>
-
-    <div v-else-if="firedHistory.length === 0" class="no-data">
+    <div v-if="firedHistory.length === 0" class="no-data">
       Нет записей об уволенных сотрудниках.
     </div>
 

@@ -25,12 +25,27 @@
       <button @click="deletePositions" class="position__button position__button--delete">
         Удалить
       </button>
+      <button @click="showHistoryDialog" class="position__button position__button--edit">
+        История
+      </button>
     </div>
   </div>
+
+<!-- Модальное окно просмотра истории должности -->
+  <MyModalWindow v-model:show="dialogVisibleHistory">
+    <PositionWathHistory
+    :position="position"
+    :close="canselModal"
+    />
+  </MyModalWindow>
 </template>
 
 <script>
+import MyModalWindow from "@/components/UI/MyModalWindow.vue";
+import PositionWathHistory from "@/components/positions/positionModal/positionWathHistory.vue";
+
 export default {
+  components: {PositionWathHistory, MyModalWindow},
   props: {
     position: {
       type: Object,
@@ -45,6 +60,7 @@ export default {
     return {
       isEditing: false,
       editedName: this.position.name,
+      dialogVisibleHistory: false,
     }
   },
   methods: {
@@ -63,12 +79,27 @@ export default {
         id: this.position.id,
         name: this.editedName
       });
+      this.isEditing = false;
     },
     deletePositions() {
       if (confirm('Вы уверены, что хотите удалить эту должность?')) {
         this.$emit('delete', this.position.id);
       }
-    }
+    },
+
+  //   Методы истории
+  //   Открытие модального окна истории
+    showHistoryDialog() {
+      this.dialogVisibleHistory = true;
+    },
+    showDeleteHistory() {
+      this.dialogVisibleDeletePosition = true;
+    },
+  // Закрытие модальных окон
+    canselModal() {
+      this.dialogVisibleHistory = false;
+    },
+
   },
 }
 </script>

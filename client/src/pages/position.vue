@@ -11,7 +11,7 @@ export default {
       updateError: null, // Добавляем состояние для ошибки обновления
       updatingPositionId: null, // Для отслеживания какой должности показывать ошибку
       currentPage: 1,
-      pageSize: 5,
+      pageSize: 9,
       totalItems: 0
     }
   },
@@ -27,7 +27,7 @@ export default {
       }
     },
 
-    async createPosition(position, callback) {
+    async createPosition(position) {
       try {
         this.createError = null; // Сбрасываем ошибку перед запросом
         const response = await createPosition(position.name);
@@ -44,7 +44,7 @@ export default {
       }
     },
 
-    async updatePosition(updatedPosition, callback) {
+    async updatePosition(updatedPosition) {
       try {
         this.updateError = null;
         this.updatingPositionId = updatedPosition.id; // Запоминаем ID должности
@@ -104,12 +104,51 @@ export default {
       @update="updatePosition"
       @delete="deletePosition"
   />
-  <div>
-    <button :disabled="currentPage === 1" @click="changePage(currentPage - 1)">Предыдущая</button>
-    <span>Страница {{ currentPage }} из {{ totalPages }}</span>
-    <button :disabled="currentPage === totalPages" @click="changePage(currentPage + 1)">Следующая</button>
+  <!-- Пагинация -->
+  <div class="pagination" v-if="totalPages > 1">
+    <button
+        :disabled="currentPage === 1"
+        @click="changePage(currentPage - 1)"
+        class="pagination-button"
+    >
+      Предыдущая
+    </button>
+
+    <span class="pagination-info">Страница {{ currentPage }} из {{ totalPages }}</span>
+
+    <button
+        :disabled="currentPage === totalPages"
+        @click="changePage(currentPage + 1)"
+        class="pagination-button"
+    >
+      Следующая
+    </button>
   </div>
 </template>
 
 <style scoped>
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.pagination-button {
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  background-color: #f8f8f8;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.pagination-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  font-size: 14px;
+}
 </style>
