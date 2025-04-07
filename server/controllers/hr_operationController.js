@@ -343,17 +343,6 @@ class HROperationsController {
         }
     }
 
-    async getHROperationHistory(req, res, next) {
-        const {employee_id} = req.params; // Изменено на employee_id
-        const {page, limit} = req.query;
-        try {
-            const {count, rows} = await historyService.getHistoryForObject('Сотрудник', employee_id, page, limit); // Изменено на 'Сотрудник' и employee_id
-            return res.json({count, rows});
-        } catch (error) {
-            console.error("Ошибка при получении истории кадровой операции", error);
-            return next(error);
-        }
-    }
 
     // Получение HR информации о сотруднике
     async getEmployeeHRInfo(req, res, next) {

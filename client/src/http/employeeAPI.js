@@ -40,6 +40,7 @@ export const updateEmployees = async (employeeId, employeeData) => {
     return response.data;
 }
 
+// Принятие сотрудника на работу
 export const hireEmployee = async (data) => {
     const response = await $host.post('api/hr_operation/hire', data);
     return response.data;
@@ -65,7 +66,7 @@ export const fireEmployee = async (employeeId) => {
 
 // Получение истории сотрудника
 export const fetchEmployeeHistory = async (employeeId,page = 1, limit = 10) => {
-    const response = await $host.get(`api/hr_operation/${employeeId}/history`, {
+    const response = await $host.get(`api/employee/${employeeId}/history`, {
         params: {
             page: page,
             limit: limit
@@ -73,7 +74,7 @@ export const fetchEmployeeHistory = async (employeeId,page = 1, limit = 10) => {
     });
     return response.data;
 }
-
+// Получить историю уволенных сотрудников
 export const fetchFiredHistory = async (page = 1, limit = 10) => {
     const response = await $host.get('api/hr_operation/fired-employees', {
         params: {

@@ -1189,10 +1189,10 @@ class EmployeeController {
     }
 
     async getEmployeeHistory(req, res, next) {
-        const { id } = req.params;
+        const { employee_id } = req.params;
         const { page, limit } = req.query;
         try {
-            const { count, rows } = await historyService.getHistoryForObject('Сотрудник', id, page, limit);
+            const { count, rows } = await historyService.getHistoryForObject('Сотрудник', employee_id, page, limit);
             return res.json({ count, rows });
         } catch (error) {
             console.error("Ошибка при получении истории сотрудника", error);

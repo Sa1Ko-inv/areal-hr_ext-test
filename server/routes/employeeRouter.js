@@ -11,7 +11,7 @@ router.post('/:id/files', employeeController.uploadEmployeeFiles);
 
 router.get('/', employeeController.getAllEmployees);
 router.get('/:id', employeeController.getOneEmployee);
-router.get('/:id/history', employeeController.getEmployeeHistory); // Получение истории для конкретной должности
+router.get('/:employee_id/history', employeeController.getEmployeeHistory); // Получение истории для конкретной сотрудника
 router.put('/:id', validate(employeeUpdateSchema), employeeController.updateEmployee);
 router.delete('/:id', employeeController.deleteEmployee);
 
