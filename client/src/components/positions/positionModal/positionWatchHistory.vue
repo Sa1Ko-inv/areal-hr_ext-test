@@ -13,11 +13,11 @@
       <div v-for="item in history" :key="item.id" class="history-item">
         <div class="operation-type">
           <p><strong>Тип объекта:</strong> {{item.object_type}}</p>
-          <span :class="item.operation_type">{{ item.operation_type }}</span>
+          <p><strong>Изменения: </strong>{{formatDate(item.operation_date)}}</p>
+          <span :class="item.operation_type">{{ getOperationName(item.operation_type) }}</span>
         </div>
 
         <div class="changes">
-          <strong>Изменения</strong>
 
           <ul>
             <li v-for="field in item.changed_fields" class="change-field">
@@ -100,7 +100,24 @@ export default {
       this.currentPage = page;
       this.getHistoryPosition();
     },
-
+    formatDate(dateString) {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      return date.toLocaleString('ru-RU', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    },
+    getOperationName(type) {
+      const operations = {
+        'create': 'Создание',
+        'update': 'Обновление',
+      };
+      return operations[type] || type;
+    },
   },
 
   mounted() {
@@ -207,8 +224,8 @@ export default {
     }
 
     &.update {
-      background-color: #e3f2fd;
-      color: #1565c0;
+      background-color: #f2e8ff;
+      color: #792ec9;
     }
 
     &.delete {

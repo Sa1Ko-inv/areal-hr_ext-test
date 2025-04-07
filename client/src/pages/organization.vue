@@ -8,10 +8,25 @@
       @delete="deleteOrganization"
   />
 
-  <div>
-    <button :disabled="currentPage === 1" @click="changePage(currentPage - 1)">Предыдущая</button>
-    <span>Страница {{ currentPage }} из {{ totalPages }}</span>
-    <button :disabled="currentPage === totalPages" @click="changePage(currentPage + 1)">Следующая</button>
+  <!-- Пагинация -->
+  <div class="pagination" v-if="totalPages > 1">
+    <button
+        :disabled="currentPage === 1"
+        @click="changePage(currentPage - 1)"
+        class="pagination-button"
+    >
+      Предыдущая
+    </button>
+
+    <span class="pagination-info">Страница {{ currentPage }} из {{ totalPages }}</span>
+
+    <button
+        :disabled="currentPage === totalPages"
+        @click="changePage(currentPage + 1)"
+        class="pagination-button"
+    >
+      Следующая
+    </button>
   </div>
 </template>
 
@@ -119,3 +134,30 @@ export default {
 }
 
 </script>
+
+<style scoped>
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.pagination-button {
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  background-color: #f8f8f8;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.pagination-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  font-size: 14px;
+}
+</style>

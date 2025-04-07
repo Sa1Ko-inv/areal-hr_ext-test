@@ -26,22 +26,38 @@
       </table>
     </div>
 
-  </div>
+    <!-- Пагинация -->
+    <div class="pagination" v-if="totalPages > 1">
+      <button
+          :disabled="currentPage === 1"
+          @click="changePage(currentPage - 1)"
+          class="pagination-button"
+      >
+        Предыдущая
+      </button>
 
-  <button :disabled="currentPage === 1" @click="changePage(currentPage - 1)">Предыдущая</button>
-  <span>Страница {{ currentPage }} из {{ totalPages }}</span>
-  <button :disabled="currentPage === totalPages" @click="changePage(currentPage + 1)">Следующая</button>
+      <span class="pagination-info">Страница {{ currentPage }} из {{ totalPages }}</span>
+
+      <button
+          :disabled="currentPage === totalPages"
+          @click="changePage(currentPage + 1)"
+          class="pagination-button"
+      >
+        Следующая
+      </button>
+    </div>
+  </div>
 </template>
 
 <script>
-import {fethcDeletedPositions} from "@/http/positionAPI.js";
+import {fetchDeletedOrganizations} from "@/http/organizationAPI.js";
 
 export default {
   props: {
     cancel: {
       type: Function,
       required: true
-    }
+    },
   },
   data() {
     return {
@@ -51,15 +67,14 @@ export default {
       totalItems: 0
     }
   },
-
   methods: {
-    async getDeletePosition() {
+    async getDeleteOrganization() {
       try {
-        const response = await fethcDeletedPositions(this.currentPage, this.pageSize);
+        const response = await fetchDeletedOrganizations(this.currentPage, this.pageSize);
         this.deleteHistory = response.rows;
         this.totalItems = response.count;
       } catch (error) {
-        console.error('Ошибка при получении истории увольнений:', error);
+        console.error("Ошибка при загрузке истории удаления организаций:", error);
       }
     },
     formatDate(dateString) {
@@ -69,17 +84,17 @@ export default {
     },
     changePage(page) {
       this.currentPage = page;
-      this.getDeletePosition();
+      this.getDeleteOrganization();
     }
   },
   mounted() {
-    this.getDeletePosition();
+    this.getDeleteOrganization();
   },
   computed: {
     totalPages() {
       return Math.ceil(this.totalItems / this.pageSize);
     }
-  }
+  },
 }
 </script>
 
@@ -177,5 +192,29 @@ span {
   margin: 0 10px;
   font-size: 14px;
   color: #666;
+}
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.pagination-button {
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  background-color: #f8f8f8;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.pagination-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  font-size: 14px;
 }
 </style>

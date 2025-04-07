@@ -7,13 +7,18 @@
       >
         <div class="organization__info">
           <div class="organization__name"><strong>Организация:</strong> {{ organization.name }}</div>
-          <div class="organization__comment" v-if="organization.comment"><strong>Комментарий:</strong> {{ organization.comment }}</div>
+          <div class="organization__comment" v-if="organization.comment"><strong>Комментарий:</strong>
+            {{ organization.comment }}
+          </div>
         </div>
       </router-link>
 
       <div class="organization__btn">
         <button @click="startEdit" class="organization__button organization__button--edit">
           Редактировать
+        </button>
+        <button @click="showHistoryDialog" class="organization__button organization__button--edit">
+          История
         </button>
         <button @click="deleteOrganization" class="organization__button organization__button--delete">
           Удалить
@@ -35,10 +40,23 @@
       </div>
     </div>
   </div>
+
+  <!-- Модальное окно просмотра истории организации -->
+  <MyModalWindow v-model:show="dialogVisibleHistory">
+    <OrganizationWatchHistory
+        :organization="organization"
+        :cancel="cancelModal"
+    />
+  </MyModalWindow>
+
 </template>
 
 <script>
+import OrganizationWatchHistory from "@/components/organizations/organizationModal/organizationWatchHistory.vue";
+import MyModalWindow from "@/components/UI/MyModalWindow.vue";
+
 export default {
+  components: {MyModalWindow, OrganizationWatchHistory},
   props: {
     organization: {
       type: Object,
@@ -53,7 +71,9 @@ export default {
     return {
       isEditing: false,
       editedName: this.organization.name,
-      editedComment: this.organization.comment || ''
+      editedComment: this.organization.comment || '',
+      dialogVisibleHistory: false,
+      dialogVisibleDelete: false
     }
   },
   methods: {
@@ -71,11 +91,23 @@ export default {
         name: this.editedName,
         comment: this.editedComment
       });
-      // this.isEditing = false;
+      this.isEditing = false;
     },
     deleteOrganization() {
       this.$emit('delete', this.organization.id);
+    },
+
+    // просмотр историй
+    showHistoryDialog() {
+      this.dialogVisibleHistory = true;
+    },
+    showDeleteOrganization() {
+      this.dialogVisibleDelete = true;
+    },
+    cancelModal() {
+      this.dialogVisibleHistory = false;
     }
+
   }
 }
 </script>
@@ -85,6 +117,7 @@ export default {
   text-decoration: none;
   color: inherit;
 }
+
 .organization {
   border: 2px solid #792ec9;
   border-radius: 8px;
@@ -114,6 +147,7 @@ export default {
 
   &__name, &__comment {
     padding: 5px 0;
+
     strong {
       color: #792ec9;
     }

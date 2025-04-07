@@ -33,7 +33,7 @@
 
 <!-- Модальное окно просмотра истории должности -->
   <MyModalWindow v-model:show="dialogVisibleHistory">
-    <PositionWathHistory
+    <PositionWatchHistory
     :position="position"
     :close="canselModal"
     />
@@ -42,10 +42,10 @@
 
 <script>
 import MyModalWindow from "@/components/UI/MyModalWindow.vue";
-import PositionWathHistory from "@/components/positions/positionModal/positionWathHistory.vue";
+import PositionWatchHistory from "@/components/positions/positionModal/positionWatchHistory.vue";
 
 export default {
-  components: {PositionWathHistory, MyModalWindow},
+  components: {PositionWatchHistory, MyModalWindow},
   props: {
     position: {
       type: Object,

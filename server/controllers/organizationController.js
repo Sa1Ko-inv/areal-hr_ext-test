@@ -1,8 +1,9 @@
 const Organization = require('../models/organization')
-// const {department} = require('../models/department')
+const ApiError = require('../error/ApiError');
 const Department = require("../models/department");
 const sequelize = require('../db');
 const historyService = require('./historyService');
+const History = require("../models/history");
 
 
 class OrganizationController {
@@ -36,7 +37,8 @@ class OrganizationController {
             const {count, rows} = await Organization.findAndCountAll({
                 limit,
                 offset,
-                distinct: true
+                distinct: true,
+                order: [['id', 'ASC']],
             })
             return res.json({count, rows});
         } catch (error) {
@@ -199,6 +201,30 @@ class OrganizationController {
         } catch (error) {
             console.error('Ошибка при получении истории организации:', error);
             return next(error)
+        }
+    }
+
+    async getDeletedOrganizations(req, res, next) {
+        try {
+            let {page, limit} = req.query;
+            page = page || 1;
+            limit = limit || 10;
+            let offset = (page - 1) * limit;
+
+            const {count, rows} = await History.findAndCountAll({
+                limit,
+                offset,
+                distinct: true,
+                order: [['operation_date', 'DESC']],
+                where: {
+                    object_type: 'Организация',
+                    operation_type: 'delete'
+                },
+            });
+            return res.json({count, rows});
+        } catch (error) {
+            console.error('Ошибка при получении удаленных организаций:', error);
+            return next(ApiError.internal(error.message));
         }
     }
 }

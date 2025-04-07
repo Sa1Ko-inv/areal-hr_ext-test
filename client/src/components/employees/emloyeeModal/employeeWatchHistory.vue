@@ -353,13 +353,13 @@ export default {
       }
 
       .operation-create {
-        background-color: #e3f7e3;
-        color: #2e7d32;
+        background-color: #f2e8ff;
+        color: #792ec9
       }
 
       .operation-update {
-        background-color: #e3f2fd;
-        color: #1565c0;
+        background-color: #f2e8ff;
+        color: #792ec9;
       }
 
       .operation-delete {
@@ -368,8 +368,8 @@ export default {
       }
 
       .operation-hire {
-        background-color: #e8f5e9;
-        color: #2e7d32;
+        background-color: #f2e8ff;
+        color: #792ec9;
       }
 
       .operation-fire {
