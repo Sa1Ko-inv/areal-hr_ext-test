@@ -6,7 +6,7 @@
         <div class="section__content">
           <div class="info-item">
             <strong class="info-item__key">ФИО:</strong>
-            <span class="info-item__value">{{ employee.last_name }} {{ employee.first_name }} {{
+            <span class="info-item__value">{{employee.id}} {{ employee.last_name }} {{ employee.first_name }} {{
                 employee.middle_name
               }}</span>
           </div>
@@ -181,7 +181,7 @@
           :employee="employee"
           :cancel="cancelEdit"
           @employee-updated="handleEmployeeUpdated"
-          @update-error="handleUpdateError"
+
       />
     </MyModalWindow>
   </div>
@@ -214,10 +214,6 @@ export default {
       type: Object,
       required: true,
     },
-    error: {
-      type: String,
-      default: null
-    }
   },
   data() {
     return {
@@ -318,14 +314,9 @@ export default {
     handleEmployeeUpdated(updatedEmployee) {
       // Обновляем локальные данные
       Object.assign(this.employee, updatedEmployee);
-      // Прокидываем событие выше
-      this.$emit('update', updatedEmployee);
+      // Прокидываем событие выше с полным обновленным объектом
+      this.$emit('update', {...this.employee});
       this.dialogVisibleEdit = false;
-    },
-
-    // Обработка ошибки обновления
-    handleUpdateError(error) {
-      this.$emit('update-error', error);
     }
   },
   mounted() {

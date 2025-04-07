@@ -1,10 +1,11 @@
 import {$host} from "@/http/index.js";
 
-export const fetchEmployees = async (page = 1, limit = 10) => {
+export const fetchEmployees = async (page = 1, limit = 10, sortOrder = 'desc') => {
     const response = await $host.get('api/employee/', {
         params: {
             page: page,
-            limit: limit
+            limit: limit,
+            sortOrder,
         }
     });
     return response;

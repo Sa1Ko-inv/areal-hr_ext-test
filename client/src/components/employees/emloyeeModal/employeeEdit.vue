@@ -124,8 +124,8 @@ export default {
         const changedData = this.getChangedData(this.originalEmployee, this.editedEmployee);
         if (Object.keys(changedData).length > 1) {
           await updateEmployees(this.employee.id, changedData);
-          // Передаем обновленные данные вместо только ID
-          this.$emit('employee-updated', this.editedEmployee);
+          // Передаем полный обновленный объект
+          this.$emit('employee-updated', {...this.editedEmployee});
         }
         this.cancel();
       } catch (error) {
@@ -143,6 +143,7 @@ export default {
         console.error("Ошибка при обновлении сотрудника:", error);
       }
     }
+
   },
   created() {
     // Создаем глубокие копии объекта сотрудника при создании компонента

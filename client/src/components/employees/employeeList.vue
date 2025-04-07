@@ -8,9 +8,7 @@
           v-for="employee in employees"
           :key="employee.id"
           :employee="employee"
-          :error="localUpdateError?.id === employee.id ? localUpdateError.message : null"
           @update="updateEmployee"
-          @update-error="handleUpdateError"
       />
     </div>
   </div>
@@ -50,22 +48,11 @@ export default {
       type: Array,
       required: true
     },
-    updateError: {
-      type: Object,
-      default: null
-    }
   },
   data() {
     return {
       dialogFireHistory: false,
       dialogCreateEmployee: false,
-      localUpdateError: this.updateError // Создаем локальную копию для изменения
-    }
-  },
-  watch: {
-    // Следим за изменениями входного параметра updateError
-    updateError(newVal) {
-      this.localUpdateError = newVal;
     }
   },
   methods: {
@@ -86,17 +73,8 @@ export default {
     // Обработчик обновления сотрудника
     updateEmployee(updatedEmployee) {
       // Обновляем локальный список сотрудников
-      const updatedEmployees = this.employees.map(emp =>
-          emp.id === updatedEmployee.id ? updatedEmployee : emp
-      );
       // Прокидываем событие в родительский компонент
-      this.$emit('update-employees', updatedEmployees);
-    },
-    // Обработчик ошибки обновления
-    handleUpdateError(error) {
-      this.localUpdateError = error;
-      // Уведомляем родительский компонент об ошибке
-      this.$emit('update-error', error);
+      this.$emit('update-employees', updatedEmployee);
     },
 
   }

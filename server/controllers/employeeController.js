@@ -717,6 +717,7 @@ class EmployeeController {
                 limit,
                 offset,
                 distinct: true,
+                order: [['id', 'DESC']], // Сортировка по id
                 include: [
                     { model: Passport },
                     { model: Address },

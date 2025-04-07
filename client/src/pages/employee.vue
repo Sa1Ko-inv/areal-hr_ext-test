@@ -1,3 +1,4 @@
+<!--TODO: доделать выводи истории для отделов, организаций, должностей и сделать сортировку-->
 <script>
 import EmployeeList from "@/components/employees/employeeList.vue";
 import {fetchEmployees} from "@/http/employeeAPI.js";
@@ -16,7 +17,7 @@ export default {
   methods: {
     async getEmployees() {
       try {
-        const response = await fetchEmployees(this.currentPage, this.pageSize);
+        const response = await fetchEmployees(this.currentPage, this.pageSize, 'desc');
         // Проверяем, что ответ имеет правильную структуру
         if (response && response.data) {
           this.employees = response.data.rows || [];
@@ -32,20 +33,20 @@ export default {
       this.currentPage = page;
       this.getEmployees();
     },
-    // Добавляем метод для обработки события создания сотрудника
+    // Метод для обработки события создания сотрудника
     handleEmployeeCreated() {
       // После создания сотрудника переходим на первую страницу и обновляем список
       this.currentPage = 1;
       this.getEmployees();
     },
-    // Обработчик обновления ошибки
-    handleUpdateError(error) {
-      this.updateError = error;
-    },
     // Обработчик обновления списка сотрудников
-    handleUpdateEmployees(updatedEmployees) {
-      this.employees = updatedEmployees;
-    },
+    handleUpdateEmployees(updatedEmployee) {
+      // Обновляем только конкретного сотрудника, сохраняя порядок
+      this.employees = this.employees.map(emp =>
+          emp.id === updatedEmployee.id ? updatedEmployee : emp
+      );
+    }
+
   },
   mounted() {
     this.getEmployees();
@@ -64,7 +65,6 @@ export default {
         :employees="employees"
         :updateError="updateError"
         @created="handleEmployeeCreated"
-        @update-error="handleUpdateError"
         @update-employees="handleUpdateEmployees"
     />
 
