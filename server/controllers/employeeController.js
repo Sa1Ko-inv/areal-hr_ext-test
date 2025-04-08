@@ -148,22 +148,22 @@ class EmployeeController {
 
     async getAllEmployees(req, res, next) {
         try {
-            let { page, limit } = req.query;
+            let { page, limit, orderBy = 'id', sortOrder = 'DESC' } = req.query; // Получение параметров сортировки
             page = page || 1;
             limit = limit || 10;
             let offset = page * limit - limit;
 
             const { count, rows } = await Employees.findAndCountAll({
-                limit,
-                offset,
+                limit: parseInt(limit),
+                offset: parseInt(offset),
                 distinct: true,
-                order: [['id', 'DESC']], // Сортировка по id
+                order: [[orderBy, sortOrder.toUpperCase()]], // Сортировка по указанному полю и направлению
                 include: [
                     { model: Passport },
                     { model: Address },
                     { model: Files }
                 ]
-            })
+            });
             return res.json({ count, rows });
         } catch (error) {
             console.log('Ошибка при получении всех сотрудников', error);

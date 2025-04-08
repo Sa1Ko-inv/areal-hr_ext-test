@@ -1,32 +1,34 @@
-<!--TODO: доделать выводи истории для отделов, организаций, должностей и сделать сортировку-->
+<!--TODO: сделать сортировку-->
 <script>
 import EmployeeList from "@/components/employees/employeeList.vue";
 import {fetchEmployees} from "@/http/employeeAPI.js";
+import MySelect from "@/components/UI/MySelect.vue";
 
 export default {
-  components: {EmployeeList},
+  components: {MySelect, EmployeeList},
   data() {
     return {
       employees: [],
       currentPage: 1,
       pageSize: 5, // Увеличил размер страницы для удобства
       totalItems: 0,
-      updateError: null // Добавляем для хранения ошибок обновления
+      updateError: null, // Добавляем для хранения ошибок обновления
+      selectedSort: "id",
+      sortOrder: "asc", // Направление сортировки
     }
   },
   methods: {
     async getEmployees() {
       try {
-        const response = await fetchEmployees(this.currentPage, this.pageSize, 'desc');
-        // Проверяем, что ответ имеет правильную структуру
+        const response = await fetchEmployees(this.currentPage, this.pageSize, this.sortOrder || 'asc', this.selectedSort || 'id');
         if (response && response.data) {
           this.employees = response.data.rows || [];
           this.totalItems = response.data.count || 0;
         } else {
-          console.error('Некорректный формат ответа:', response);
+          console.error("Некорректный формат ответа:", response);
         }
       } catch (error) {
-        console.error('Ошибка при получении сотрудников:', error);
+        console.error("Ошибка при получении сотрудников:", error);
       }
     },
     changePage(page) {
@@ -45,8 +47,13 @@ export default {
       this.employees = this.employees.map(emp =>
           emp.id === updatedEmployee.id ? updatedEmployee : emp
       );
-    }
-
+    },
+    handleSortChange({ selectedSort, sortOrder }) {
+      // Обновляем параметры сортировки и загружаем данные
+      this.selectedSort = selectedSort;
+      this.sortOrder = sortOrder;
+      this.getEmployees();
+    },
   },
   mounted() {
     this.getEmployees();
@@ -55,17 +62,28 @@ export default {
     totalPages() {
       return Math.ceil(this.totalItems / this.pageSize) || 1; // Добавляем защиту от деления на ноль
     }
-  }
+  },
+
+  watch: {
+    selectedSort(newValue) {
+      this.currentPage = 1; // Возвращаемся на первую страницу при изменении сортировки
+      this.getEmployees(); // Обновляем список сотрудников с новой сортировкой
+    },
+  },
 }
 </script>
 
 <template>
   <div class="">
+
     <EmployeeList
         :employees="employees"
         :updateError="updateError"
+        :selectedSort="selectedSort"
+        :sortOrder="sortOrder"
         @created="handleEmployeeCreated"
         @update-employees="handleUpdateEmployees"
+        @sort-change="handleSortChange"
     />
 
     <!-- Пагинация -->

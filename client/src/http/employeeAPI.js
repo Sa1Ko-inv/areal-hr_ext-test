@@ -1,15 +1,16 @@
 import {$host} from "@/http/index.js";
 
-export const fetchEmployees = async (page = 1, limit = 10, sortOrder = 'desc') => {
+export const fetchEmployees = async (page = 1, limit = 10, sortOrder = 'desc', orderBy = 'last_name') => {
     const response = await $host.get('api/employee/', {
         params: {
             page: page,
             limit: limit,
             sortOrder,
+            orderBy, // Передача поля для сортировки
         }
     });
     return response;
-}
+};
 
 // Создание сотрудника
 export const createEmployees = async (employeeData) => {

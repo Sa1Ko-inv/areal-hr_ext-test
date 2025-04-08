@@ -223,7 +223,7 @@ export default {
       dialogVisibleSalary: false,
       dialogVisibleHistory: false,
       dialogVisibleEdit: false,
-      hrInfo: null, // Инициализировано как null для лучшей обработки состояния загрузки
+      hrInfo: [], // Инициализировано как null для лучшей обработки состояния загрузки
     };
   },
   methods: {
