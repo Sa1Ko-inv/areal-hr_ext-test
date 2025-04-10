@@ -121,7 +121,7 @@ input {
   }
 
   &::placeholder {
-    color: lighten($text-color-secondary, 20%);
+    color: $text-color-secondary;
   }
 }
 
