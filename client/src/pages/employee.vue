@@ -1,4 +1,4 @@
-<!--TODO: сделать сортировку-->
+<!--TODO: сортировка по hr_operation показано в недоумении-->
 <script>
 import EmployeeList from "@/components/employees/employeeList.vue";
 import {fetchEmployees} from "@/http/employeeAPI.js";
@@ -13,8 +13,8 @@ export default {
       pageSize: 5, // Увеличил размер страницы для удобства
       totalItems: 0,
       updateError: null, // Добавляем для хранения ошибок обновления
-      selectedSort: "id",
-      sortOrder: "asc", // Направление сортировки
+      selectedSort: "",
+      sortOrder: "", // Направление сортировки
     }
   },
   methods: {

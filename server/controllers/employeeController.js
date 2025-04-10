@@ -6,7 +6,9 @@ const path = require('path');
 const sequelize = require('../db');
 const fs = require('fs');
 const uuid = require('uuid');
-const historyService = require('./historyService'); // Импортируем historyService
+const historyService = require('./historyService');
+const HR_Operation = require("../models/hr_operation");
+const Department = require("../models/department"); // Импортируем historyService
 
 //Топ версия
 class EmployeeController {
@@ -18,7 +20,7 @@ class EmployeeController {
             // Проверяем, существует ли сотрудник
             const employee = await Employees.findByPk(employeeId);
             if (!employee) {
-                return res.status(404).json({ error: 'Сотрудник не найден' });
+                return res.status(404).json({error: 'Сотрудник не найден'});
             }
 
             // Обрабатываем загрузку файлов
@@ -63,7 +65,7 @@ class EmployeeController {
                 employeeId,
                 'update',
                 {
-                    files: { old: null, new: uploadedFiles.map(f => f.name) }
+                    files: {old: null, new: uploadedFiles.map(f => f.name)}
                 },
                 null // Пока нет авторизации
             );
@@ -74,7 +76,7 @@ class EmployeeController {
             });
         } catch (error) {
             console.log('Ошибка при загрузке файлов', error);
-            return res.status(500).json({ error: 'Ошибка сервера' });
+            return res.status(500).json({error: 'Ошибка сервера'});
         }
     }
 
@@ -115,11 +117,11 @@ class EmployeeController {
 
             // Получаем созданного сотрудника со всеми связанными данными
             const createdEmployee = await Employees.findOne({
-                where: { id: employee.id },
+                where: {id: employee.id},
                 include: [
-                    { model: Passport },
-                    { model: Address },
-                    { model: Files }
+                    {model: Passport},
+                    {model: Address},
+                    {model: Files}
                 ]
             });
 
@@ -129,12 +131,12 @@ class EmployeeController {
                 employee.id,
                 'create',
                 {
-                    last_name: { old: null, new: last_name },
-                    first_name: { old: null, new: first_name },
-                    middle_name: { old: null, new: middle_name },
-                    birth_date: { old: null, new: birth_date },
-                    passport: passport ? { old: null, new: passport } : { old: null, new: null },
-                    address: address ? { old: null, new: address } : { old: null, new: null }
+                    last_name: {old: null, new: last_name},
+                    first_name: {old: null, new: first_name},
+                    middle_name: {old: null, new: middle_name},
+                    birth_date: {old: null, new: birth_date},
+                    passport: passport ? {old: null, new: passport} : {old: null, new: null},
+                    address: address ? {old: null, new: address} : {old: null, new: null}
                 },
                 null // Пока нет авторизации
             );
@@ -142,72 +144,72 @@ class EmployeeController {
             return res.status(201).json(createdEmployee);
         } catch (error) {
             console.log('Ошибка при создании сотрудника', error);
-            return res.status(500).json({ error: 'Ошибка сервера' });
+            return res.status(500).json({error: 'Ошибка сервера'});
         }
     }
 
     async getAllEmployees(req, res, next) {
         try {
-            let { page, limit, orderBy = 'id', sortOrder = 'DESC' } = req.query; // Получение параметров сортировки
+            let {page, limit} = req.query;
             page = page || 1;
             limit = limit || 10;
             let offset = page * limit - limit;
 
-            const { count, rows } = await Employees.findAndCountAll({
-                limit: parseInt(limit),
-                offset: parseInt(offset),
+            const {count, rows} = await Employees.findAndCountAll({
+                limit,
+                offset,
                 distinct: true,
-                order: [[orderBy, sortOrder.toUpperCase()]], // Сортировка по указанному полю и направлению
+                order: [['last_name', 'ASC']],
                 include: [
-                    { model: Passport },
-                    { model: Address },
-                    { model: Files }
+                    {model: Passport},
+                    {model: Address},
+                    {model: Files},
                 ]
             });
-            return res.json({ count, rows });
+            return res.json({count, rows});
         } catch (error) {
             console.log('Ошибка при получении всех сотрудников', error);
-            return res.status(500).json({ error: 'Ошибка сервера' });
+            return res.status(500).json({error: 'Ошибка сервера'});
         }
     }
 
     async getOneEmployee(req, res, next) {
-        const { id } = req.params;
+        const {id} = req.params;
         try {
             const employee = await Employees.findOne({
-                where: { id },
+                where: {id},
                 include: [
-                    { model: Passport },
-                    { model: Address },
-                    { model: Files }
+                    {model: Passport},
+                    {model: Address},
+                    {model: Files}
                 ]
             });
 
             if (!employee) {
-                return res.status(404).json({ error: 'Сотрудник не найден' });
+                return res.status(404).json({error: 'Сотрудник не найден'});
             }
 
             return res.json(employee);
         } catch (error) {
             console.log('Ошибка при получении сотрудника', error);
-            return res.status(500).json({ error: 'Ошибка сервера' });
+            return res.status(500).json({error: 'Ошибка сервера'});
         }
     }
 
     async updateEmployee(req, res, next) {
-        const { id } = req.params;
+        const {id} = req.params;
         try {
             const employee = await Employees.findOne({
-                where: { id },
+                where: {id},
                 include: [
-                    { model: Passport },
-                    { model: Address },
-                    { model: Files }
+                    {model: Passport},
+                    {model: Address},
+                    {model: Files}
                 ]
             });
 
             if (!employee) {
-                return res.status(404).json({ error: 'Сотрудник не найден' });
+                return res.status(404).json({error: 'Сотрудник не найден'});
             }
 
             // Сохраняем старые значения для истории
@@ -215,12 +217,12 @@ class EmployeeController {
             const oldFirstName = employee.first_name;
             const oldMiddleName = employee.middle_name;
             const oldBirthDate = employee.birth_date;
-            const oldPassport = employee.passport ? employee.passport.get({ plain: true }) : null; // Получаем все данные паспорта
-            const oldAddress = employee.address ? { ...employee.address.dataValues } : null; // Получаем все данные адреса
-            const oldFiles = employee.files.map(f => ({ name: f.name, file_url: f.file_url })); // Сохраняем URL
+            const oldPassport = employee.passport ? employee.passport.get({plain: true}) : null; // Получаем все данные паспорта
+            const oldAddress = employee.address ? {...employee.address.dataValues} : null; // Получаем все данные адреса
+            const oldFiles = employee.files.map(f => ({name: f.name, file_url: f.file_url})); // Сохраняем URL
 
             // Обновляем данные сотрудника
-            const { last_name, first_name, middle_name, birth_date, passport, address } = req.body;
+            const {last_name, first_name, middle_name, birth_date, passport, address} = req.body;
 
             await employee.update({
                 last_name: last_name || employee.last_name,
@@ -233,13 +235,13 @@ class EmployeeController {
             let updatedPassport = null;
             if (passport && employee.passport) {
                 await employee.passport.update(passport);
-                updatedPassport = employee.passport.get({ plain: true });
+                updatedPassport = employee.passport.get({plain: true});
             } else if (passport) {
                 const newPassport = await Passport.create({
                     ...passport,
                     employee_id: employee.id
                 });
-                updatedPassport = { ...newPassport.dataValues };
+                updatedPassport = {...newPassport.dataValues};
             } else {
                 updatedPassport = oldPassport;
             }
@@ -248,13 +250,13 @@ class EmployeeController {
             let updatedAddress = null;
             if (address && employee.address) {
                 await employee.address.update(address);
-                updatedAddress = { ...employee.address.dataValues };
+                updatedAddress = {...employee.address.dataValues};
             } else if (address) {
                 const newAddress = await Address.create({
                     ...address,
                     employee_id: employee.id
                 });
-                updatedAddress = { ...newAddress.dataValues };
+                updatedAddress = {...newAddress.dataValues};
             } else {
                 updatedAddress = oldAddress;
             }
@@ -287,28 +289,28 @@ class EmployeeController {
                     uploadedFiles.push(fileRecord);
                 }
             }
-            const newFiles = uploadedFiles.map(f => ({ name: f.name, file_url: f.file_url }));
+            const newFiles = uploadedFiles.map(f => ({name: f.name, file_url: f.file_url}));
             // Получаем обновленного сотрудника
             const updatedEmployee = await Employees.findOne({
-                where: { id },
+                where: {id},
                 include: [
-                    { model: Passport },
-                    { model: Address },
-                    { model: Files }
+                    {model: Passport},
+                    {model: Address},
+                    {model: Files}
                 ]
             });
 
             // Подготавливаем данные для истории
             const historyData = {
-                last_name: { old: oldLastName, new: last_name || oldLastName },
-                first_name: { old: oldFirstName, new: first_name || oldFirstName },
-                middle_name: { old: oldMiddleName, new: middle_name || oldMiddleName },
-                birth_date: { old: oldBirthDate, new: birth_date || oldBirthDate },
-                passport: { old: oldPassport, new: updatedPassport }, // Сравниваем старые и новые данные паспорта
-                address: { old: oldAddress, new: updatedAddress },   // Сравниваем старые и новые данные адреса
+                last_name: {old: oldLastName, new: last_name || oldLastName},
+                first_name: {old: oldFirstName, new: first_name || oldFirstName},
+                middle_name: {old: oldMiddleName, new: middle_name || oldMiddleName},
+                birth_date: {old: oldBirthDate, new: birth_date || oldBirthDate},
+                passport: {old: oldPassport, new: updatedPassport}, // Сравниваем старые и новые данные паспорта
+                address: {old: oldAddress, new: updatedAddress},   // Сравниваем старые и новые данные адреса
                 files: {
                     old: oldFiles,
-                    new: updatedEmployee.files.map(f => ({ name: f.name, file_url: f.file_url }))
+                    new: updatedEmployee.files.map(f => ({name: f.name, file_url: f.file_url}))
                 }
             };
 
@@ -319,17 +321,14 @@ class EmployeeController {
                     const oldFilesName = historyData[key].old.map(f => f.name);
                     const newFilesName = historyData[key].new.map(f => f.name);
                     if (JSON.stringify(oldFilesName) !== JSON.stringify(newFilesName)) {
-                        changedFields[key] = { old: historyData[key].old, new: historyData[key].new };
+                        changedFields[key] = {old: historyData[key].old, new: historyData[key].new};
                     }
-                }
-                else if (key === 'passport' || key === 'address') {
+                } else if (key === 'passport' || key === 'address') {
                     if (historyData[key].old === null && historyData[key].new !== null) {
                         changedFields[key] = {old: null, new: historyData[key].new}
-                    }
-                    else if (historyData[key].old !== null && historyData[key].new === null) {
+                    } else if (historyData[key].old !== null && historyData[key].new === null) {
                         changedFields[key] = {old: historyData[key].old, new: null}
-                    }
-                    else if (historyData[key].old && historyData[key].new) {
+                    } else if (historyData[key].old && historyData[key].new) {
                         let hasChanged = false;
                         for (const prop in historyData[key].old) {
                             if (historyData[key].old[prop] !== historyData[key].new[prop]) {
@@ -338,12 +337,11 @@ class EmployeeController {
                             }
                         }
                         if (hasChanged) {
-                            changedFields[key] = { old: historyData[key].old, new: historyData[key].new };
+                            changedFields[key] = {old: historyData[key].old, new: historyData[key].new};
                         }
                     }
-                }
-                else if (historyData[key].old !== historyData[key].new) {
-                    changedFields[key] = { old: historyData[key].old, new: historyData[key].new };
+                } else if (historyData[key].old !== historyData[key].new) {
+                    changedFields[key] = {old: historyData[key].old, new: historyData[key].new};
                 }
             }
 
@@ -361,60 +359,60 @@ class EmployeeController {
             return res.json(updatedEmployee);
         } catch (error) {
             console.log('Ошибка при обновлении сотрудника', error);
-            return res.status(500).json({ error: 'Ошибка сервера' });
+            return res.status(500).json({error: 'Ошибка сервера'});
         }
     }
 
     async deleteEmployee(req, res, next) {
-        const { id } = req.params;
+        const {id} = req.params;
         // Создаем транзакцию для обеспечения целостности данных
         const transaction = await sequelize.transaction();
 
         try {
             // Находим сотрудника
             const employee = await Employees.findOne({
-                where: { id },
+                where: {id},
                 include: [
-                    { model: Passport },
-                    { model: Address },
-                    { model: Files }
+                    {model: Passport},
+                    {model: Address},
+                    {model: Files}
                 ],
                 transaction
             });
 
             if (!employee) {
                 await transaction.rollback();
-                return res.status(404).json({ error: 'Сотрудник не найден' });
+                return res.status(404).json({error: 'Сотрудник не найден'});
             }
             // Сохраняем старые значения для истории
             const oldLastName = employee.last_name;
             const oldFirstName = employee.first_name;
             const oldMiddleName = employee.middle_name;
             const oldBirthDate = employee.birth_date;
-            const oldPassport = employee.passport ? { ...employee.passport.dataValues } : null;  // Получаем все данные
-            const oldAddress = employee.address ? { ...employee.address.dataValues } : null;    // Получаем все данные
+            const oldPassport = employee.passport ? {...employee.passport.dataValues} : null;  // Получаем все данные
+            const oldAddress = employee.address ? {...employee.address.dataValues} : null;    // Получаем все данные
             const oldFiles = employee.files.map(f => f.name);
 
             // Удаляем связанные записи (мягкое удаление)
             // Паспорт
             if (employee.passport) {
-                await employee.passport.destroy({ transaction });
+                await employee.passport.destroy({transaction});
             }
 
             // Адрес
             if (employee.address) {
-                await employee.address.destroy({ transaction });
+                await employee.address.destroy({transaction});
             }
 
             // Файлы
             if (employee.files && employee.files.length > 0) {
                 for (const file of employee.files) {
-                    await file.destroy({ transaction });
+                    await file.destroy({transaction});
                 }
             }
 
             // Удаляем самого сотрудника (мягкое удаление)
-            await employee.destroy({ transaction });
+            await employee.destroy({transaction});
 
             // Фиксируем транзакцию
             await transaction.commit();
@@ -423,13 +421,13 @@ class EmployeeController {
                 id,
                 'delete',
                 {
-                    last_name: { old: oldLastName, new: null },
-                    first_name: { old: oldFirstName, new: null },
-                    middle_name: { old: oldMiddleName, new: null },
-                    birth_date: { old: oldBirthDate, new: null },
-                    passport: { old: oldPassport, new: null }, // Все данные паспорта
-                    address: { old: oldAddress, new: null }, // Все данные адреса
-                    files: { old: oldFiles, new: null }
+                    last_name: {old: oldLastName, new: null},
+                    first_name: {old: oldFirstName, new: null},
+                    middle_name: {old: oldMiddleName, new: null},
+                    birth_date: {old: oldBirthDate, new: null},
+                    passport: {old: oldPassport, new: null}, // Все данные паспорта
+                    address: {old: oldAddress, new: null}, // Все данные адреса
+                    files: {old: oldFiles, new: null}
                 },
                 null // Пока нет авторизации
             );
@@ -452,17 +450,17 @@ class EmployeeController {
     // УДАЛИТЬ ПОСЛЕ РАЗРАБОТКИ
 
     async hardDeleteEmployee(req, res, next) {
-        const { id } = req.params;
+        const {id} = req.params;
         try {
             // Находим сотрудника, включая удаленные записи
             const employee = await Employees.findOne({
-                where: { id },
-                include: [{ model: Files }],
+                where: {id},
+                include: [{model: Files}],
                 paranoid: false
             });
 
             if (!employee) {
-                return res.status(404).json({ error: 'Сотрудник не найден' });
+                return res.status(404).json({error: 'Сотрудник не найден'});
             }
 
             // Удаляем физические файлы с сервера
@@ -476,42 +474,42 @@ class EmployeeController {
             }
 
             // Полное удаление сотрудника и связанных записей из БД
-            await employee.destroy({ force: true });
+            await employee.destroy({force: true});
 
-            return res.json({ message: 'Сотрудник и все связанные данные полностью удалены' });
+            return res.json({message: 'Сотрудник и все связанные данные полностью удалены'});
         } catch (error) {
             console.log('Ошибка при полном удалении сотрудника', error);
-            return res.status(500).json({ error: 'Ошибка сервера' });
+            return res.status(500).json({error: 'Ошибка сервера'});
         }
     }
 
     async deleteFile(req, res, next) {
-        const { id } = req.params;
+        const {id} = req.params;
         try {
             const file = await Files.findByPk(id);
 
             if (!file) {
-                return res.status(404).json({ error: 'Файл не найден' });
+                return res.status(404).json({error: 'Файл не найден'});
             }
 
             // Мягкое удаление файла (физический файл остается на сервере)
             await file.destroy();
 
-            return res.json({ message: 'Файл успешно удален (мягкое удаление)' });
+            return res.json({message: 'Файл успешно удален (мягкое удаление)'});
         } catch (error) {
             console.log('Ошибка при удалении файла', error);
-            return res.status(500).json({ error: 'Ошибка сервера' });
+            return res.status(500).json({error: 'Ошибка сервера'});
         }
     }
 
     async hardDeleteFile(req, res, next) {
-        const { id } = req.params;
+        const {id} = req.params;
         try {
             // Находим файл, включая удаленные записи
-            const file = await Files.findByPk(id, { paranoid: false });
+            const file = await Files.findByPk(id, {paranoid: false});
 
             if (!file) {
-                return res.status(404).json({ error: 'Файл не найден' });
+                return res.status(404).json({error: 'Файл не найден'});
             }
 
             // Удаляем физический файл с сервера
@@ -521,47 +519,47 @@ class EmployeeController {
             }
 
             // Полное удаление записи о файле из БД
-            await file.destroy({ force: true });
+            await file.destroy({force: true});
 
-            return res.json({ message: 'Файл полностью удален' });
+            return res.json({message: 'Файл полностью удален'});
         } catch (error) {
             console.log('Ошибка при полном удалении файла', error);
-            return res.status(500).json({ error: 'Ошибка сервера' });
+            return res.status(500).json({error: 'Ошибка сервера'});
         }
     }
 
     async restoreEmployee(req, res, next) {
-        const { id } = req.params;
+        const {id} = req.params;
         try {
             // Находим удаленного сотрудника
             const employee = await Employees.findOne({
-                where: { id },
+                where: {id},
                 paranoid: false
             });
 
             if (!employee) {
-                return res.status(404).json({ error: 'Сотрудник не найден' });
+                return res.status(404).json({error: 'Сотрудник не найден'});
             }
 
             if (!employee.deletedAt) {
-                return res.status(400).json({ error: 'Сотрудник не был удален' });
+                return res.status(400).json({error: 'Сотрудник не был удален'});
             }
 
             // Восстанавливаем сотрудника
             await employee.restore();
 
             // Восстанавливаем связанные записи
-            await Passport.restore({ where: { employee_id: id } });
-            await Address.restore({ where: { employee_id: id } });
-            await Files.restore({ where: { employee_id: id } });
+            await Passport.restore({where: {employee_id: id}});
+            await Address.restore({where: {employee_id: id}});
+            await Files.restore({where: {employee_id: id}});
 
             // Получаем восстановленного сотрудника со всеми связанными данными
             const restoredEmployee = await Employees.findOne({
-                where: { id },
+                where: {id},
                 include: [
-                    { model: Passport },
-                    { model: Address },
-                    { model: Files }
+                    {model: Passport},
+                    {model: Address},
+                    {model: Files}
                 ]
             });
             await historyService.createHistoryEntry(
@@ -569,13 +567,19 @@ class EmployeeController {
                 id,
                 'restore',
                 {
-                    last_name: { old: null, new: restoredEmployee.last_name },
-                    first_name: { old: null, new: restoredEmployee.first_name },
-                    middle_name: { old: null, new: restoredEmployee.middle_name },
-                    birth_date: { old: null, new: restoredEmployee.birth_date },
-                    passport: restoredEmployee.passport ? { old: null, new: { ...restoredEmployee.dataValues } } : { old: null, new: null }, // Все данные
-                    address: restoredEmployee.address ? { old: null, new: { ...restoredEmployee.dataValues } } : { old: null, new: null }, // Все данные
-                    files: { old: null, new: restoredEmployee.files.map(f => f.name) }
+                    last_name: {old: null, new: restoredEmployee.last_name},
+                    first_name: {old: null, new: restoredEmployee.first_name},
+                    middle_name: {old: null, new: restoredEmployee.middle_name},
+                    birth_date: {old: null, new: restoredEmployee.birth_date},
+                    passport: restoredEmployee.passport ? {
+                        old: null,
+                        new: {...restoredEmployee.dataValues}
+                    } : {old: null, new: null}, // Все данные
+                    address: restoredEmployee.address ? {old: null, new: {...restoredEmployee.dataValues}} : {
+                        old: null,
+                        new: null
+                    }, // Все данные
+                    files: {old: null, new: restoredEmployee.files.map(f => f.name)}
                 },
                 null // Пока нет авторизации
             );
@@ -586,25 +590,25 @@ class EmployeeController {
             });
         } catch (error) {
             console.log('Ошибка при восстановлении сотрудника', error);
-            return res.status(500).json({ error: 'Ошибка сервера' });
+            return res.status(500).json({error: 'Ошибка сервера'});
         }
     }
 
     async restoreFile(req, res, next) {
-        const { id } = req.params;
+        const {id} = req.params;
         try {
             // Находим удаленный файл
             const file = await Files.findOne({
-                where: { id },
+                where: {id},
                 paranoid: false
             });
 
             if (!file) {
-                return res.status(404).json({ error: 'Файл не найден' });
+                return res.status(404).json({error: 'Файл не найден'});
             }
 
             if (!file.deletedAt) {
-                return res.status(400).json({ error: 'Файл не был удален' });
+                return res.status(400).json({error: 'Файл не был удален'});
             }
 
             // Восстанавливаем файл
@@ -616,16 +620,16 @@ class EmployeeController {
             });
         } catch (error) {
             console.log('Ошибка при восстановлении файла', error);
-            return res.status(500).json({ error: 'Ошибка сервера' });
+            return res.status(500).json({error: 'Ошибка сервера'});
         }
     }
 
     async getEmployeeHistory(req, res, next) {
-        const { employee_id } = req.params;
-        const { page, limit } = req.query;
+        const {employee_id} = req.params;
+        const {page, limit} = req.query;
         try {
-            const { count, rows } = await historyService.getHistoryForObject('Сотрудник', employee_id, page, limit);
-            return res.json({ count, rows });
+            const {count, rows} = await historyService.getHistoryForObject('Сотрудник', employee_id, page, limit);
+            return res.json({count, rows});
         } catch (error) {
             console.error("Ошибка при получении истории сотрудника", error);
             return next(error);

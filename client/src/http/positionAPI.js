@@ -1,6 +1,6 @@
 import {$host} from "./index";
 
-export const fetchPositions = async (page = 1, limit = 10) => {
+export const fetchPositions = async (page = 1, limit = 100) => {
     const response = await $host.get('api/position', {
         params: {
             page: page,

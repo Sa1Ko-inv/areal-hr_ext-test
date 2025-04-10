@@ -46,7 +46,7 @@
       <button type="submit">
         Сохранить
       </button>
-      <button type="button" @click="console.log(this.hireEmployeeData)">Отмена</button>
+      <button type="button" @click="cancel">Отмена</button>
     </div>
   </form>
 </template>
@@ -124,7 +124,6 @@ export default {
       try {
         const response = await fetchPositions();
         this.positions = response.data.rows;
-        console.log(this.employeeId);
         // this.totalItems = response.data.count;
       } catch (error) {
         console.error('Ошибка при получении должностей:', error);
