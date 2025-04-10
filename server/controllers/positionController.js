@@ -36,7 +36,7 @@ class PositionController {
                 limit,
                 offset,
                 distinct: true,
-                order: [['id', 'ASC']],
+                order: [['name', 'ASC']],
             });
 
             return res.json({count, rows});

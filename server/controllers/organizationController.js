@@ -38,7 +38,7 @@ class OrganizationController {
                 limit,
                 offset,
                 distinct: true,
-                order: [['id', 'ASC']],
+                order: [['name', 'ASC']],
             })
             return res.json({count, rows});
         } catch (error) {
@@ -60,12 +60,14 @@ class OrganizationController {
                     // paranoid: false,
                     where: {parent_id: null},
                     required: false,
+                    order: [['name', 'ASC']],
                     include: [
                         {
                             model: Department,
                             as: 'children',
                             // paranoid: false,
-                            hierarchy: true
+                            hierarchy: true,
+                            order: [['name', 'ASC']],
                         }
                     ]
                 }]
