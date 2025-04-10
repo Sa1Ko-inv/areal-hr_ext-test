@@ -4,19 +4,35 @@
     <button @click="showEmployeeCreate">Создать сотрудника</button>
     <button @click="showFireHistory">Просмотр уволенных сотрудников</button>
 
+    <!-- Добавляем поле для поиска с кнопкой -->
+    <div class="search-container">
+      <input
+          type="text"
+          v-model="searchQuery"
+          placeholder="Поиск по ФИО..."
+          class="search-input"
+          @input="debounceSearch"
+      />
+      <button v-if="searchQuery" @click="clearSearch" class="search-button clear-button">✕</button>
+    </div>
+
     <div class="sort-container">
       <MySelect v-model="selectedSort" :options="sortOptions" @change="handleSortChange"/>
     </div>
 
     <div class="positionList__items">
-      <EmployeeItem
-          v-for="employee in employees"
-          :key="employee.id"
-          :employee="employee"
-          @update="updateEmployee"
-          @hr-info-loaded="handleHRInfo"
-          :sortBy="selectedSort"
-      />
+      <template v-if="employees.length">
+        <EmployeeItem
+            v-for="employee in sortedEmployees"
+            :key="employee.id"
+            :employee="employee"
+            @update="updateEmployee"
+            :sortBy="selectedSort"
+        />
+      </template>
+      <template v-else>
+        <p class="no-results">Сотрудников не найдено</p>
+      </template>
     </div>
   </div>
   <!-- Модальные окна остаются без изменений -->
@@ -59,11 +75,31 @@ export default {
       dialogFireHistory: false,
       dialogCreateEmployee: false,
       selectedSort: "",
-      hrInfoMap: {},
+      searchQuery: "", // Поле для поискового запроса
       sortOptions: [
         {value: "organization", name: "Организации"},
         {value: "department", name: "Отдел"},
       ],
+    }
+  },
+  computed: {
+    // Теперь сортируем только по локальным полям, поиск происходит на сервере
+    sortedEmployees() {
+      if (!this.selectedSort || !['last_name', 'first_name'].includes(this.selectedSort)) {
+        return this.employees;
+      }
+
+      return [...this.employees].sort((a, b) => {
+        const field = this.selectedSort;
+        const valueA = a[field]?.toLowerCase() || '';
+        const valueB = b[field]?.toLowerCase() || '';
+
+        if (this.sortOrder === 'ASC') {
+          return valueA.localeCompare(valueB);
+        } else {
+          return valueB.localeCompare(valueA);
+        }
+      });
     }
   },
   methods: {
@@ -84,20 +120,32 @@ export default {
     updateEmployee(updatedEmployee) {
       this.$emit('update-employees', updatedEmployee);
     },
-    handleHRInfo({employeeId, hrInfo}) {
-      this.hrInfoMap[employeeId] = hrInfo;
-    },
-    // Новый метод для обработки изменения сортировки
+    // Обработка изменения сортировки с учетом локальной сортировки
     handleSortChange() {
       if (this.selectedSort) {
         this.$emit('sort-change', {
           value: this.selectedSort,
-          order: this.sortOrder
+
         });
       }
     },
+    // Переключение порядка сортировки
+    debounceSearch() {
+      clearTimeout(this.searchTimeout);
+      this.searchTimeout = setTimeout(() => {
+        this.performSearch();
+      }, 600); // задержка в 300 мс между вводом и поиском
+    },
+    // Выполнение поиска при нажатии кнопки или Enter
+    performSearch() {
+      this.$emit('search', this.searchQuery);
+    },
+    // Очистка поискового запроса
+    clearSearch() {
+      this.searchQuery = "";
+      this.$emit('search', "");
+    }
   },
-  // Следим за изменениями выбранной сортировки
   watch: {
     selectedSort(newValue) {
       if (newValue) {
@@ -109,16 +157,4 @@ export default {
 </script>
 
 <style scoped>
-.sort-container {
-  display: flex;
-  align-items: center;
-  margin: 10px 0;
-}
-
-.sort-order-button {
-  margin-left: 10px;
-  padding: 5px 10px;
-  cursor: pointer;
-  font-size: 16px;
-}
 </style>

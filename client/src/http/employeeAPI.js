@@ -1,14 +1,21 @@
 import {$host} from "@/http/index.js";
 
-export const fetchEmployees = async (page = 1, limit = 10, sortBy = null, sortOrder = 'asc') => {
-    const response = await $host.get('api/employee/', {
-        params: {
-            page,
-            limit,
-            sortBy,
-            sortOrder
-        }
-    });
+export const fetchEmployees = async (page = 1, limit = 10, sortBy = null, sortOrder = 'ASC', searchQuery = '') => {
+    const params = {
+        page,
+        limit
+    };
+
+    if (sortBy) {
+        params.sortBy = sortBy;
+        params.sortOrder = sortOrder;
+    }
+
+    if (searchQuery) {
+        params.search = searchQuery;
+    }
+
+    const response = await $host.get('api/employee/', { params });
     return response;
 };
 

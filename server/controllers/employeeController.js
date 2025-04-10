@@ -151,7 +151,7 @@ class EmployeeController {
 
     async getAllEmployees(req, res, next) {
         try {
-            const { page = 1, limit = 10, sortBy, sortOrder = 'ASC' } = req.query;
+            const { page = 1, limit = 10, sortBy, sortOrder = 'ASC', search = '' } = req.query;
             const offset = (page - 1) * limit;
 
             // Сначала получаем всех сотрудников без пагинации
@@ -207,11 +207,28 @@ class EmployeeController {
                 return emp;
             });
 
-            // Применяем сортировку ко всему набору данных
+            // Применяем поиск по ФИО, если параметр search указан
+            let filteredEmployees = employeesWithLastDepartmentInfo;
+            if (search && search.trim() !== '') {
+                const searchLower = search.toLowerCase().trim();
+                filteredEmployees = employeesWithLastDepartmentInfo.filter(emp => {
+                    const fullName = `${emp.last_name} ${emp.first_name} ${emp.middle_name || ''}`.toLowerCase();
+                    const lastName = emp.last_name.toLowerCase();
+                    const firstName = emp.first_name.toLowerCase();
+                    const middleName = (emp.middle_name || '').toLowerCase();
+
+                    return fullName.includes(searchLower) ||
+                        lastName.includes(searchLower) ||
+                        firstName.includes(searchLower) ||
+                        middleName.includes(searchLower);
+                });
+            }
+
+            // Применяем сортировку к отфильтрованным данным
             let sortedEmployees;
             if (sortBy === 'department') {
                 // Сортируем по имени отдела
-                sortedEmployees = [...employeesWithLastDepartmentInfo].sort((a, b) => {
+                sortedEmployees = [...filteredEmployees].sort((a, b) => {
                     const deptNameA = (a.lastDepartment && a.lastDepartment.name) || '';
                     const deptNameB = (b.lastDepartment && b.lastDepartment.name) || '';
 
@@ -221,7 +238,7 @@ class EmployeeController {
                 });
             } else if (sortBy === 'organization') {
                 // Сортируем по ID организации
-                sortedEmployees = [...employeesWithLastDepartmentInfo].sort((a, b) => {
+                sortedEmployees = [...filteredEmployees].sort((a, b) => {
                     const orgIdA = a.lastOrganization ? a.lastOrganization.id : 0;
                     const orgIdB = b.lastOrganization ? b.lastOrganization.id : 0;
 
@@ -233,7 +250,7 @@ class EmployeeController {
                 });
             } else {
                 // Сортировка по фамилии (по умолчанию)
-                sortedEmployees = [...employeesWithLastDepartmentInfo].sort((a, b) => {
+                sortedEmployees = [...filteredEmployees].sort((a, b) => {
                     return sortOrder.toUpperCase() === 'ASC'
                         ? a.last_name.localeCompare(b.last_name)
                         : b.last_name.localeCompare(a.last_name);
@@ -243,7 +260,7 @@ class EmployeeController {
             // Применяем пагинацию к уже отсортированным данным
             const paginatedEmployees = sortedEmployees.slice(offset, offset + +limit);
 
-            // Получаем общее количество сотрудников для пагинации
+            // Получаем общее количество отфильтрованных сотрудников для пагинации
             const totalCount = sortedEmployees.length;
 
             // Возвращаем результат с пагинацией

@@ -13,20 +13,27 @@ export default {
       pageSize: 3,
       totalItems: 0,
       updateError: null,
-      selectedSort: "", // Добавляем состояние для выбранной сортировки
-      sortOrder: "ASC"  // Добавляем состояние для порядка сортировки
+      selectedSort: "",
+      sortOrder: "ASC",
+      searchQuery: "" // Добавляем для хранения поискового запроса
     }
   },
   methods: {
     async getEmployees() {
       try {
-        // Добавляем параметры сортировки в запрос
+        // Отправляем на сервер параметры сортировки и поиска
+        const serverSort = this.selectedSort &&
+        !['last_name', 'first_name'].includes(this.selectedSort) ?
+            this.selectedSort : null;
+
         const response = await fetchEmployees(
             this.currentPage,
             this.pageSize,
-            this.selectedSort || null,
-            this.sortOrder
+            serverSort,
+            this.sortOrder,
+            this.searchQuery // Добавляем поисковый запрос
         );
+
         if (response && response.data) {
           this.employees = response.data.rows || [];
           this.totalItems = response.data.count || 0;
@@ -41,24 +48,29 @@ export default {
       this.currentPage = page;
       this.getEmployees();
     },
-    // Метод для обработки события создания сотрудника
     handleEmployeeCreated() {
       this.currentPage = 1;
       this.getEmployees();
     },
-    // Обработчик обновления списка сотрудников
     handleUpdateEmployees(updatedEmployee) {
       this.employees = this.employees.map(emp =>
           emp.id === updatedEmployee.id ? updatedEmployee : emp
       );
     },
-    // Новый метод для обработки изменений сортировки
     handleSortChange(sortData) {
       this.selectedSort = sortData.value;
       this.sortOrder = sortData.order || "ASC";
-      this.currentPage = 1; // Возвращаемся на первую страницу при изменении сортировки
+
+      // Возвращаемся на первую страницу при смене сортировки
+      this.currentPage = 1;
       this.getEmployees();
     },
+    // Добавляем обработчик изменения поискового запроса
+    handleSearch(query) {
+      this.searchQuery = query;
+      this.currentPage = 1; // Сбрасываем на первую страницу при поиске
+      this.getEmployees();
+    }
   },
   mounted() {
     this.getEmployees();
@@ -79,6 +91,7 @@ export default {
         @created="handleEmployeeCreated"
         @update-employees="handleUpdateEmployees"
         @sort-change="handleSortChange"
+        @search="handleSearch"
     />
 
     <!-- Пагинация -->
