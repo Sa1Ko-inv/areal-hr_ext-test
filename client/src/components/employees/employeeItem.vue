@@ -214,10 +214,6 @@ export default {
       type: Object,
       required: true,
     },
-    sortBy: {
-      type: String,
-      default: "",
-    },
   },
   data() {
     return {
@@ -229,15 +225,6 @@ export default {
       dialogVisibleEdit: false,
       hrInfo: null, // Инициализировано как null для лучшей обработки состояния загрузки
     };
-  },
-  watch: {
-    // Добавляем наблюдатель за изменением sortBy
-    sortBy: {
-      handler(newValue) {
-        console.log("Изменилась сортировка в EmployeeItem:", newValue);
-        this.loadHRInfo(); // Перезагружаем HR-информацию при изменении сортировки
-      }
-    }
   },
   methods: {
     // Открытие модальных окон
@@ -294,12 +281,7 @@ export default {
     async loadHRInfo() {
       this.hrInfo = null; // Сброс перед загрузкой для отображения индикатора
       try {
-        this.hrInfo = await fetchEmployeeHRInfo(this.employee.id, this.sortBy);
-        this.$emit('hr-info-loaded', {
-          employeeId: this.employee.id,
-          hrInfo: this.hrInfo
-        });
-        console.log("Загружена HR-информация с параметром сортировки:", this.sortBy, this.hrInfo);
+        this.hrInfo = await fetchEmployeeHRInfo(this.employee.id,);
       } catch (error) {
         console.error("Ошибка при загрузке HR информации:", error);
       }

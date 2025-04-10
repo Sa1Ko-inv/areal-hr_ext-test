@@ -347,30 +347,15 @@ class HROperationsController {
     // Получение HR информации о сотруднике
     async getEmployeeHRInfo(req, res, next) {
         const {employee_id} = req.params;
-        let {orderBy} = req.query;
 
         try {
-            // Проверяем, что orderBy имеет допустимое значение
-            const validOrderFields = ['department', 'organization', 'position', 'salary', 'createdAt'];
-            if (orderBy && !validOrderFields.includes(orderBy)) {
-                orderBy = 'createdAt'; // Значение по умолчанию, если передано недопустимое
-            }
 
             // Находим последнюю HR операцию для сотрудника
             const latestOperation = await HR_Operation.findOne({
                 where: {employee_id},
                 order: [['createdAt', 'DESC']],
                 include: [
-                    {
-                        model: require('../models/department'),
-                        as: 'department',
-                        include: [
-                            {
-                                model: require('../models/organization'),
-                                as: 'organization'
-                            }
-                        ]
-                    },
+                    {model: require('../models/department'), as: 'department', include: [Organization]},
                     {model: require('../models/position'), as: 'position'}
                 ]
             });
@@ -393,13 +378,8 @@ class HROperationsController {
                     ? `${latestOperation.department.name}${latestOperation.department.organization ? ` (${latestOperation.department.organization.name})` : ''}`
                     : null,
                 position: latestOperation.position ? latestOperation.position.name : null,
-                organization: latestOperation.department && latestOperation.department.organization
-                    ? latestOperation.department.organization.id
-                    : null,
                 department_id: latestOperation.department_id,
                 position_id: latestOperation.position_id,
-                // Сохраняем информацию о том, по какому полю была сортировка
-                sortedBy: orderBy || 'createdAt'
             };
 
             return res.json(hrInfo);

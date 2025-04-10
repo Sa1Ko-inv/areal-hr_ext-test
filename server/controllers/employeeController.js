@@ -8,7 +8,8 @@ const fs = require('fs');
 const uuid = require('uuid');
 const historyService = require('./historyService');
 const HR_Operation = require("../models/hr_operation");
-const Department = require("../models/department"); // Импортируем historyService
+const Department = require("../models/department");
+const Organization = require("../models/organization"); // Импортируем historyService
 
 //Топ версия
 class EmployeeController {
@@ -150,26 +151,110 @@ class EmployeeController {
 
     async getAllEmployees(req, res, next) {
         try {
-            let {page, limit} = req.query;
-            page = page || 1;
-            limit = limit || 10;
-            let offset = page * limit - limit;
+            const { page = 1, limit = 10, sortBy, sortOrder = 'ASC' } = req.query;
+            const offset = (page - 1) * limit;
 
-            const {count, rows} = await Employees.findAndCountAll({
-                limit,
-                offset,
+            // Сначала получаем всех сотрудников без пагинации
+            const allEmployees = await Employees.findAll({
                 distinct: true,
-                order: [['last_name', 'ASC']],
                 include: [
-                    {model: Passport},
-                    {model: Address},
-                    {model: Files},
+                    { model: Passport },
+                    { model: Address },
+                    { model: Files },
+                    {
+                        model: HR_Operation,
+                        as: 'hr_operations',
+                        required: false,
+                        include: [
+                            {
+                                model: Department,
+                                as: 'department',
+                                include: [
+                                    {
+                                        model: Organization,
+                                    }
+                                ]
+                            }
+                        ]
+                    }
                 ]
             });
-            return res.json({count, rows});
-        } catch (error) {
-            console.log('Ошибка при получении всех сотрудников', error);
-            return res.status(500).json({error: 'Ошибка сервера'});
+
+            // Преобразуем данные и добавляем информацию о последнем отделе и организации
+            const employeesWithLastDepartmentInfo = allEmployees.map(employee => {
+                const emp = employee.toJSON();
+
+                // Находим все операции изменения отдела
+                const departmentChanges = emp.hr_operations.filter(
+                    op => op.type === 'department_change'
+                );
+
+                // Если есть изменения отдела, берём последнее
+                if (departmentChanges.length > 0) {
+                    // Сортируем по дате создания (от новых к старым)
+                    departmentChanges.sort((a, b) =>
+                        new Date(b.createdAt) - new Date(a.createdAt)
+                    );
+                    emp.lastDepartment = departmentChanges[0].department;
+                    emp.lastOrganization = departmentChanges[0].department?.organization || null;
+                } else {
+                    // Если изменений не было, ищем операцию найма
+                    const hireOperation = emp.hr_operations.find(op => op.type === 'hire');
+                    emp.lastDepartment = hireOperation ? hireOperation.department : null;
+                    emp.lastOrganization = hireOperation?.department?.organization || null;
+                }
+
+                return emp;
+            });
+
+            // Применяем сортировку ко всему набору данных
+            let sortedEmployees;
+            if (sortBy === 'department') {
+                // Сортируем по имени отдела
+                sortedEmployees = [...employeesWithLastDepartmentInfo].sort((a, b) => {
+                    const deptNameA = (a.lastDepartment && a.lastDepartment.name) || '';
+                    const deptNameB = (b.lastDepartment && b.lastDepartment.name) || '';
+
+                    return sortOrder.toUpperCase() === 'ASC'
+                        ? deptNameA.localeCompare(deptNameB)
+                        : deptNameB.localeCompare(deptNameA);
+                });
+            } else if (sortBy === 'organization') {
+                // Сортируем по ID организации
+                sortedEmployees = [...employeesWithLastDepartmentInfo].sort((a, b) => {
+                    const orgIdA = a.lastOrganization ? a.lastOrganization.id : 0;
+                    const orgIdB = b.lastOrganization ? b.lastOrganization.id : 0;
+
+                    if (sortOrder.toUpperCase() === 'ASC') {
+                        return orgIdA - orgIdB;
+                    } else {
+                        return orgIdB - orgIdA;
+                    }
+                });
+            } else {
+                // Сортировка по фамилии (по умолчанию)
+                sortedEmployees = [...employeesWithLastDepartmentInfo].sort((a, b) => {
+                    return sortOrder.toUpperCase() === 'ASC'
+                        ? a.last_name.localeCompare(b.last_name)
+                        : b.last_name.localeCompare(a.last_name);
+                });
+            }
+
+            // Применяем пагинацию к уже отсортированным данным
+            const paginatedEmployees = sortedEmployees.slice(offset, offset + +limit);
+
+            // Получаем общее количество сотрудников для пагинации
+            const totalCount = sortedEmployees.length;
+
+            // Возвращаем результат с пагинацией
+            return res.json({
+                count: totalCount,
+                rows: paginatedEmployees
+            });
+
+        } catch (e) {
+            console.error(e);
+            return res.status(500).json({ message: "Ошибка на сервере" });
         }
     }
 

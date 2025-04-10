@@ -19,6 +19,7 @@ export default {
     modelValue: {
       type: String,
       // required: true
+      default: ""
     },
     options: {
       type: Array,

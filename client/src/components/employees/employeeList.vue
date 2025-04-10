@@ -3,10 +3,14 @@
     <h3>Список сотрудников</h3>
     <button @click="showEmployeeCreate">Создать сотрудника</button>
     <button @click="showFireHistory">Просмотр уволенных сотрудников</button>
-    <MySelect v-model="selectedSort" :options="sortOptions"/>
+
+    <div class="sort-container">
+      <MySelect v-model="selectedSort" :options="sortOptions" @change="handleSortChange"/>
+    </div>
+
     <div class="positionList__items">
       <EmployeeItem
-          v-for="employee in sortedEmployees"
+          v-for="employee in employees"
           :key="employee.id"
           :employee="employee"
           @update="updateEmployee"
@@ -15,13 +19,12 @@
       />
     </div>
   </div>
-  <!-- Модальное окно истории просмотра уволенных сотрудников -->
+  <!-- Модальные окна остаются без изменений -->
   <MyModalWindow v-model:show="dialogFireHistory">
     <EmployeeFireHistory
         :cancel="cancelModal"
     />
   </MyModalWindow>
-  <!-- Модальное окно создания сотрудника -->
   <MyModalWindow v-model:show="dialogCreateEmployee">
     <EmployeeCreate
         :cancel="cancelModal"
@@ -63,64 +66,6 @@ export default {
       ],
     }
   },
-  computed: {
-    sortedEmployees() {
-      // Если сортировка не выбрана, возвращаем исходный массив
-      if (!this.selectedSort || Object.keys(this.hrInfoMap).length === 0) {
-        return this.employees;
-      }
-
-      // Создаем копию массива для сортировки
-      return [...this.employees].sort((a, b) => {
-        const hrInfoA = this.hrInfoMap[a.id];
-        const hrInfoB = this.hrInfoMap[b.id];
-
-        // Если для какого-то сотрудника нет HR-информации, он идет в конец
-        if (!hrInfoA) return 1;
-        if (!hrInfoB) return -1;
-
-        // Сортировка по выбранному полю
-        switch (this.selectedSort) {
-          case 'organization':
-            // Сортировка по организации (если есть)
-            if (hrInfoA.organization && hrInfoB.organization) {
-              return hrInfoA.organization - hrInfoB.organization;
-            }
-            return hrInfoA.organization ? -1 : 1;
-
-          case 'department':
-            // Сортировка по отделу (если есть)
-            if (hrInfoA.department && hrInfoB.department) {
-              return hrInfoA.department.localeCompare(hrInfoB.department);
-            }
-            return hrInfoA.department ? -1 : 1;
-
-          // case 'position':
-          //   // Сортировка по должности (если есть)
-          //   if (hrInfoA.position && hrInfoB.position) {
-          //     return hrInfoA.position.localeCompare(hrInfoB.position);
-          //   }
-          //   return hrInfoA.position ? -1 : 1;
-          //
-          // case 'salary':
-          //   // Сортировка по зарплате (по возрастанию)
-          //   if (hrInfoA.salary && hrInfoB.salary) {
-          //     return hrInfoA.salary - hrInfoB.salary;
-          //   }
-          //   return hrInfoA.salary ? -1 : 1;
-
-          default:
-            return 0;
-        }
-      });
-    }
-  },
-  watch: {
-    selectedSort(newValue) {
-      console.log("Выбрана сортировка:", newValue);
-      // Здесь можно добавить дополнительную логику при изменении сортировки
-    },
-  },
   methods: {
     showFireHistory() {
       this.dialogFireHistory = true;
@@ -136,20 +81,44 @@ export default {
       this.$emit('created');
       this.dialogCreateEmployee = false;
     },
-    // Обработчик обновления сотрудника
     updateEmployee(updatedEmployee) {
-      // Обновляем локальный список сотрудников
-      // Прокидываем событие в родительский компонент
       this.$emit('update-employees', updatedEmployee);
     },
     handleHRInfo({employeeId, hrInfo}) {
       this.hrInfoMap[employeeId] = hrInfo;
-      console.log('Обновлена HR-информация:', this.hrInfoMap);
     },
+    // Новый метод для обработки изменения сортировки
+    handleSortChange() {
+      if (this.selectedSort) {
+        this.$emit('sort-change', {
+          value: this.selectedSort,
+          order: this.sortOrder
+        });
+      }
+    },
+  },
+  // Следим за изменениями выбранной сортировки
+  watch: {
+    selectedSort(newValue) {
+      if (newValue) {
+        this.handleSortChange();
+      }
+    }
   }
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped>
+.sort-container {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+}
 
+.sort-order-button {
+  margin-left: 10px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 16px;
+}
 </style>

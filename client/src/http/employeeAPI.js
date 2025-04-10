@@ -1,10 +1,12 @@
 import {$host} from "@/http/index.js";
 
-export const fetchEmployees = async (page = 1, limit = 10,) => {
+export const fetchEmployees = async (page = 1, limit = 10, sortBy = null, sortOrder = 'asc') => {
     const response = await $host.get('api/employee/', {
         params: {
-            page: page,
-            limit: limit,
+            page,
+            limit,
+            sortBy,
+            sortOrder
         }
     });
     return response;
@@ -85,11 +87,7 @@ export const fetchFiredHistory = async (page = 1, limit = 10) => {
 }
 
 // Получить историю HR операций для конкретного сотрудника
-export const fetchEmployeeHRInfo = async (employeeId, orderBy) => {
-    const response = await $host.get(`api/hr_operation/employee/${employeeId}`, {
-        params: {
-            orderBy: orderBy
-        }
-    });
+export const fetchEmployeeHRInfo = async (employeeId) => {
+    const response = await $host.get(`api/hr_operation/employee/${employeeId}`);
     return response.data;
 }

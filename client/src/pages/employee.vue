@@ -10,17 +10,23 @@ export default {
     return {
       employees: [],
       currentPage: 1,
-      pageSize: 5, // Увеличил размер страницы для удобства
+      pageSize: 3,
       totalItems: 0,
-      updateError: null, // Добавляем для хранения ошибок обновления
-      selectedSort: "",
-      sortOrder: "", // Направление сортировки
+      updateError: null,
+      selectedSort: "", // Добавляем состояние для выбранной сортировки
+      sortOrder: "ASC"  // Добавляем состояние для порядка сортировки
     }
   },
   methods: {
     async getEmployees() {
       try {
-        const response = await fetchEmployees(this.currentPage, this.pageSize, this.sortOrder || 'asc', this.selectedSort || 'id');
+        // Добавляем параметры сортировки в запрос
+        const response = await fetchEmployees(
+            this.currentPage,
+            this.pageSize,
+            this.selectedSort || null,
+            this.sortOrder
+        );
         if (response && response.data) {
           this.employees = response.data.rows || [];
           this.totalItems = response.data.count || 0;
@@ -37,21 +43,20 @@ export default {
     },
     // Метод для обработки события создания сотрудника
     handleEmployeeCreated() {
-      // После создания сотрудника переходим на первую страницу и обновляем список
       this.currentPage = 1;
       this.getEmployees();
     },
     // Обработчик обновления списка сотрудников
     handleUpdateEmployees(updatedEmployee) {
-      // Обновляем только конкретного сотрудника, сохраняя порядок
       this.employees = this.employees.map(emp =>
           emp.id === updatedEmployee.id ? updatedEmployee : emp
       );
     },
-    handleSortChange({ selectedSort, sortOrder }) {
-      // Обновляем параметры сортировки и загружаем данные
-      this.selectedSort = selectedSort;
-      this.sortOrder = sortOrder;
+    // Новый метод для обработки изменений сортировки
+    handleSortChange(sortData) {
+      this.selectedSort = sortData.value;
+      this.sortOrder = sortData.order || "ASC";
+      this.currentPage = 1; // Возвращаемся на первую страницу при изменении сортировки
       this.getEmployees();
     },
   },
@@ -60,27 +65,17 @@ export default {
   },
   computed: {
     totalPages() {
-      return Math.ceil(this.totalItems / this.pageSize) || 1; // Добавляем защиту от деления на ноль
+      return Math.ceil(this.totalItems / this.pageSize) || 1;
     }
-  },
-
-  watch: {
-    selectedSort(newValue) {
-      this.currentPage = 1; // Возвращаемся на первую страницу при изменении сортировки
-      this.getEmployees(); // Обновляем список сотрудников с новой сортировкой
-    },
   },
 }
 </script>
 
 <template>
   <div class="">
-
     <EmployeeList
         :employees="employees"
         :updateError="updateError"
-        :selectedSort="selectedSort"
-        :sortOrder="sortOrder"
         @created="handleEmployeeCreated"
         @update-employees="handleUpdateEmployees"
         @sort-change="handleSortChange"
