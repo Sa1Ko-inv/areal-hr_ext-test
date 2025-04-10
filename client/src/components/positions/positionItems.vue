@@ -92,9 +92,6 @@ export default {
     showHistoryDialog() {
       this.dialogVisibleHistory = true;
     },
-    showDeleteHistory() {
-      this.dialogVisibleDeletePosition = true;
-    },
   // Закрытие модальных окон
     canselModal() {
       this.dialogVisibleHistory = false;

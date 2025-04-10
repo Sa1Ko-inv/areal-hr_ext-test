@@ -17,11 +17,21 @@
       <label>Отдел</label>
       <select v-model="formData.department_id">
         <option :value="null">Выберите отдел</option>
-        <option v-for="dept in filteredDepartments" :key="dept.id" :value="dept.id">
-          {{ dept.name }}
-        </option>
+        <template v-for="dept in filteredDepartments" :key="dept.id">
+          <option :value="dept.id">
+            {{ dept.name }}
+          </option>
+          <option
+              v-for="child in dept.children"
+              :key="child.id"
+              :value="child.id"
+          >
+            — {{ child.name }}
+          </option>
+        </template>
       </select>
     </div>
+
 
     <div class="form-actions">
       <button type="submit">
@@ -84,6 +94,7 @@ export default {
       try {
         const response = await fetchDepartments();
         this.departments = response.data;
+        console.log(this.departments)
 
         if (this.currentDepartmentId) {
           const currentDept = response.data.find(d => d.id === this.currentDepartmentId);

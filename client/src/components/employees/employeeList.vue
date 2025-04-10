@@ -156,5 +156,119 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+$primary-color: #792ec9;
+$primary-color-dark: #6525a7;
+$border-color: #e0e0e0;
+$text-color-primary: #333;
+$background-color-light: #fff;
+$danger-color: #dc3545;
+$success-color: #28a745;
+$border-radius: 8px;
+$box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+$font-family: 'Arial', sans-serif;
+$section-gap: 20px;
+$button-padding: 10px 18px;
+
+.employeeList {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: $font-family;
+
+  h3 {
+    color: $primary-color;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+  }
+
+  button {
+    padding: $button-padding;
+    background-color: $primary-color;
+    color: white;
+    border: none;
+    border-radius: calc($border-radius / 2);
+    cursor: pointer;
+    margin-right: 10px;
+    margin-bottom: 15px;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: $primary-color-dark;
+    }
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
+
+.search-container {
+  position: relative;
+  max-width: 400px;
+  margin-bottom: 20px;
+
+  .search-input {
+    width: 100%;
+    padding: 10px 40px 10px 15px;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+    }
+  }
+
+  .search-button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    color: #666;
+
+    &:hover {
+      color: $text-color-primary;
+    }
+
+    &.clear-button {
+      font-size: 1.2rem;
+      line-height: 1;
+    }
+  }
+}
+
+.sort-container {
+  margin-bottom: 20px;
+  max-width: 300px;
+}
+
+.positionList__items {
+  //display: grid;
+  //grid-template-columns: 1fr;
+  //gap: $section-gap;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1200px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.no-results {
+  color: #666;
+  font-style: italic;
+  text-align: center;
+  grid-column: 1 / -1;
+  padding: 20px;
+}
 </style>
