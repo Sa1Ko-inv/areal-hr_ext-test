@@ -16,7 +16,7 @@ class PositionController {
                 position.id,
                 'create',
                 {name: {old: null, new: name}}, // old: null для создания
-                null // Пока нет авторизации
+                `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
             );
             return res.json(position);
         } catch (error) {
@@ -66,7 +66,7 @@ class PositionController {
                 id,
                 'update',
                 {name: {old: oldName, new: name}}, // old: oldName, new: name
-                null // Пока нет авторизации
+                `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
             );
             return res.json(position);
         } catch (error) {
@@ -92,7 +92,7 @@ class PositionController {
                 id,
                 'delete',
                 {name: {old: oldName, new: null}}, //При удалении новое значение null
-                null // Пока нет авторизации
+                `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
             );
 
             return res.json({message: 'Должность удалена'});

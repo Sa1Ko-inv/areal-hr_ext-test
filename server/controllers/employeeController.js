@@ -68,7 +68,7 @@ class EmployeeController {
                 {
                     files: {old: null, new: uploadedFiles.map(f => f.name)}
                 },
-                null // Пока нет авторизации
+                `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
             );
 
             return res.status(200).json({
@@ -139,7 +139,7 @@ class EmployeeController {
                     passport: passport ? {old: null, new: passport} : {old: null, new: null},
                     address: address ? {old: null, new: address} : {old: null, new: null}
                 },
-                null // Пока нет авторизации
+                `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
             );
 
             return res.status(201).json(createdEmployee);
@@ -454,7 +454,7 @@ class EmployeeController {
                     id,
                     'update',
                     changedFields,
-                    null // Пока нет авторизации
+                    `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
                 );
             }
 
@@ -531,7 +531,7 @@ class EmployeeController {
                     address: {old: oldAddress, new: null}, // Все данные адреса
                     files: {old: oldFiles, new: null}
                 },
-                null // Пока нет авторизации
+                `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
             );
 
             return res.json({

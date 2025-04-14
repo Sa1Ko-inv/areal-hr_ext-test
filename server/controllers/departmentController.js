@@ -49,7 +49,7 @@ class DepartmentController {
                     parent_department: { old: null, new: parentDepartmentName || null },
                     organization: { old: null, new: organizationName }
                 },
-                null // Пока нет авторизации
+                `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
             );
 
             return res.json(department);
@@ -190,7 +190,7 @@ class DepartmentController {
                     },
                     organization: { old: oldOrganizationName, new: newOrganizationName || oldOrganizationName }
                 },
-                null // Пока нет авторизации
+                `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
             );
 
             return res.json(department);
@@ -256,7 +256,7 @@ class DepartmentController {
                     parent_department: { old: oldParentName, new: null },
                     organization: { old: oldOrganizationName, new: null }
                 },
-                null // Пока нет авторизации
+                `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
             );
 
             return res.json({ message: 'Отдел и все дочерние отделы успешно удалены' });

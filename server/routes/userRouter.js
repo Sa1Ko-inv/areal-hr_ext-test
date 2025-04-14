@@ -10,9 +10,9 @@ router.post('/registration', validate(userCreateSchema), userController.registra
 router.post('/login', validate(userLoginSchema), userController.login) // Авторизация пользователя
 router.get('/auth', authMiddleware, userController.check) // Проверка авторизации пользователя
 
-router.post('/create', checkRole('admin'), validate(userCreateSchema), userController.createUser) // Создание нового пользователя
+router.post('/create', authMiddleware,  checkRole('admin'), validate(userCreateSchema), userController.createUser) // Создание нового пользователя
 router.get('/', userController.getAllUsers) // Получение всех пользователей
-router.put('/:id', checkRole('admin'), validate(userUpdateSchema), userController.updateUser) // Обновление данных пользователя по ID
-router.delete('/:id', checkRole('admin'), userController.deleteUser) // Удаление пользователя по ID
+router.put('/:id', authMiddleware, checkRole('admin'), validate(userUpdateSchema), userController.updateUser) // Обновление данных пользователя по ID
+router.delete('/:id', authMiddleware, checkRole('admin'), userController.deleteUser) // Удаление пользователя по ID
 
 module.exports = router;

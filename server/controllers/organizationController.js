@@ -17,7 +17,7 @@ class OrganizationController {
                 organization.id,
                 'create',
                 {name: {old: null, new: name}, comment: {old: null, new: comment}}, // old: null для создания// old: null для создания
-                null // Пока нет авторизации
+                `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
             );
             return res.json(organization);
 
@@ -108,8 +108,8 @@ class OrganizationController {
                 {
                     name: {old: oldName, new: name},
                     comment: {old: oldComment, new: comment}
-                }, // old: oldName, new: name
-                null // Пока нет авторизации
+                },
+                `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
             )
 
             await organization.update({name, comment});
@@ -178,8 +178,8 @@ class OrganizationController {
                 {
                     name: {old: oldName, new: null},
                     comment: {old: oldComment, new: null}
-                }, // old: oldName, new: name
-                null // Пока нет авторизации
+                },
+                `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
             )
 
             await transaction.commit();

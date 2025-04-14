@@ -5,11 +5,9 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const historyService = require('./historyService');
 
-
-// TODO: добавить валидацию данных с помощью Joi
-const generateJWT = (id, login, role) => {
+const generateJWT = (id, login, role, last_name, first_name, middle_name ) => {
     return jwt.sign(
-        {id, login, role},
+        {id, login, role, last_name, first_name, middle_name},
         process.env.SECRET_KEY,
         {expiresIn: '24h'}
     )
@@ -41,20 +39,21 @@ class UserController {
         if (!isValidPassword) {
             return next(ApiError.internal('Указан неверный пароль'));
         }
-        const token = generateJWT(user.id, user.login, user.role);
+        const token = generateJWT(user.id, user.login, user.role, user.last_name, user.first_name, user.middle_name);
         return res.json({token}); //Передавать токен
     }
 
-    // TODO : сделать проверку на существование пользователя с таким логином (функция check)
-
     //Проверка токена
     async check(req, res) {
-        const token = generateJWT(req.user.id, req.user.login, req.user.role);
+        const token = generateJWT(req.user.id, req.user.login, req.user.role, req.user.last_name, req.user.first_name, req.user.middle_name);
         return res.json({
             token,
             id: req.user.id,
             login: req.user.login,
             role: req.user.role,
+            last_name: req.user.last_name,
+            first_name: req.user.first_name,
+            middle_name: req.user.middle_name,
         });
     }
 
@@ -80,7 +79,7 @@ class UserController {
                 login: {old: null, new: login},
                 role: {old: null, new: role}
             },
-            null // Пока нет авторизации
+            `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
         );
 
         return res.json(user)
@@ -165,7 +164,7 @@ class UserController {
                     user.id,
                     'update',
                     changedFields,
-                    null // Пока нет авторизации
+                    `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
                 );
             }
 
@@ -205,7 +204,7 @@ class UserController {
                         login: {old: oldValues.login, new: null},
                         role: {old: oldValues.role, new: null}
                     },
-                    null // Пока нет авторизации
+                    `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
                 );
 
                 return res.json({message: 'Пользователь успешно удален'});

@@ -52,7 +52,6 @@ class HROperationsController {
                     // return res.status(404).json({ error: `Должность с ID ${position_id} не найдена` });
                 }
             }
-            // --- Конец получения названий ---
 
             // Создаем операцию приема на работу
             const operation = await HR_Operation.create({
@@ -76,7 +75,7 @@ class HROperationsController {
                     // department_id: { old: null, new: department_id },
                     // position_id: { old: null, new: position_id },
                 },
-                null // Пока нет авторизации
+                `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
             );
 
             console.log('Сотрудник принят на работу:', operation.toJSON());
@@ -123,7 +122,7 @@ class HROperationsController {
                 {
                     salary: {old: lastOperation.salary, new: salary}
                 },
-                null // Пока нет авторизации
+                `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
             );
 
             console.log('Зарплата изменена:', operation.toJSON());
@@ -213,7 +212,7 @@ class HROperationsController {
                     // Если нужно также логировать ID, можно добавить их отдельно:
                     // department_id: { old: lastOperation.department_id, new: department_id },
                 },
-                null // Пока нет авторизации
+                `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
             );
 
             console.log('Отдел изменен:', operation.toJSON());
@@ -307,7 +306,7 @@ class HROperationsController {
                     apartment: {old: employee.address ? employee.address.apartment : null, new: null},
                     operation_type: {old: null, new: 'fire'}  // Правильный формат для operation_type
                 },
-                null // Пока нет авторизации
+                `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
             );
 
             // Фиксируем транзакцию
