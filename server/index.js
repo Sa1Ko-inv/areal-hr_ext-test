@@ -5,7 +5,7 @@ const cors = require('cors');
 const fileUpload = require('express-fileupload');
 const router = require('./routes/index');
 const path = require('path');
-// const errorHandler = require('./middleware/ErrorHandlingMiddleware');
+const errorHandler = require('./middleware/ErrorHandlingMiddleware');
 
 
 
@@ -26,7 +26,7 @@ app.use(express.static(path.resolve(__dirname, 'static')));
 app.use('/api', router);
 
 // Обработка ошибок, последний middleware
-// app.use(errorHandler);
+app.use(errorHandler);
 
 // Все операции с БД являются асинхронными
 const start = async () => {
