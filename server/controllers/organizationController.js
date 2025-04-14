@@ -106,7 +106,7 @@ class OrganizationController {
                 id,
                 'update',
                 {
-                    name: {old: oldName, new: name},
+                    name: {old: oldName, new: name || oldName},
                     comment: {old: oldComment, new: comment}
                 },
                 `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
