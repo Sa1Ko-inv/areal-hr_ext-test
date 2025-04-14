@@ -1,10 +1,19 @@
 const ApiError = require("../error/ApiError");
 const User = require("../models/user");
 const argon2 = require('argon2');
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
 const historyService = require('./historyService');
 
 
 // TODO: добавить валидацию данных с помощью Joi
+const generateJWT = (id, login, role) => {
+    return jwt.sign(
+        {id, login, role},
+        process.env.SECRET_KEY,
+        {expiresIn: '24h'}
+    )
+}
 
 class UserController {
     async registration(req, res) {
@@ -18,8 +27,8 @@ class UserController {
         });
 
         const user = await User.create({first_name, last_name, middle_name, login, password: hashedPassword, role});
-        // Сделать генерацию токена и передача данных в ответе
-        return res.json(user); //Передавать токен
+        const token = generateJWT(user.id, user.login, user.role);
+        return res.json({token}); //Передавать токен
     }
 
     async login(req, res, next) {
@@ -32,11 +41,22 @@ class UserController {
         if (!isValidPassword) {
             return next(ApiError.internal('Указан неверный пароль'));
         }
-        // Сделать генерацию токена и передача данных в ответе
-        return res.json(user); //Передавать токен
+        const token = generateJWT(user.id, user.login, user.role);
+        return res.json({token}); //Передавать токен
     }
 
     // TODO : сделать проверку на существование пользователя с таким логином (функция check)
+
+    //Проверка токена
+    async check(req, res) {
+        const token = generateJWT(req.user.id, req.user.login, req.user.role);
+        return res.json({
+            token,
+            id: req.user.id,
+            login: req.user.login,
+            role: req.user.role,
+        });
+    }
 
     //Создание пользователя
     async createUser(req, res, next) {
