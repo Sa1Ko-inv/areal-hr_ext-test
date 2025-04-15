@@ -4,68 +4,76 @@
     <MyButton modifier="create" @click="showOrganizationCreate">
       Создать организацию
     </MyButton>
-    <MyButton modifier="showHistory" style="margin-left: 10px" @click="showOrganizationDeleteHistory">
+    <MyButton
+      modifier="showHistory"
+      style="margin-left: 10px"
+      @click="showOrganizationDeleteHistory"
+    >
       Посмотреть удаленные организации
     </MyButton>
     <div class="organizationList__items">
-
       <OrganizationItem
-          v-for="organization in organizations"
-          :organization="organization"
-          :key="organization.id"
-          :error="updateError?.id === organization.id ? updateError.message : null"
-          @update="updateOrganization"
-          @delete="deleteOrganization"
+        v-for="organization in organizations"
+        :organization="organization"
+        :key="organization.id"
+        :error="
+          updateError?.id === organization.id ? updateError.message : null
+        "
+        @update="updateOrganization"
+        @delete="deleteOrganization"
       />
-
-
     </div>
   </div>
   <!--Модальное окно для создания новой организации-->
   <MyModalWindow v-model:show="dialogCreateOrganization">
     <OrganizationCreateForm
-        @create="createOrganization"
-        :cancel="cancelModal"
-        :error="createError"
+      @create="createOrganization"
+      :cancel="cancelModal"
+      :error="createError"
     />
   </MyModalWindow>
 
   <!--Модальное окно для просмотра удаленных организаций-->
   <MyModalWindow v-model:show="dialogHistoryDeleteOrganization">
-    <OrganizationDeleteHistory
-        :cancel="cancelModal"
-    />
+    <OrganizationDeleteHistory :cancel="cancelModal" />
   </MyModalWindow>
 </template>
 
 <script>
-import OrganizationItem from "@/components/organizations/organizationItem.vue";
-import OrganizationCreateForm from "@/components/organizations/organizationModal/organizationCreateForm.vue";
-import MyModalWindow from "@/components/UI/MyModalWindow.vue";
-import OrganizationDeleteHistory from "@/components/organizations/organizationModal/organizationDeleteHistory.vue";
-import MyButton from "@/components/UI/MyButton.vue";
+import OrganizationItem from '@/components/organizations/organizationItem.vue';
+import OrganizationCreateForm from '@/components/organizations/organizationModal/organizationCreateForm.vue';
+import MyModalWindow from '@/components/UI/MyModalWindow.vue';
+import OrganizationDeleteHistory from '@/components/organizations/organizationModal/organizationDeleteHistory.vue';
+import MyButton from '@/components/UI/MyButton.vue';
 
 export default {
-  components: {MyButton, OrganizationDeleteHistory, MyModalWindow, OrganizationCreateForm, OrganizationItem},
+  components: {
+    MyButton,
+    OrganizationDeleteHistory,
+    MyModalWindow,
+    OrganizationCreateForm,
+    OrganizationItem,
+  },
   props: {
     organizations: {
       type: Array,
-      required: true
+      required: true,
     },
     createError: {
       type: String,
-      default: null
+      default: null,
     },
-    updateError: { // Добавляем проп для ошибки обновления
+    updateError: {
+      // Добавляем проп для ошибки обновления
       type: Object,
-      default: null
-    }
+      default: null,
+    },
   },
   data() {
     return {
       dialogCreateOrganization: false,
       dialogHistoryDeleteOrganization: false,
-    }
+    };
   },
   methods: {
     // Методы для открытия модальных окон
@@ -89,9 +97,9 @@ export default {
     cancelModal() {
       this.dialogCreateOrganization = false;
       this.dialogHistoryDeleteOrganization = false;
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>

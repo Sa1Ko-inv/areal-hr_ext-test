@@ -1,9 +1,14 @@
 <script>
-import {createPosition, deletePosition, fetchPositions, updatePosition} from "@/http/positionAPI.js";
-import PositionList from "@/components/positions/positionList.vue";
+import {
+  createPosition,
+  deletePosition,
+  fetchPositions,
+  updatePosition,
+} from '@/http/positionAPI.js';
+import PositionList from '@/components/positions/positionList.vue';
 
 export default {
-  components: {PositionList},
+  components: { PositionList },
   data() {
     return {
       positions: [],
@@ -12,8 +17,8 @@ export default {
       updatingPositionId: null, // Для отслеживания какой должности показывать ошибку
       currentPage: 1,
       pageSize: 9,
-      totalItems: 0
-    }
+      totalItems: 0,
+    };
   },
 
   methods: {
@@ -34,7 +39,11 @@ export default {
         this.positions.push(response.data);
         this.getPositions();
       } catch (error) {
-        if (error.response && error.response.data && error.response.data.errors) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.errors
+        ) {
           this.createError = error.response.data.errors[0].message; // Сохраняем сообщение об ошибке
           console.error('Ошибка при создании должностей:', error);
         } else {
@@ -52,36 +61,42 @@ export default {
         this.getPositions();
         this.updatingPositionId = null; // Сбрасываем ID после обновления
       } catch (error) {
-        if (error.response && error.response.data && error.response.data.errors) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.errors
+        ) {
           this.updateError = {
             id: updatedPosition.id,
-            message: error.response.data.errors[0].message
+            message: error.response.data.errors[0].message,
           };
         } else {
           this.updateError = {
             id: updatedPosition.id,
-            message: 'Произошла ошибка при обновлении должности'
+            message: 'Произошла ошибка при обновлении должности',
           };
         }
-      console.log('Ошибка при обновлении должности:', error);
+        console.log('Ошибка при обновлении должности:', error);
       }
     },
 
     async deletePosition(id) {
       try {
         await deletePosition(id);
-        this.positions = this.positions.filter(position => position.id !== id);
+        this.positions = this.positions.filter(
+          (position) => position.id !== id
+        );
         this.getPositions();
-        alert("Должность успешна удалена");
+        alert('Должность успешна удалена');
       } catch (error) {
         console.error('Ошибка при удалении должности:', error);
-        alert("Ошибка при удалении должности");
+        alert('Ошибка при удалении должности');
       }
     },
     changePage(page) {
       this.currentPage = page;
       this.getPositions();
-    }
+    },
   },
 
   mounted() {
@@ -90,36 +105,38 @@ export default {
   computed: {
     totalPages() {
       return Math.ceil(this.totalItems / this.pageSize);
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <template>
   <PositionList
-      :positions="positions"
-      :createError="createError"
-      :updateError="updateError"
-      @create="createPosition"
-      @update="updatePosition"
-      @delete="deletePosition"
+    :positions="positions"
+    :createError="createError"
+    :updateError="updateError"
+    @create="createPosition"
+    @update="updatePosition"
+    @delete="deletePosition"
   />
   <!-- Пагинация -->
   <div class="pagination" v-if="totalPages > 1">
     <button
-        :disabled="currentPage === 1"
-        @click="changePage(currentPage - 1)"
-        class="pagination-button"
+      :disabled="currentPage === 1"
+      @click="changePage(currentPage - 1)"
+      class="pagination-button"
     >
       Предыдущая
     </button>
 
-    <span class="pagination-info">Страница {{ currentPage }} из {{ totalPages }}</span>
+    <span class="pagination-info"
+      >Страница {{ currentPage }} из {{ totalPages }}</span
+    >
 
     <button
-        :disabled="currentPage === totalPages"
-        @click="changePage(currentPage + 1)"
-        class="pagination-button"
+      :disabled="currentPage === totalPages"
+      @click="changePage(currentPage + 1)"
+      class="pagination-button"
     >
       Следующая
     </button>

@@ -22,9 +22,9 @@
             {{ dept.name }}
           </option>
           <option
-              v-for="child in dept.children"
-              :key="child.id"
-              :value="child.id"
+            v-for="child in dept.children"
+            :key="child.id"
+            :value="child.id"
           >
             — {{ child.name }}
           </option>
@@ -45,38 +45,35 @@
     <div class="salary">
       <label>Зарплата</label>
       <input
-          v-model.number="hireEmployeeData.salary"
-          placeholder="Зарплата"
-          type="text"
+        v-model.number="hireEmployeeData.salary"
+        placeholder="Зарплата"
+        type="text"
       />
     </div>
 
     <div class="form-actions">
-      <button type="submit">
-        Сохранить
-      </button>
+      <button type="submit">Сохранить</button>
       <button type="button" @click="cancel">Отмена</button>
     </div>
   </form>
 </template>
 
 <script>
-import {fetchOrganizations} from "@/http/organizationAPI.js";
-import {fetchDepartments} from "@/http/departmentAPI.js";
-import {fetchPositions} from "@/http/positionAPI.js";
-import employee from "@/pages/employee.vue";
+import { fetchOrganizations } from '@/http/organizationAPI.js';
+import { fetchDepartments } from '@/http/departmentAPI.js';
+import { fetchPositions } from '@/http/positionAPI.js';
+import employee from '@/pages/employee.vue';
 
 export default {
   props: {
     employeeId: {
       type: [Number, String],
-      required: true
+      required: true,
     },
     cancel: {
       type: Function,
-      default: () => {
-      }
-    }
+      default: () => {},
+    },
   },
   data() {
     return {
@@ -86,7 +83,7 @@ export default {
       positions: [],
       hireEmployeeData: {
         employee_id: this.employeeId,
-        department_id:'',
+        department_id: '',
         position_id: '',
         salary: '',
       },
@@ -98,8 +95,10 @@ export default {
       if (!this.selectedOrganizationId) {
         return this.departments;
       }
-      return this.departments.filter(dept => dept.organization_id === this.selectedOrganizationId);
-    }
+      return this.departments.filter(
+        (dept) => dept.organization_id === this.selectedOrganizationId
+      );
+    },
   },
   methods: {
     async loadOrganizations() {
@@ -114,10 +113,8 @@ export default {
       try {
         const response = await fetchDepartments();
         this.departments = response.data;
-
       } catch (error) {
         console.log('Ошибка при загрузке отделов:', error);
-
       }
     },
     async loadPositions() {
@@ -132,12 +129,14 @@ export default {
 
     employeeHireOnWork() {
       try {
-        this.cancel()
+        this.cancel();
         this.$emit('hireEmployee', this.hireEmployeeData);
-        this.hireEmployeeData = {employee_id: this.employeeId,
-            department_id:'',
-            position_id: '',
-            salary: '', }
+        this.hireEmployeeData = {
+          employee_id: this.employeeId,
+          department_id: '',
+          position_id: '',
+          salary: '',
+        };
       } catch (error) {
         console.error('Ошибка при принятии на работу:', error);
       }
@@ -148,8 +147,8 @@ export default {
     this.loadOrganizations();
     this.loadDepartments();
     this.loadPositions();
-  }
-}
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -190,7 +189,8 @@ form {
   text-align: center;
 }
 
-.form-group, .salary {
+.form-group,
+.salary {
   margin-bottom: 20px;
 
   label {
@@ -207,7 +207,9 @@ form {
     border: 1px solid $border-color;
     border-radius: $border-radius;
     background-color: $background-color-light;
-    transition: border-color $transition-duration, box-shadow $transition-duration;
+    transition:
+      border-color $transition-duration,
+      box-shadow $transition-duration;
 
     &:focus {
       outline: none;
@@ -222,7 +224,9 @@ form {
     border: 1px solid $border-color;
     border-radius: $border-radius;
     background-color: $background-color-light;
-    transition: border-color $transition-duration, box-shadow $transition-duration;
+    transition:
+      border-color $transition-duration,
+      box-shadow $transition-duration;
 
     &:focus {
       outline: none;
@@ -251,7 +255,9 @@ form {
     border-radius: $border-radius;
     font-weight: 500;
     cursor: pointer;
-    transition: background-color $transition-duration, transform 0.1s;
+    transition:
+      background-color $transition-duration,
+      transform 0.1s;
 
     &:first-child {
       background-color: $primary-color;

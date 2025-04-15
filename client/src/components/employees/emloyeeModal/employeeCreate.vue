@@ -1,4 +1,3 @@
-
 <template>
   <div class="form-container">
     <form @submit.prevent="createEmployee" class="employee-form">
@@ -11,51 +10,51 @@
         <div class="form-group">
           <label for="first_name">Имя</label>
           <MyInput
-              id="first_name"
-              type="text"
-              v-model="employeeData.first_name"
-              placeholder="Введите имя"
+            id="first_name"
+            type="text"
+            v-model="employeeData.first_name"
+            placeholder="Введите имя"
           />
         </div>
 
         <div class="form-group">
           <label for="last_name">Фамилия</label>
           <MyInput
-              id="last_name"
-              type="text"
-              v-model="employeeData.last_name"
-              placeholder="Введите фамилию"
+            id="last_name"
+            type="text"
+            v-model="employeeData.last_name"
+            placeholder="Введите фамилию"
           />
         </div>
 
         <div class="form-group">
           <label for="middle_name">Отчество</label>
           <MyInput
-              id="middle_name"
-              type="text"
-              v-model="employeeData.middle_name"
-              placeholder="Введите отчество"
+            id="middle_name"
+            type="text"
+            v-model="employeeData.middle_name"
+            placeholder="Введите отчество"
           />
         </div>
 
         <div class="form-group">
           <label for="birth_date">Дата рождения</label>
           <MyInput
-              id="birth_date"
-              type="text"
-              v-model="employeeData.birth_date"
-              placeholder="дд/мм/гггг"
+            id="birth_date"
+            type="text"
+            v-model="employeeData.birth_date"
+            placeholder="дд/мм/гггг"
           />
         </div>
 
         <div class="form-group">
           <label for="files">Файлы сотрудника</label>
           <MyInput
-              id="files"
-              type="file"
-              multiple
-              @change="handleFileUpload"
-              accept=".jpg,.jpeg"
+            id="files"
+            type="file"
+            multiple
+            @change="handleFileUpload"
+            accept=".jpg,.jpeg"
           />
           <small>Поддерживаются только JPG/JPEG файлы</small>
           <div v-if="selectedFiles.length > 0" class="selected-files">
@@ -69,144 +68,150 @@
         </div>
       </div>
 
-        <div class="form-section">
-          <h3 class="section-title">Паспортные данные</h3>
-          <div class="form-row">
-            <div class="form-group half">
-              <label for="passport_series">Серия паспорта</label>
-              <MyInput
-                  id="passport_series"
-                  type="text"
-                  v-model="employeeData.passport.series"
-                  placeholder="0000"
-              />
-            </div>
-
-            <div class="form-group half">
-              <label for="passport_number">Номер паспорта</label>
-              <MyInput
-                  id="passport_number"
-                  type="text"
-                  v-model="employeeData.passport.number"
-                  placeholder="000000"
-              />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="issued_by">Кем выдан</label>
+      <div class="form-section">
+        <h3 class="section-title">Паспортные данные</h3>
+        <div class="form-row">
+          <div class="form-group half">
+            <label for="passport_series">Серия паспорта</label>
             <MyInput
-                id="issued_by"
-                type="text"
-                v-model="employeeData.passport.issued_by"
-                placeholder="Кем выдан"
+              id="passport_series"
+              type="text"
+              v-model="employeeData.passport.series"
+              placeholder="0000"
             />
           </div>
 
-          <div class="form-row">
-            <div class="form-group half">
-              <label for="issued_date">Дата выдачи</label>
-              <MyInput
-                  id="issued_date"
-                  type="text"
-                  v-model="employeeData.passport.issued_date"
-                  placeholder="дд/мм/гггг"
-              />
-            </div>
-
-            <div class="form-group half">
-              <label for="division_code">Код подразделения</label>
-              <MyInput
-                  id="division_code"
-                  type="text"
-                  v-model="employeeData.passport.division_code"
-                  placeholder="000-000"
-              />
-            </div>
+          <div class="form-group half">
+            <label for="passport_number">Номер паспорта</label>
+            <MyInput
+              id="passport_number"
+              type="text"
+              v-model="employeeData.passport.number"
+              placeholder="000000"
+            />
           </div>
         </div>
 
-        <div class="form-section">
-          <h3 class="section-title">Адрес проживания</h3>
-          <div class="form-row">
-            <div class="form-group half">
-              <label for="region">Регион</label>
-              <MyInput
-                  id="region"
-                  type="text"
-                  v-model="employeeData.address.region"
-                  placeholder="Введите регион"
-              />
-            </div>
+        <div class="form-group">
+          <label for="issued_by">Кем выдан</label>
+          <MyInput
+            id="issued_by"
+            type="text"
+            v-model="employeeData.passport.issued_by"
+            placeholder="Кем выдан"
+          />
+        </div>
 
-            <div class="form-group half">
-              <label for="locality">Населенный пункт</label>
-              <MyInput
-                  id="locality"
-                  type="text"
-                  v-model="employeeData.address.locality"
-                  placeholder="Введите населенный пункт"
-              />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="street">Улица</label>
+        <div class="form-row">
+          <div class="form-group half">
+            <label for="issued_date">Дата выдачи</label>
             <MyInput
-                id="street"
-                type="text"
-                v-model="employeeData.address.street"
-                placeholder="Введите улицу"
+              id="issued_date"
+              type="text"
+              v-model="employeeData.passport.issued_date"
+              placeholder="дд/мм/гггг"
             />
           </div>
 
-          <div class="form-row">
-            <div class="form-group third">
-              <label for="house">Дом</label>
-              <MyInput
-                  id="house"
-                  type="text"
-                  v-model="employeeData.address.house"
-                  placeholder="Дом"
-              />
-            </div>
+          <div class="form-group half">
+            <label for="division_code">Код подразделения</label>
+            <MyInput
+              id="division_code"
+              type="text"
+              v-model="employeeData.passport.division_code"
+              placeholder="000-000"
+            />
+          </div>
+        </div>
+      </div>
 
-            <div class="form-group third">
-              <label for="building">Корпус</label>
-              <MyInput
-                  id="building"
-                  type="text"
-                  v-model="employeeData.address.building"
-                  placeholder="Корпус"
-              />
-            </div>
+      <div class="form-section">
+        <h3 class="section-title">Адрес проживания</h3>
+        <div class="form-row">
+          <div class="form-group half">
+            <label for="region">Регион</label>
+            <MyInput
+              id="region"
+              type="text"
+              v-model="employeeData.address.region"
+              placeholder="Введите регион"
+            />
+          </div>
 
-            <div class="form-group third">
-              <label for="apartment">Квартира</label>
-              <MyInput
-                  id="apartment"
-                  type="text"
-                  v-model="employeeData.address.apartment"
-                  placeholder="Квартира"
-              />
-            </div>
+          <div class="form-group half">
+            <label for="locality">Населенный пункт</label>
+            <MyInput
+              id="locality"
+              type="text"
+              v-model="employeeData.address.locality"
+              placeholder="Введите населенный пункт"
+            />
           </div>
         </div>
 
-        <div class="form-actions">
-          <MyButton type="submit" modifier="create" :disabled="isSubmitting">
-            {{ isSubmitting ? 'Создание...' : 'Создать' }}
-          </MyButton>
-          <MyButton type="button" modifier="cancel" @click="cancel" :disabled="isSubmitting">Отмена</MyButton>
+        <div class="form-group">
+          <label for="street">Улица</label>
+          <MyInput
+            id="street"
+            type="text"
+            v-model="employeeData.address.street"
+            placeholder="Введите улицу"
+          />
         </div>
+
+        <div class="form-row">
+          <div class="form-group third">
+            <label for="house">Дом</label>
+            <MyInput
+              id="house"
+              type="text"
+              v-model="employeeData.address.house"
+              placeholder="Дом"
+            />
+          </div>
+
+          <div class="form-group third">
+            <label for="building">Корпус</label>
+            <MyInput
+              id="building"
+              type="text"
+              v-model="employeeData.address.building"
+              placeholder="Корпус"
+            />
+          </div>
+
+          <div class="form-group third">
+            <label for="apartment">Квартира</label>
+            <MyInput
+              id="apartment"
+              type="text"
+              v-model="employeeData.address.apartment"
+              placeholder="Квартира"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <MyButton type="submit" modifier="create" :disabled="isSubmitting">
+          {{ isSubmitting ? 'Создание...' : 'Создать' }}
+        </MyButton>
+        <MyButton
+          type="button"
+          modifier="cancel"
+          @click="cancel"
+          :disabled="isSubmitting"
+          >Отмена</MyButton
+        >
+      </div>
     </form>
   </div>
 </template>
 
 <script>
-import {createEmployees, uploadEmployeeFiles} from "@/http/employeeAPI.js";
-import MyInput from "@/components/UI/MyInput.vue";
-import MyButton from "@/components/UI/MyButton.vue";
+import { createEmployees, uploadEmployeeFiles } from '@/http/employeeAPI.js';
+import MyInput from '@/components/UI/MyInput.vue';
+import MyButton from '@/components/UI/MyButton.vue';
 
 const EMPLOYEE_INITIAL_DATA = {
   first_name: '',
@@ -227,24 +232,24 @@ const EMPLOYEE_INITIAL_DATA = {
     house: '',
     apartment: '',
     building: '',
-  }
+  },
 };
 
 export default {
-  components: {MyButton, MyInput},
+  components: { MyButton, MyInput },
   props: {
     cancel: {
       type: Function,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
-      employeeData: {...EMPLOYEE_INITIAL_DATA},
+      employeeData: { ...EMPLOYEE_INITIAL_DATA },
       selectedFiles: [],
       createError: null,
       isSubmitting: false,
-    }
+    };
   },
   methods: {
     handleFileUpload(event) {
@@ -264,7 +269,7 @@ export default {
           const formData = new FormData();
 
           // Добавляем все файлы в FormData
-          this.selectedFiles.forEach(file => {
+          this.selectedFiles.forEach((file) => {
             formData.append('files', file);
           });
 
@@ -276,11 +281,14 @@ export default {
         this.$emit('created');
 
         // Сбрасываем форму
-        this.employeeData = {...EMPLOYEE_INITIAL_DATA};
+        this.employeeData = { ...EMPLOYEE_INITIAL_DATA };
         this.selectedFiles = [];
-
       } catch (error) {
-        if (error.response && error.response.data && error.response.data.errors) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.errors
+        ) {
           this.createError = error.response.data.errors[0].message;
         } else {
           this.createError = 'Произошла ошибка при создании сотрудника';
@@ -289,9 +297,9 @@ export default {
       } finally {
         this.isSubmitting = false;
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -404,7 +412,6 @@ label {
   margin-top: 1rem;
 }
 
-
 // Error message
 .error-message {
   background-color: rgba($error-color, 0.1);
@@ -415,4 +422,3 @@ label {
   border-left: 3px solid $error-color;
 }
 </style>
-

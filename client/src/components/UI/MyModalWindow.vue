@@ -10,18 +10,19 @@
 <script>
 export default {
   name: 'MyModalWindow',
-  props: { //Отвечает за то, что видим мы модальное окно или нет
+  props: {
+    //Отвечает за то, что видим мы модальное окно или нет
     show: {
       type: Boolean,
-      required: false
-    }
+      required: false,
+    },
   },
   methods: {
     hideDialog() {
       this.$emit('update:show', false);
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>

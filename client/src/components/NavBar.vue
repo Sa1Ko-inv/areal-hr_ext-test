@@ -1,24 +1,34 @@
 <script>
-import {POSITION_ROUTE, MAIN_ROUTE, ORGANIZATION_ROUTE} from "@/utils/consts.js";
+import {
+  POSITION_ROUTE,
+  MAIN_ROUTE,
+  ORGANIZATION_ROUTE,
+} from '@/utils/consts.js';
 
 export default {
   data() {
-    return {}
+    return {};
   },
   setup() {
-    return {POSITION_ROUTE, MAIN_ROUTE, ORGANIZATION_ROUTE}
-  }
-}
+    return { POSITION_ROUTE, MAIN_ROUTE, ORGANIZATION_ROUTE };
+  },
+};
 </script>
 
 <template>
   <nav class="navbar">
     <div class="navbar__brand">
-      <router-link :to='MAIN_ROUTE' class="navbar__home-link">На главную</router-link>
+      <router-link :to="MAIN_ROUTE" class="navbar__home-link"
+        >На главную</router-link
+      >
     </div>
     <div class="navbar__menu">
-      <router-link :to='ORGANIZATION_ROUTE' class="navbar__link">Организации</router-link>
-      <router-link :to='POSITION_ROUTE' class="navbar__link">Должности</router-link>
+      <router-link :to="ORGANIZATION_ROUTE" class="navbar__link"
+        >Организации</router-link
+      >
+      <router-link :to="POSITION_ROUTE" class="navbar__link"
+        >Должности</router-link
+      >
     </div>
     <router-link to="" class="navbar__link">Выход</router-link>
   </nav>
@@ -56,7 +66,6 @@ export default {
     margin: 0;
     padding: 0;
     gap: 20px;
-
   }
 
   &__link {

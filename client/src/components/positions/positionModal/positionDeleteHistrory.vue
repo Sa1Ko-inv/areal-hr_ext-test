@@ -10,38 +10,39 @@
     <div class="history-list">
       <table>
         <thead>
-        <tr>
-          <th>ID Должности</th>
-          <th>Название должности</th>
-          <th>Дата удаления</th>
-        </tr>
+          <tr>
+            <th>ID Должности</th>
+            <th>Название должности</th>
+            <th>Дата удаления</th>
+          </tr>
         </thead>
         <tbody>
-        <tr v-for="entry in deleteHistory" :key="entry.id">
-          <td>{{ entry.object_id }}</td>
-          <td>{{ entry.changed_fields?.name?.old || '' }}</td>
-          <td>{{ formatDate(entry.operation_date) }}</td>
-        </tr>
+          <tr v-for="entry in deleteHistory" :key="entry.id">
+            <td>{{ entry.object_id }}</td>
+            <td>{{ entry.changed_fields?.name?.old || '' }}</td>
+            <td>{{ formatDate(entry.operation_date) }}</td>
+          </tr>
         </tbody>
       </table>
     </div>
-
   </div>
 
   <div class="history-footer">
     <div class="pagination">
       <MyButton
-          class="pagination-btn"
-          :disabled="currentPage === 1"
-          @click="changePage(currentPage - 1)"
+        class="pagination-btn"
+        :disabled="currentPage === 1"
+        @click="changePage(currentPage - 1)"
       >
         Предыдущая
       </MyButton>
-      <span class="page-info">Страница {{ currentPage }} из {{ totalPages || 1 }}</span>
+      <span class="page-info"
+        >Страница {{ currentPage }} из {{ totalPages || 1 }}</span
+      >
       <MyButton
-          class="pagination-btn"
-          :disabled="currentPage === totalPages || totalPages === 0"
-          @click="changePage(currentPage + 1)"
+        class="pagination-btn"
+        :disabled="currentPage === totalPages || totalPages === 0"
+        @click="changePage(currentPage + 1)"
       >
         Следующая
       </MyButton>
@@ -50,30 +51,33 @@
 </template>
 
 <script>
-import {fethcDeletedPositions} from "@/http/positionAPI.js";
-import MyButton from "@/components/UI/MyButton.vue";
+import { fethcDeletedPositions } from '@/http/positionAPI.js';
+import MyButton from '@/components/UI/MyButton.vue';
 
 export default {
-  components: {MyButton},
+  components: { MyButton },
   props: {
     cancel: {
       type: Function,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
       deleteHistory: [],
       currentPage: 1,
       pageSize: 5,
-      totalItems: 0
-    }
+      totalItems: 0,
+    };
   },
 
   methods: {
     async getDeletePosition() {
       try {
-        const response = await fethcDeletedPositions(this.currentPage, this.pageSize);
+        const response = await fethcDeletedPositions(
+          this.currentPage,
+          this.pageSize
+        );
         this.deleteHistory = response.rows;
         this.totalItems = response.count;
       } catch (error) {
@@ -82,13 +86,19 @@ export default {
     },
     formatDate(dateString) {
       if (!dateString) return 'N/A';
-      const options = {year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'};
+      const options = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      };
       return new Date(dateString).toLocaleDateString('ru-RU', options);
     },
     changePage(page) {
       this.currentPage = page;
       this.getDeletePosition();
-    }
+    },
   },
   mounted() {
     this.getDeletePosition();
@@ -96,9 +106,9 @@ export default {
   computed: {
     totalPages() {
       return Math.ceil(this.totalItems / this.pageSize);
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -149,7 +159,8 @@ h4 {
     border-collapse: collapse;
     font-size: 14px;
 
-    th, td {
+    th,
+    td {
       border: 1px solid #ddd;
       padding: 8px 12px;
       text-align: left;

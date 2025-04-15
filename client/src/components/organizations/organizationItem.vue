@@ -2,25 +2,34 @@
   <div class="organization">
     <div v-if="!isEditing">
       <router-link
-          :to="`/organization/${organization.id}`"
-          class="organization-link"
+        :to="`/organization/${organization.id}`"
+        class="organization-link"
       >
         <div class="organization__info">
-          <div class="organization__name"><strong>Организация:</strong> {{ organization.name }}</div>
-          <div class="organization__comment" v-if="organization.comment"><strong>Комментарий:</strong>
+          <div class="organization__name">
+            <strong>Организация:</strong> {{ organization.name }}
+          </div>
+          <div class="organization__comment" v-if="organization.comment">
+            <strong>Комментарий:</strong>
             {{ organization.comment }}
           </div>
         </div>
       </router-link>
 
       <div class="organization__btn">
-        <MyButton modifier="edit" @click="startEdit" >
-          Редактировать
-        </MyButton>
-        <MyButton modifier="showHistory" @click="showHistoryDialog" class="organization__button organization__button--edit">
+        <MyButton modifier="edit" @click="startEdit"> Редактировать </MyButton>
+        <MyButton
+          modifier="showHistory"
+          @click="showHistoryDialog"
+          class="organization__button organization__button--edit"
+        >
           История
         </MyButton>
-        <MyButton modifier="delete" @click="deleteOrganization" class="organization__button organization__button--delete">
+        <MyButton
+          modifier="delete"
+          @click="deleteOrganization"
+          class="organization__button organization__button--delete"
+        >
           Удалить
         </MyButton>
       </div>
@@ -28,13 +37,21 @@
 
     <div class="organization__edit" v-else>
       <div class="organization__edit-top">
-        <MyInput v-model.number="editedName" type="text" placeholder="Название"/>
+        <MyInput
+          v-model.number="editedName"
+          type="text"
+          placeholder="Название"
+        />
         <div class="organization__edit-buttons">
           <MyButton modifier="save" @click="saveEdit">Сохранить</MyButton>
           <MyButton modifier="cancel" @click="cancelEdit">Отмена</MyButton>
         </div>
       </div>
-      <textarea v-model.number="editedComment" class="organization__edit-textarea" placeholder="Комментарий"></textarea>
+      <textarea
+        v-model.number="editedComment"
+        class="organization__edit-textarea"
+        placeholder="Комментарий"
+      ></textarea>
       <div v-if="error" class="organization__error">
         {{ error }}
       </div>
@@ -44,30 +61,30 @@
   <!-- Модальное окно просмотра истории организации -->
   <MyModalWindow v-model:show="dialogVisibleHistory">
     <OrganizationWatchHistory
-        :organization="organization"
-        :cancel="cancelModal"
+      :organization="organization"
+      :cancel="cancelModal"
     />
   </MyModalWindow>
-
 </template>
 
 <script>
-import OrganizationWatchHistory from "@/components/organizations/organizationModal/organizationWatchHistory.vue";
-import MyModalWindow from "@/components/UI/MyModalWindow.vue";
-import MyButton from "@/components/UI/MyButton.vue";
-import MyInput from "@/components/UI/MyInput.vue";
+import OrganizationWatchHistory from '@/components/organizations/organizationModal/organizationWatchHistory.vue';
+import MyModalWindow from '@/components/UI/MyModalWindow.vue';
+import MyButton from '@/components/UI/MyButton.vue';
+import MyInput from '@/components/UI/MyInput.vue';
 
 export default {
-  components: {MyInput, MyButton, MyModalWindow, OrganizationWatchHistory},
+  components: { MyInput, MyButton, MyModalWindow, OrganizationWatchHistory },
   props: {
     organization: {
       type: Object,
-      required: true
+      required: true,
     },
-    error: { // Добавляем проп для ошибки
+    error: {
+      // Добавляем проп для ошибки
       type: String,
-      default: null
-    }
+      default: null,
+    },
   },
   data() {
     return {
@@ -75,8 +92,8 @@ export default {
       editedName: this.organization.name,
       editedComment: this.organization.comment || '',
       dialogVisibleHistory: false,
-      dialogVisibleDelete: false
-    }
+      dialogVisibleDelete: false,
+    };
   },
   methods: {
     startEdit() {
@@ -91,7 +108,7 @@ export default {
       this.$emit('update', {
         id: this.organization.id,
         name: this.editedName,
-        comment: this.editedComment
+        comment: this.editedComment,
       });
       this.isEditing = false;
     },
@@ -108,10 +125,9 @@ export default {
     },
     cancelModal() {
       this.dialogVisibleHistory = false;
-    }
-
-  }
-}
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -147,7 +163,8 @@ export default {
     flex: 1;
   }
 
-  &__name, &__comment {
+  &__name,
+  &__comment {
     padding: 5px 0;
 
     strong {

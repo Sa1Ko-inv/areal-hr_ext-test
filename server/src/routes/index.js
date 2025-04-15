@@ -9,9 +9,9 @@ const userRouter = require('./userRouter');
 
 router.use('/organization', organizationRouter);
 router.use('/department', departmentRouter);
-router.use('/position', positionRouter );
+router.use('/position', positionRouter);
 router.use('/employee', employeeRouter);
 router.use('/hr_operation', hr_operationRouter);
-router.use('/user', userRouter)
+router.use('/user', userRouter);
 
 module.exports = router;

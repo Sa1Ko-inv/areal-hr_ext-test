@@ -13,32 +13,32 @@ module.exports = {
       first_name: {
         type: Sequelize.STRING,
         allowNull: false,
-        comment: "Имя"
+        comment: 'Имя',
       },
       last_name: {
         type: Sequelize.STRING,
         allowNull: false,
-        comment: "Фамилия"
+        comment: 'Фамилия',
       },
       middle_name: {
         type: Sequelize.STRING,
         allowNull: false,
-        comment: "Отчество"
+        comment: 'Отчество',
       },
       login: {
         type: Sequelize.STRING,
         allowNull: false,
-        comment: "Login"
+        comment: 'Login',
       },
       password: {
         type: Sequelize.STRING,
         allowNull: false,
-        comment: "пароль"
+        comment: 'пароль',
       },
       role: {
         type: Sequelize.ENUM('admin', 'hr_manager'),
         allowNull: false,
-        comment: "Роль"
+        comment: 'Роль',
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -60,5 +60,5 @@ module.exports = {
 
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('users');
-  }
+  },
 };

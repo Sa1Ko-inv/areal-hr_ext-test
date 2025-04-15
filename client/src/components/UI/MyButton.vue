@@ -83,7 +83,6 @@ export default {
 .btn--create {
   background-color: #792ec9;
   color: white;
-
 }
 
 .btn--create:hover {

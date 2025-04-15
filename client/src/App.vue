@@ -1,21 +1,18 @@
 <script>
-
-import {defineComponent} from "vue";
-import NavBar from "@/components/NavBar.vue";
+import { defineComponent } from 'vue';
+import NavBar from '@/components/NavBar.vue';
 
 export default defineComponent({
-  components: {NavBar}
-})
+  components: { NavBar },
+});
 </script>
 
 <template>
   <div class="app">
-    <NavBar/>
+    <NavBar />
 
     <router-view></router-view>
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

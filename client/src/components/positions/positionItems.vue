@@ -1,17 +1,19 @@
 <template>
   <div class="position">
     <div class="position__info" v-if="!isEditing">
-      <div class="position__name"><strong>Должность:</strong> {{ position.name }}</div>
+      <div class="position__name">
+        <strong>Должность:</strong> {{ position.name }}
+      </div>
     </div>
     <div class="position__edit" v-else>
       <div class="position__edit-container">
         <MyInput
-            v-model="editedName"
-            type="text"
-            size="medium"
-            placeholder="Введите название должности"
-            :error="!!error"
-            class="position__edit-input"
+          v-model="editedName"
+          type="text"
+          size="medium"
+          placeholder="Введите название должности"
+          :error="!!error"
+          class="position__edit-input"
         />
         <div v-if="error" class="position__error">
           {{ error }}
@@ -32,18 +34,15 @@
 
   <!-- Модальное окно просмотра истории должности -->
   <MyModalWindow v-model:show="dialogVisibleHistory">
-    <PositionWatchHistory
-        :position="position"
-        :close="canselModal"
-    />
+    <PositionWatchHistory :position="position" :close="canselModal" />
   </MyModalWindow>
 </template>
 
 <script>
-import MyModalWindow from "@/components/UI/MyModalWindow.vue";
-import PositionWatchHistory from "@/components/positions/positionModal/positionWatchHistory.vue";
-import MyInput from "@/components/UI/MyInput.vue";
-import MyButton from "@/components/UI/MyButton.vue";
+import MyModalWindow from '@/components/UI/MyModalWindow.vue';
+import PositionWatchHistory from '@/components/positions/positionModal/positionWatchHistory.vue';
+import MyInput from '@/components/UI/MyInput.vue';
+import MyButton from '@/components/UI/MyButton.vue';
 
 export default {
   components: { MyButton, MyInput, PositionWatchHistory, MyModalWindow },
@@ -78,7 +77,7 @@ export default {
       this.errors = []; // Сбрасываем ошибки перед сохранением
       this.$emit('update', {
         id: this.position.id,
-        name: this.editedName
+        name: this.editedName,
       });
       this.isEditing = false;
     },

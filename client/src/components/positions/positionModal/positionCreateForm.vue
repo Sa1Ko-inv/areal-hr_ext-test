@@ -1,34 +1,35 @@
 <script>
-import MyInput from "@/components/UI/MyInput.vue";
-import MyButton from "@/components/UI/MyButton.vue";
+import MyInput from '@/components/UI/MyInput.vue';
+import MyButton from '@/components/UI/MyButton.vue';
 
 export default {
-  components: {MyButton, MyInput},
+  components: { MyButton, MyInput },
   props: {
     cancel: {
       type: Function,
-      required: true
+      required: true,
     },
-    error: { // Добавляем пропс для ошибки
+    error: {
+      // Добавляем пропс для ошибки
       type: String,
-      default: null
-    }
+      default: null,
+    },
   },
   data() {
     return {
       position: {
         name: '',
       },
-    }
+    };
   },
 
   methods: {
     createPosition() {
       this.$emit('create', this.position);
-      this.position = {name: ''};
+      this.position = { name: '' };
     },
-  }
-}
+  },
+};
 </script>
 
 <template>
@@ -37,20 +38,22 @@ export default {
 
     <div class="form-group">
       <MyInput
-          size="medium"
-          v-model.number="position.name"
-          placeholder="Название должности"
-          type="text"
+        size="medium"
+        v-model.number="position.name"
+        placeholder="Название должности"
+        type="text"
       />
     </div>
     <!-- Отображение ошибки для поля name -->
     <div v-if="error" class="error-message">
-      {{error}}
+      {{ error }}
     </div>
 
     <div class="form-actions">
       <MyButton modifier="create" type="submit">Добавить должность</MyButton>
-      <MyButton modifier="cancel" type="button" @click="cancel()">Отмена</MyButton>
+      <MyButton modifier="cancel" type="button" @click="cancel()"
+        >Отмена</MyButton
+      >
     </div>
   </form>
 </template>
@@ -75,7 +78,6 @@ form {
     display: flex;
     gap: 10px;
     margin-top: 10px;
-
   }
 }
 
@@ -92,5 +94,4 @@ form {
   margin-bottom: 16px;
   border-left: 3px solid #d32f2f;
 }
-
 </style>

@@ -4,56 +4,58 @@
 
     <div class="form-group">
       <label>Название организации</label>
-      <MyInput v-model.number="name" type="text" class="form-input"/>
+      <MyInput v-model.number="name" type="text" class="form-input" />
       <div v-if="error" class="error-message">{{ error }}</div>
     </div>
 
     <div class="form-group">
       <label>Комментарий</label>
-      <textarea v-model="comment"  class="form-textarea"></textarea>
+      <textarea v-model="comment" class="form-textarea"></textarea>
     </div>
 
     <div class="form-actions">
       <MyButton modifier="create" type="submit">Создать</MyButton>
-      <MyButton modifier="cancel" type="button" @click="cancel">Отмена</MyButton>
+      <MyButton modifier="cancel" type="button" @click="cancel"
+        >Отмена</MyButton
+      >
     </div>
   </form>
 </template>
 
 <script>
-import MyInput from "@/components/UI/MyInput.vue";
-import MyButton from "@/components/UI/MyButton.vue";
+import MyInput from '@/components/UI/MyInput.vue';
+import MyButton from '@/components/UI/MyButton.vue';
 
 export default {
-  components: {MyButton, MyInput},
+  components: { MyButton, MyInput },
   props: {
     cancel: {
       type: Function,
-      required: true
+      required: true,
     },
-    error: { // Добавляем пропс для ошибки
+    error: {
+      // Добавляем пропс для ошибки
       type: String,
-      default: null
-    }
+      default: null,
+    },
   },
   data() {
     return {
       name: '',
-      comment: ''
-    }
+      comment: '',
+    };
   },
   methods: {
     create() {
       this.$emit('create', {
         name: this.name,
-        comment: this.comment
+        comment: this.comment,
       });
       this.name = '';
       this.comment = '';
     },
-
-  }
-}
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -71,7 +73,6 @@ export default {
     margin-bottom: 20px;
   }
 }
-
 
 .form-group {
   margin-bottom: 15px;
@@ -105,5 +106,4 @@ export default {
   gap: 10px;
   margin-top: 20px;
 }
-
 </style>

@@ -1,33 +1,47 @@
 <template>
   <div class="employeeList">
     <h3>Список сотрудников</h3>
-    <MyButton modifier="create" @click="showEmployeeCreate">Создать сотрудника</MyButton>
-    <MyButton modifier="showHistory" @click="showFireHistory">Просмотр уволенных сотрудников</MyButton>
+    <MyButton modifier="create" @click="showEmployeeCreate"
+      >Создать сотрудника</MyButton
+    >
+    <MyButton modifier="showHistory" @click="showFireHistory"
+      >Просмотр уволенных сотрудников</MyButton
+    >
 
     <!-- Добавляем поле для поиска с кнопкой -->
     <div class="search-container">
       <MyInput
-          type="text"
-          v-model="searchQuery"
-          placeholder="Поиск по ФИО..."
-          class="search-input"
-          @input="debounceSearch"
+        type="text"
+        v-model="searchQuery"
+        placeholder="Поиск по ФИО..."
+        class="search-input"
+        @input="debounceSearch"
       />
-      <button v-if="searchQuery" @click="clearSearch" class="search-button clear-button">✕</button>
+      <button
+        v-if="searchQuery"
+        @click="clearSearch"
+        class="search-button clear-button"
+      >
+        ✕
+      </button>
     </div>
 
     <div class="sort-container">
-      <MySelect v-model="selectedSort" :options="sortOptions" @change="handleSortChange"/>
+      <MySelect
+        v-model="selectedSort"
+        :options="sortOptions"
+        @change="handleSortChange"
+      />
     </div>
 
     <div class="positionList__items">
       <template v-if="employees.length">
         <EmployeeItem
-            v-for="employee in sortedEmployees"
-            :key="employee.id"
-            :employee="employee"
-            @update="updateEmployee"
-            :sortBy="selectedSort"
+          v-for="employee in sortedEmployees"
+          :key="employee.id"
+          :employee="employee"
+          @update="updateEmployee"
+          :sortBy="selectedSort"
         />
       </template>
       <template v-else>
@@ -37,26 +51,21 @@
   </div>
   <!-- Модальные окна остаются без изменений -->
   <MyModalWindow v-model:show="dialogFireHistory">
-    <EmployeeFireHistory
-        :cancel="cancelModal"
-    />
+    <EmployeeFireHistory :cancel="cancelModal" />
   </MyModalWindow>
   <MyModalWindow v-model:show="dialogCreateEmployee">
-    <EmployeeCreate
-        :cancel="cancelModal"
-        @created="createdEmployee"
-    />
+    <EmployeeCreate :cancel="cancelModal" @created="createdEmployee" />
   </MyModalWindow>
 </template>
 
 <script>
-import MyModalWindow from "@/components/UI/MyModalWindow.vue";
-import EmployeeItem from "@/components/employees/employeeItem.vue";
-import EmployeeFireHistory from "@/components/employees/emloyeeModal/employeeFireHistory.vue";
-import EmployeeCreate from "@/components/employees/emloyeeModal/employeeCreate.vue";
-import MySelect from "@/components/UI/MySelect.vue";
-import MyInput from "@/components/UI/MyInput.vue";
-import MyButton from "@/components/UI/MyButton.vue";
+import MyModalWindow from '@/components/UI/MyModalWindow.vue';
+import EmployeeItem from '@/components/employees/employeeItem.vue';
+import EmployeeFireHistory from '@/components/employees/emloyeeModal/employeeFireHistory.vue';
+import EmployeeCreate from '@/components/employees/emloyeeModal/employeeCreate.vue';
+import MySelect from '@/components/UI/MySelect.vue';
+import MyInput from '@/components/UI/MyInput.vue';
+import MyButton from '@/components/UI/MyButton.vue';
 
 export default {
   components: {
@@ -66,30 +75,33 @@ export default {
     EmployeeCreate,
     MyModalWindow,
     EmployeeItem,
-    EmployeeFireHistory
+    EmployeeFireHistory,
   },
   props: {
     employees: {
       type: Array,
-      required: true
+      required: true,
     },
   },
   data() {
     return {
       dialogFireHistory: false,
       dialogCreateEmployee: false,
-      selectedSort: "",
-      searchQuery: "", // Поле для поискового запроса
+      selectedSort: '',
+      searchQuery: '', // Поле для поискового запроса
       sortOptions: [
-        {value: "organization", name: "Организации"},
-        {value: "department", name: "Отдел"},
+        { value: 'organization', name: 'Организации' },
+        { value: 'department', name: 'Отдел' },
       ],
-    }
+    };
   },
   computed: {
     // Теперь сортируем только по локальным полям, поиск происходит на сервере
     sortedEmployees() {
-      if (!this.selectedSort || !['last_name', 'first_name'].includes(this.selectedSort)) {
+      if (
+        !this.selectedSort ||
+        !['last_name', 'first_name'].includes(this.selectedSort)
+      ) {
         return this.employees;
       }
 
@@ -104,7 +116,7 @@ export default {
           return valueB.localeCompare(valueA);
         }
       });
-    }
+    },
   },
   methods: {
     showFireHistory() {
@@ -129,7 +141,6 @@ export default {
       if (this.selectedSort) {
         this.$emit('sort-change', {
           value: this.selectedSort,
-
         });
       }
     },
@@ -146,18 +157,18 @@ export default {
     },
     // Очистка поискового запроса
     clearSearch() {
-      this.searchQuery = "";
-      this.$emit('search', "");
-    }
+      this.searchQuery = '';
+      this.$emit('search', '');
+    },
   },
   watch: {
     selectedSort(newValue) {
       if (newValue) {
         this.handleSortChange();
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">
@@ -189,7 +200,6 @@ $button-padding: 10px 18px;
   button {
     padding: $button-padding;
     margin-bottom: 15px;
-
   }
 }
 

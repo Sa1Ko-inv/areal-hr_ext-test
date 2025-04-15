@@ -22,9 +22,9 @@
             {{ dept.name }}
           </option>
           <option
-              v-for="child in dept.children"
-              :key="child.id"
-              :value="child.id"
+            v-for="child in dept.children"
+            :key="child.id"
+            :value="child.id"
           >
             — {{ child.name }}
           </option>
@@ -32,11 +32,8 @@
       </select>
     </div>
 
-
     <div class="form-actions">
-      <button type="submit">
-        Сохранить
-      </button>
+      <button type="submit">Сохранить</button>
       <button type="button" @click="cancel">Отмена</button>
     </div>
   </form>
@@ -51,16 +48,16 @@ export default {
   props: {
     employeeId: {
       type: [Number, String],
-      required: true
+      required: true,
     },
     currentDepartmentId: {
       type: [Number, String],
-      default: null
+      default: null,
     },
     cancel: {
       type: Function,
-      default: () => {}
-    }
+      default: () => {},
+    },
   },
   data() {
     return {
@@ -68,7 +65,7 @@ export default {
       departments: [],
       selectedOrganizationId: null,
       formData: {
-        department_id: this.currentDepartmentId || null
+        department_id: this.currentDepartmentId || null,
       },
       error: null,
     };
@@ -78,8 +75,10 @@ export default {
       if (!this.selectedOrganizationId) {
         return this.departments;
       }
-      return this.departments.filter(dept => dept.organization_id === this.selectedOrganizationId);
-    }
+      return this.departments.filter(
+        (dept) => dept.organization_id === this.selectedOrganizationId
+      );
+    },
   },
   methods: {
     async loadOrganizations() {
@@ -94,17 +93,18 @@ export default {
       try {
         const response = await fetchDepartments();
         this.departments = response.data;
-        console.log(this.departments)
+        console.log(this.departments);
 
         if (this.currentDepartmentId) {
-          const currentDept = response.data.find(d => d.id === this.currentDepartmentId);
+          const currentDept = response.data.find(
+            (d) => d.id === this.currentDepartmentId
+          );
           if (currentDept) {
             this.selectedOrganizationId = currentDept.organization_id;
           }
         }
       } catch (error) {
         console.log('Ошибка при загрузке отделов:', error);
-
       }
     },
     filterDepartments() {
@@ -113,9 +113,9 @@ export default {
     async saveDepartmentChange() {
       try {
         await changeDepartment(this.employeeId, {
-          department_id: this.formData.department_id
+          department_id: this.formData.department_id,
         });
-        this.cancel()
+        this.cancel();
         this.$emit('updateDepartment');
       } catch (error) {
         console.error('Ошибка при изменении отдела:', error);
@@ -125,10 +125,9 @@ export default {
   mounted() {
     this.loadOrganizations();
     this.loadDepartments();
-  }
+  },
 };
 </script>
-
 
 <style scoped lang="scss">
 .error-message {
@@ -195,12 +194,12 @@ form {
     font-weight: 500;
     transition: all 0.2s;
 
-    &[type="submit"] {
+    &[type='submit'] {
       background-color: #792ec9;
       color: white;
 
       &:hover:not(:disabled) {
-        background-color: #792ec9
+        background-color: #792ec9;
       }
 
       &:disabled {
@@ -209,7 +208,7 @@ form {
       }
     }
 
-    &[type="button"] {
+    &[type='button'] {
       background-color: #f5f5f5;
       color: #333;
       border: 1px solid #ddd;

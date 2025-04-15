@@ -13,12 +13,12 @@
           Выбрать файлы
         </label>
         <input
-            type="file"
-            id="file-upload"
-            multiple
-            @change="handleFileSelect"
-            class="file-input"
-            accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
+          type="file"
+          id="file-upload"
+          multiple
+          @change="handleFileSelect"
+          class="file-input"
+          accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
         />
         <span v-if="selectedFiles.length > 0" class="selected-files-count">
           Выбрано файлов: {{ selectedFiles.length }}
@@ -27,17 +27,23 @@
 
       <!-- Список выбранных файлов -->
       <div v-if="selectedFiles.length > 0" class="selected-files-list">
-        <div v-for="(file, index) in selectedFiles" :key="index" class="selected-file-item">
+        <div
+          v-for="(file, index) in selectedFiles"
+          :key="index"
+          class="selected-file-item"
+        >
           <span class="file-name">{{ file.name }}</span>
-          <MyButton @click="removeSelectedFile(index)" class="remove-file-btn">×</MyButton>
+          <MyButton @click="removeSelectedFile(index)" class="remove-file-btn"
+            >×</MyButton
+          >
         </div>
       </div>
 
       <!-- Кнопка загрузки -->
       <MyButton
-          modifier="save"
-          @click="uploadFiles"
-          :disabled="selectedFiles.length === 0 || isUploading"
+        modifier="save"
+        @click="uploadFiles"
+        :disabled="selectedFiles.length === 0 || isUploading"
       >
         {{ isUploading ? 'Загрузка...' : 'Загрузить файлы' }}
       </MyButton>
@@ -52,11 +58,12 @@
     <div class="files-section">
       <h4>Существующие файлы</h4>
 
-      <div v-if="isLoading" class="loading-message">
-        Загрузка файлов...
-      </div>
+      <div v-if="isLoading" class="loading-message">Загрузка файлов...</div>
 
-      <div v-else-if="!employee.files || employee.files.length === 0" class="no-files-message">
+      <div
+        v-else-if="!employee.files || employee.files.length === 0"
+        class="no-files-message"
+      >
         У сотрудника нет загруженных файлов
       </div>
 
@@ -65,14 +72,16 @@
           <div class="file-preview">
             <!-- Для изображений показываем превью -->
             <img
-                v-if="isImageFile(file.name)"
-                :src="getImageUrl(file.file_url)"
-                :alt="file.name"
-                class="file-thumbnail"
-            >
+              v-if="isImageFile(file.name)"
+              :src="getImageUrl(file.file_url)"
+              :alt="file.name"
+              class="file-thumbnail"
+            />
             <!-- Для других типов файлов показываем иконку -->
             <div v-else class="file-icon">
-              <span class="file-extension">{{ getFileExtension(file.name) }}</span>
+              <span class="file-extension">{{
+                getFileExtension(file.name)
+              }}</span>
             </div>
           </div>
 
@@ -83,17 +92,17 @@
 
           <div class="file-actions">
             <a
-                :href="getImageUrl(file.file_url)"
-                target="_blank"
-                class="view-btn"
-                title="Открыть файл"
+              :href="getImageUrl(file.file_url)"
+              target="_blank"
+              class="view-btn"
+              title="Открыть файл"
             >
               Открыть
             </a>
             <MyButton
-                modifier="delete"
-                @click="confirmDeleteFile(file)"
-                title="Удалить файл"
+              modifier="delete"
+              @click="confirmDeleteFile(file)"
+              title="Удалить файл"
             >
               Удалить
             </MyButton>
@@ -108,7 +117,7 @@
         <h4>Подтверждение удаления</h4>
         <p>Вы действительно хотите удалить файл "{{ fileToDelete?.name }}"?</p>
         <div class="delete-confirm-actions">
-          <MyButton modifier="delete" @click="deleteFile" >Удалить</MyButton>
+          <MyButton modifier="delete" @click="deleteFile">Удалить</MyButton>
           <MyButton modifier="cansel" @click="cancelDelete">Отмена</MyButton>
         </div>
       </div>
@@ -117,20 +126,20 @@
 </template>
 
 <script>
-import { uploadEmployeeFiles, deleteEmployeeFile } from "@/http/employeeAPI.js";
-import MyButton from "@/components/UI/MyButton.vue";
+import { uploadEmployeeFiles, deleteEmployeeFile } from '@/http/employeeAPI.js';
+import MyButton from '@/components/UI/MyButton.vue';
 
 export default {
-  components: {MyButton},
+  components: { MyButton },
   props: {
     employee: {
       type: Object,
-      required: true
+      required: true,
     },
     cancel: {
       type: Function,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
@@ -140,7 +149,7 @@ export default {
       uploadError: null,
       showDeleteConfirm: false,
       fileToDelete: null,
-      localFiles: [] // Добавляем локальную копию файлов
+      localFiles: [], // Добавляем локальную копию файлов
     };
   },
   created() {
@@ -172,7 +181,7 @@ export default {
       return date.toLocaleDateString('ru-RU', {
         day: '2-digit',
         month: '2-digit',
-        year: 'numeric'
+        year: 'numeric',
       });
     },
 
@@ -181,13 +190,14 @@ export default {
       const newFiles = Array.from(event.target.files);
 
       // Проверка типов файлов (опционально)
-      const validFiles = newFiles.filter(file => {
+      const validFiles = newFiles.filter((file) => {
         const fileType = file.type.toLowerCase();
         return fileType.includes('image/');
       });
 
       if (validFiles.length !== newFiles.length) {
-        this.uploadError = 'Некоторые файлы имеют неподдерживаемый формат и были пропущены';
+        this.uploadError =
+          'Некоторые файлы имеют неподдерживаемый формат и были пропущены';
       } else {
         this.uploadError = null;
       }
@@ -212,7 +222,7 @@ export default {
 
       try {
         const formData = new FormData();
-        this.selectedFiles.forEach(file => {
+        this.selectedFiles.forEach((file) => {
           formData.append('files', file);
         });
 
@@ -228,10 +238,13 @@ export default {
 
         // Уведомляем родительский компонент об успешной загрузке
         this.$emit('files-uploaded', response.data.files);
-
       } catch (error) {
         console.error('Ошибка при загрузке файлов:', error);
-        if (error.response && error.response.data && error.response.data.error) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.error
+        ) {
           this.uploadError = error.response.data.error;
         } else {
           this.uploadError = 'Произошла ошибка при загрузке файлов';
@@ -261,11 +274,12 @@ export default {
         await deleteEmployeeFile(this.fileToDelete.id);
 
         // Удаляем файл из локальной копии
-        this.localFiles = this.localFiles.filter(file => file.id !== this.fileToDelete.id);
+        this.localFiles = this.localFiles.filter(
+          (file) => file.id !== this.fileToDelete.id
+        );
 
         // Уведомляем родительский компонент об удалении файла
         this.$emit('file-deleted', this.fileToDelete.id);
-
       } catch (error) {
         console.error('Ошибка при удалении файла:', error);
         alert('Не удалось удалить файл. Пожалуйста, попробуйте снова.');
@@ -273,11 +287,10 @@ export default {
         this.showDeleteConfirm = false;
         this.fileToDelete = null;
       }
-    }
-  }
+    },
+  },
 };
 </script>
-
 
 <style scoped>
 .file-manager {
@@ -325,7 +338,8 @@ h4 {
   font-size: 1.2rem;
 }
 
-.upload-section, .files-section {
+.upload-section,
+.files-section {
   background-color: white;
   border-radius: 6px;
   padding: 15px;
@@ -393,14 +407,14 @@ h4 {
   padding: 0 5px;
 }
 
-
 .upload-error {
   margin-top: 10px;
   color: #ff4d4d;
   font-size: 14px;
 }
 
-.loading-message, .no-files-message {
+.loading-message,
+.no-files-message {
   padding: 20px;
   text-align: center;
   color: #666;
@@ -418,7 +432,9 @@ h4 {
   border-radius: 6px;
   overflow: hidden;
   background-color: white;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 
 .file-card:hover {
@@ -496,11 +512,9 @@ h4 {
   text-decoration: none;
 }
 
-
 .view-btn:hover {
   background-color: #792ec9;
 }
-
 
 .delete-confirm-modal {
   position: fixed;
@@ -535,7 +549,6 @@ h4 {
   gap: 10px;
   margin-top: 20px;
 }
-
 
 @media (max-width: 600px) {
   .files-grid {

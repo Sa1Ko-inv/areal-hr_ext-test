@@ -1,11 +1,9 @@
-<!--TODO: сортировка по hr_operation показано в недоумении-->
 <script>
-import EmployeeList from "@/components/employees/employeeList.vue";
-import {fetchEmployees} from "@/http/employeeAPI.js";
-import MySelect from "@/components/UI/MySelect.vue";
+import EmployeeList from '@/components/employees/employeeList.vue';
+import { fetchEmployees } from '@/http/employeeAPI.js';
 
 export default {
-  components: {MySelect, EmployeeList},
+  components: { EmployeeList },
   data() {
     return {
       employees: [],
@@ -13,35 +11,37 @@ export default {
       pageSize: 3,
       totalItems: 0,
       updateError: null,
-      selectedSort: "",
-      sortOrder: "ASC",
-      searchQuery: "" // Добавляем для хранения поискового запроса
-    }
+      selectedSort: '',
+      sortOrder: 'ASC',
+      searchQuery: '', // Добавляем для хранения поискового запроса
+    };
   },
   methods: {
     async getEmployees() {
       try {
         // Отправляем на сервер параметры сортировки и поиска
-        const serverSort = this.selectedSort &&
-        !['last_name', 'first_name'].includes(this.selectedSort) ?
-            this.selectedSort : null;
+        const serverSort =
+          this.selectedSort &&
+          !['last_name', 'first_name'].includes(this.selectedSort)
+            ? this.selectedSort
+            : null;
 
         const response = await fetchEmployees(
-            this.currentPage,
-            this.pageSize,
-            serverSort,
-            this.sortOrder,
-            this.searchQuery // Добавляем поисковый запрос
+          this.currentPage,
+          this.pageSize,
+          serverSort,
+          this.sortOrder,
+          this.searchQuery // Добавляем поисковый запрос
         );
 
         if (response && response.data) {
           this.employees = response.data.rows || [];
           this.totalItems = response.data.count || 0;
         } else {
-          console.error("Некорректный формат ответа:", response);
+          console.error('Некорректный формат ответа:', response);
         }
       } catch (error) {
-        console.error("Ошибка при получении сотрудников:", error);
+        console.error('Ошибка при получении сотрудников:', error);
       }
     },
     changePage(page) {
@@ -53,13 +53,13 @@ export default {
       this.getEmployees();
     },
     handleUpdateEmployees(updatedEmployee) {
-      this.employees = this.employees.map(emp =>
-          emp.id === updatedEmployee.id ? updatedEmployee : emp
+      this.employees = this.employees.map((emp) =>
+        emp.id === updatedEmployee.id ? updatedEmployee : emp
       );
     },
     handleSortChange(sortData) {
       this.selectedSort = sortData.value;
-      this.sortOrder = sortData.order || "ASC";
+      this.sortOrder = sortData.order || 'ASC';
 
       // Возвращаемся на первую страницу при смене сортировки
       this.currentPage = 1;
@@ -70,7 +70,7 @@ export default {
       this.searchQuery = query;
       this.currentPage = 1; // Сбрасываем на первую страницу при поиске
       this.getEmployees();
-    }
+    },
   },
   mounted() {
     this.getEmployees();
@@ -78,38 +78,40 @@ export default {
   computed: {
     totalPages() {
       return Math.ceil(this.totalItems / this.pageSize) || 1;
-    }
+    },
   },
-}
+};
 </script>
 
 <template>
   <div class="">
     <EmployeeList
-        :employees="employees"
-        :updateError="updateError"
-        @created="handleEmployeeCreated"
-        @update-employees="handleUpdateEmployees"
-        @sort-change="handleSortChange"
-        @search="handleSearch"
+      :employees="employees"
+      :updateError="updateError"
+      @created="handleEmployeeCreated"
+      @update-employees="handleUpdateEmployees"
+      @sort-change="handleSortChange"
+      @search="handleSearch"
     />
 
     <!-- Пагинация -->
     <div class="pagination" v-if="totalPages > 1">
       <button
-          :disabled="currentPage === 1"
-          @click="changePage(currentPage - 1)"
-          class="pagination-button"
+        :disabled="currentPage === 1"
+        @click="changePage(currentPage - 1)"
+        class="pagination-button"
       >
         Предыдущая
       </button>
 
-      <span class="pagination-info">Страница {{ currentPage }} из {{ totalPages }}</span>
+      <span class="pagination-info"
+        >Страница {{ currentPage }} из {{ totalPages }}</span
+      >
 
       <button
-          :disabled="currentPage === totalPages"
-          @click="changePage(currentPage + 1)"
-          class="pagination-button"
+        :disabled="currentPage === totalPages"
+        @click="changePage(currentPage + 1)"
+        class="pagination-button"
       >
         Следующая
       </button>

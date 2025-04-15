@@ -14,12 +14,17 @@
         <div v-for="item in history" :key="item.id" class="history-item">
           <div class="history-item-header">
             <div class="operation-info">
-              <span class="operation-type" :class="getOperationName(item.operation_type)">
+              <span
+                class="operation-type"
+                :class="getOperationName(item.operation_type)"
+              >
                 {{ getOperationName(item.operation_type) }}
               </span>
               <span class="changed-by">{{ item.changed_by }}</span>
             </div>
-            <span class="history-date">{{ formatDate(item.operation_date) }}</span>
+            <span class="history-date">{{
+              formatDate(item.operation_date)
+            }}</span>
           </div>
 
           <div class="history-item-content">
@@ -28,12 +33,22 @@
             <div v-if="item.changed_fields" class="changes">
               <strong>Изменённые поля:</strong>
               <ul class="changed-fields-list">
-                <li v-for="field in item.changed_fields" :key="field.field" class="change-field">
+                <li
+                  v-for="field in item.changed_fields"
+                  :key="field.field"
+                  class="change-field"
+                >
                   <div class="field-values">
-                    <div v-if="field.old !== null && field.old !== undefined" class="old-value">
+                    <div
+                      v-if="field.old !== null && field.old !== undefined"
+                      class="old-value"
+                    >
                       <span>Было:</span> {{ field.old }}
                     </div>
-                    <div v-if="field.new !== null && field.new !== undefined" class="new-value">
+                    <div
+                      v-if="field.new !== null && field.new !== undefined"
+                      class="new-value"
+                    >
                       <span>Стало:</span> {{ field.new }}
                     </div>
                   </div>
@@ -48,17 +63,19 @@
     <div class="history-footer">
       <div class="pagination">
         <MyButton
-            class="pagination-btn"
-            :disabled="currentPage === 1"
-            @click="changePage(currentPage - 1)"
+          class="pagination-btn"
+          :disabled="currentPage === 1"
+          @click="changePage(currentPage - 1)"
         >
           Предыдущая
         </MyButton>
-        <span class="page-info">Страница {{ currentPage }} из {{ totalPages || 1 }}</span>
+        <span class="page-info"
+          >Страница {{ currentPage }} из {{ totalPages || 1 }}</span
+        >
         <MyButton
-            class="pagination-btn"
-            :disabled="currentPage === totalPages || totalPages === 0"
-            @click="changePage(currentPage + 1)"
+          class="pagination-btn"
+          :disabled="currentPage === totalPages || totalPages === 0"
+          @click="changePage(currentPage + 1)"
         >
           Следующая
         </MyButton>
@@ -68,19 +85,19 @@
 </template>
 
 <script>
-import {fetchPositionHistory} from "@/http/positionAPI.js";
-import MyButton from "@/components/UI/MyButton.vue";
+import { fetchPositionHistory } from '@/http/positionAPI.js';
+import MyButton from '@/components/UI/MyButton.vue';
 
 export default {
-  components: {MyButton},
+  components: { MyButton },
   props: {
     position: {
       type: Object,
-      required: true
+      required: true,
     },
     close: {
       type: Function,
-      required: true
+      required: true,
     },
   },
 
@@ -89,19 +106,23 @@ export default {
       history: [],
       currentPage: 1,
       pageSize: 5,
-      totalItems: 0
-    }
+      totalItems: 0,
+    };
   },
 
   methods: {
     async getHistoryPosition() {
       try {
-        const response = await fetchPositionHistory(this.position.id, this.currentPage, this.pageSize);
+        const response = await fetchPositionHistory(
+          this.position.id,
+          this.currentPage,
+          this.pageSize
+        );
         this.history = response.rows;
         this.totalItems = response.count;
         console.log(response.rows);
       } catch (error) {
-        console.error("Ошибка при получении истории должности:", error);
+        console.error('Ошибка при получении истории должности:', error);
       }
     },
     changePage(page) {
@@ -116,28 +137,28 @@ export default {
         month: '2-digit',
         year: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
       });
     },
     getOperationName(type) {
       const operations = {
-        'create': 'Создание',
-        'update': 'Обновление',
+        create: 'Создание',
+        update: 'Обновление',
       };
       return operations[type] || type;
     },
   },
 
   mounted() {
-    this.getHistoryPosition()
+    this.getHistoryPosition();
   },
 
   computed: {
     totalPages() {
       return Math.ceil(this.totalItems / this.pageSize) || 1;
-    }
+    },
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

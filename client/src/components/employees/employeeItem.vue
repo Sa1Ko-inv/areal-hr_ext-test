@@ -7,9 +7,10 @@ MyB
         <div class="section__content">
           <div class="info-item">
             <strong class="info-item__key">ФИО:</strong>
-            <span class="info-item__value">{{ employee.id }} {{ employee.last_name }} {{ employee.first_name }} {{
-                employee.middle_name
-              }}</span>
+            <span class="info-item__value"
+              >{{ employee.id }} {{ employee.last_name }}
+              {{ employee.first_name }} {{ employee.middle_name }}</span
+            >
           </div>
           <div class="info-item">
             <strong class="info-item__key">Дата рождения:</strong>
@@ -24,11 +25,15 @@ MyB
             <template v-if="hrInfo.status === 'hired'">
               <div class="info-item">
                 <strong class="info-item__key">Должность:</strong>
-                <span class="info-item__value">{{ hrInfo.position || 'Не указана' }}</span>
+                <span class="info-item__value">{{
+                  hrInfo.position || 'Не указана'
+                }}</span>
               </div>
               <div class="info-item">
                 <strong class="info-item__key">Отдел:</strong>
-                <span class="info-item__value">{{ hrInfo.department || 'Не указан' }}</span>
+                <span class="info-item__value">{{
+                  hrInfo.department || 'Не указан'
+                }}</span>
               </div>
               <div class="info-item">
                 <strong class="info-item__key">Зарплата:</strong>
@@ -36,7 +41,9 @@ MyB
               </div>
             </template>
             <div v-else class="info-item info-item--status">
-              <span class="info-item__value">Сотрудник не принят на работу</span>
+              <span class="info-item__value"
+                >Сотрудник не принят на работу</span
+              >
             </div>
           </div>
           <div v-else class="info-item info-item--status">
@@ -51,23 +58,33 @@ MyB
           <div v-if="employee.passport">
             <div class="info-item">
               <strong class="info-item__key">Серия:</strong>
-              <span class="info-item__value">{{ employee.passport.series }}</span>
+              <span class="info-item__value">{{
+                employee.passport.series
+              }}</span>
             </div>
             <div class="info-item">
               <strong class="info-item__key">Номер:</strong>
-              <span class="info-item__value">{{ employee.passport.number }}</span>
+              <span class="info-item__value">{{
+                employee.passport.number
+              }}</span>
             </div>
             <div class="info-item">
               <strong class="info-item__key">Кем выдан:</strong>
-              <span class="info-item__value">{{ employee.passport.issued_by }}</span>
+              <span class="info-item__value">{{
+                employee.passport.issued_by
+              }}</span>
             </div>
             <div class="info-item">
               <strong class="info-item__key">Дата выдачи:</strong>
-              <span class="info-item__value">{{ employee.passport.issued_date }}</span>
+              <span class="info-item__value">{{
+                employee.passport.issued_date
+              }}</span>
             </div>
             <div class="info-item">
               <strong class="info-item__key">Код подразделения:</strong>
-              <span class="info-item__value">{{ employee.passport.division_code }}</span>
+              <span class="info-item__value">{{
+                employee.passport.division_code
+              }}</span>
             </div>
           </div>
           <div v-else class="info-item info-item--status">
@@ -82,15 +99,21 @@ MyB
           <div v-if="employee.address">
             <div class="info-item">
               <strong class="info-item__key">Регион:</strong>
-              <span class="info-item__value">{{ employee.address.region }}</span>
+              <span class="info-item__value">{{
+                employee.address.region
+              }}</span>
             </div>
             <div class="info-item">
               <strong class="info-item__key">Населенный пункт:</strong>
-              <span class="info-item__value">{{ employee.address.locality }}</span>
+              <span class="info-item__value">{{
+                employee.address.locality
+              }}</span>
             </div>
             <div class="info-item">
               <strong class="info-item__key">Улица:</strong>
-              <span class="info-item__value">{{ employee.address.street }}</span>
+              <span class="info-item__value">{{
+                employee.address.street
+              }}</span>
             </div>
             <div class="info-item">
               <strong class="info-item__key">Дом:</strong>
@@ -98,11 +121,15 @@ MyB
             </div>
             <div class="info-item">
               <strong class="info-item__key">Корпус:</strong>
-              <span class="info-item__value">{{ employee.address.building || '-' }}</span>
+              <span class="info-item__value">{{
+                employee.address.building || '-'
+              }}</span>
             </div>
             <div class="info-item">
               <strong class="info-item__key">Квартира:</strong>
-              <span class="info-item__value">{{ employee.address.apartment || '-' }}</span>
+              <span class="info-item__value">{{
+                employee.address.apartment || '-'
+              }}</span>
             </div>
           </div>
           <div v-else class="info-item info-item--status">
@@ -112,69 +139,89 @@ MyB
       </section>
     </div>
     <div class="employee-card__actions">
-      <MyButton style="background-color: #28a745; color: white; border: #28a745" v-if="!hrInfo || hrInfo.status !== 'hired'" @click="showHireDialog">Принять на работу</MyButton>
-      <MyButton modifier="edit" v-if="hrInfo && hrInfo.status === 'hired'" @click="showChangeSalaryDialog">Изменить зарплату</MyButton>
-      <MyButton modifier="edit" v-if="hrInfo && hrInfo.status === 'hired'" @click="showChangeDepartmentDialog">Изменить отдел</MyButton>
+      <MyButton
+        style="background-color: #28a745; color: white; border: #28a745"
+        v-if="!hrInfo || hrInfo.status !== 'hired'"
+        @click="showHireDialog"
+        >Принять на работу</MyButton
+      >
+      <MyButton
+        modifier="edit"
+        v-if="hrInfo && hrInfo.status === 'hired'"
+        @click="showChangeSalaryDialog"
+        >Изменить зарплату</MyButton
+      >
+      <MyButton
+        modifier="edit"
+        v-if="hrInfo && hrInfo.status === 'hired'"
+        @click="showChangeDepartmentDialog"
+        >Изменить отдел</MyButton
+      >
       <MyButton modifier="edit" @click="showEditDialog">Редактировать</MyButton>
-      <MyButton modifier="showHistory" @click="showFilesDialog">Просмотреть файлы</MyButton>
-      <MyButton modifier="showHistory" @click="showHistoryDialog">История</MyButton>
-      <MyButton modifier="delete" v-if="hrInfo && hrInfo.status === 'hired'" @click="fire_Employee">Уволить</MyButton>
+      <MyButton modifier="showHistory" @click="showFilesDialog"
+        >Просмотреть файлы</MyButton
+      >
+      <MyButton modifier="showHistory" @click="showHistoryDialog"
+        >История</MyButton
+      >
+      <MyButton
+        modifier="delete"
+        v-if="hrInfo && hrInfo.status === 'hired'"
+        @click="fire_Employee"
+        >Уволить</MyButton
+      >
     </div>
 
     <!--Модальное окно просмотра файлов сотрудника-->
     <MyModalWindow v-model:show="dialogVisibleFiles">
       <WatchFileEmployee
-          :employee="employee"
-          :cancel="cancelModal"
-          @files-uploaded="handleFilesUploaded"
-          @file-deleted="handleFileDeleted"
+        :employee="employee"
+        :cancel="cancelModal"
+        @files-uploaded="handleFilesUploaded"
+        @file-deleted="handleFileDeleted"
       />
     </MyModalWindow>
 
     <!-- Модальное окно для изменения отдела HR_Operation -->
     <MyModalWindow v-model:show="dialogVisibleDepartment">
       <EmployeeEditDepartment
-          :employeeId="employee.id"
-          :currentDepartmentId="hrInfo?.department_id"
-          @updateDepartment="onDepartmentChangeSuccess"
-          :cancel="cancelModal"
+        :employeeId="employee.id"
+        :currentDepartmentId="hrInfo?.department_id"
+        @updateDepartment="onDepartmentChangeSuccess"
+        :cancel="cancelModal"
       />
     </MyModalWindow>
 
     <!-- Модальное окно для изменения зарплаты HR_Operation -->
     <MyModalWindow v-model:show="dialogVisibleSalary">
       <EmployeeEditSalary
-          :employeeId="employee.id"
-          :currentSalary="hrInfo?.salary"
-          @updateSalary="onSalaryChangeSuccess"
-          :cancel="cancelModal"
+        :employeeId="employee.id"
+        :currentSalary="hrInfo?.salary"
+        @updateSalary="onSalaryChangeSuccess"
+        :cancel="cancelModal"
       />
     </MyModalWindow>
 
     <!-- Модальное окно для принятия на работу HR_Operation -->
     <MyModalWindow v-model:show="dialogVisibleHire">
       <EmployeeHire
-          :employeeId="employee.id"
-          :cancel="cancelModal"
-          @hireEmployee="handleHireEmployee"
+        :employeeId="employee.id"
+        :cancel="cancelModal"
+        @hireEmployee="handleHireEmployee"
       />
     </MyModalWindow>
 
     <!-- Модальное окно для просмотра истории сотрудника -->
     <MyModalWindow v-model:show="dialogVisibleHistory">
-      <EmployeeWatchHistory
-          :employeeId="employee.id"
-          :cancel="cancelModal"
-      />
+      <EmployeeWatchHistory :employeeId="employee.id" :cancel="cancelModal" />
     </MyModalWindow>
 
     <!-- Модальное окно для редактирования сотрудника -->
     <MyModalWindow v-model:show="dialogVisibleEdit">
       <EmployeeEdit
-          :employee="employee"
-          :cancel="cancelEdit"
-          @employee-updated="handleEmployeeUpdated"
-
+        :employee="employee"
+        :cancel="cancelEdit"
+        @employee-updated="handleEmployeeUpdated"
       />
     </MyModalWindow>
   </div>
@@ -182,15 +229,19 @@ MyB
 
 <script>
 // Импорты компонентов и API
-import MyModalWindow from "@/components/UI/MyModalWindow.vue";
-import WatchFileEmployee from "@/components/employees/emloyeeModal/watchFileEmloyee.vue";
-import EmployeeEditDepartment from "@/components/employees/emloyeeModal/employeeEditDepartment.vue";
-import {fetchEmployeeHRInfo, fireEmployee, hireEmployee} from "@/http/employeeAPI.js";
-import EmployeeEditSalary from "@/components/employees/emloyeeModal/employeeEditSalary.vue";
-import EmployeeHire from "@/components/employees/emloyeeModal/employeeHire.vue";
-import EmployeeWatchHistory from "@/components/employees/emloyeeModal/employeeWatchHistory.vue";
-import EmployeeEdit from "@/components/employees/emloyeeModal/employeeEdit.vue";
-import MyButton from "@/components/UI/MyButton.vue";
+import MyModalWindow from '@/components/UI/MyModalWindow.vue';
+import WatchFileEmployee from '@/components/employees/emloyeeModal/watchFileEmloyee.vue';
+import EmployeeEditDepartment from '@/components/employees/emloyeeModal/employeeEditDepartment.vue';
+import {
+  fetchEmployeeHRInfo,
+  fireEmployee,
+  hireEmployee,
+} from '@/http/employeeAPI.js';
+import EmployeeEditSalary from '@/components/employees/emloyeeModal/employeeEditSalary.vue';
+import EmployeeHire from '@/components/employees/emloyeeModal/employeeHire.vue';
+import EmployeeWatchHistory from '@/components/employees/emloyeeModal/employeeWatchHistory.vue';
+import EmployeeEdit from '@/components/employees/emloyeeModal/employeeEdit.vue';
+import MyButton from '@/components/UI/MyButton.vue';
 
 export default {
   name: 'EmployeeDetailCard',
@@ -251,15 +302,15 @@ export default {
     },
     // Увольнение сотрудника
     async fire_Employee() {
-      if (!confirm("Вы уверены, что хотите уволить сотрудника?")) {
+      if (!confirm('Вы уверены, что хотите уволить сотрудника?')) {
         return;
       }
       try {
         await fireEmployee(this.employee.id);
         await this.loadHRInfo();
       } catch (error) {
-        console.error("Ошибка при увольнении сотрудника:", error);
-        alert("Произошла ошибка при увольнении сотрудника");
+        console.error('Ошибка при увольнении сотрудника:', error);
+        alert('Произошла ошибка при увольнении сотрудника');
       }
     },
     // Принятие на работу
@@ -269,16 +320,16 @@ export default {
         await this.loadHRInfo();
         this.dialogVisibleHire = false;
       } catch (error) {
-        console.error("Ошибка при принятии на работу:", error);
+        console.error('Ошибка при принятии на работу:', error);
       }
     },
     // Загрузка HR информации
     async loadHRInfo() {
       this.hrInfo = null; // Сброс перед загрузкой для отображения индикатора
       try {
-        this.hrInfo = await fetchEmployeeHRInfo(this.employee.id,);
+        this.hrInfo = await fetchEmployeeHRInfo(this.employee.id);
       } catch (error) {
-        console.error("Ошибка при загрузке HR информации:", error);
+        console.error('Ошибка при загрузке HR информации:', error);
       }
     },
     // Закрытие модальных окон (универсальный метод)
@@ -303,22 +354,23 @@ export default {
     },
     // Обработка события удаления файла
     async handleFileDeleted(fileId) {
-      this.employee.files = this.employee.files.filter(file => file.id !== fileId);
+      this.employee.files = this.employee.files.filter(
+        (file) => file.id !== fileId
+      );
     },
     handleEmployeeUpdated(updatedEmployee) {
       // Обновляем локальные данные
       Object.assign(this.employee, updatedEmployee);
       // Прокидываем событие выше с полным обновленным объектом
-      this.$emit('update', {...this.employee});
+      this.$emit('update', { ...this.employee });
       this.dialogVisibleEdit = false;
-    }
+    },
   },
   mounted() {
     this.loadHRInfo();
   },
 };
 </script>
-
 
 <style scoped lang="scss">
 $primary-color: #792ec9;
@@ -355,7 +407,10 @@ $item-gap: 12px;
     margin-bottom: $section-gap * 1.5; // Больший отступ перед кнопками
 
     @media (min-width: 768px) {
-      grid-template-columns: repeat(2, 1fr); // Две колонки на экранах шире 768px
+      grid-template-columns: repeat(
+        2,
+        1fr
+      ); // Две колонки на экранах шире 768px
     }
   }
 
@@ -429,5 +484,4 @@ $item-gap: 12px;
     border-bottom: none;
   }
 }
-
 </style>

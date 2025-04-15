@@ -1,18 +1,23 @@
 <template>
   <form @submit.prevent="saveDepartment">
     <h4>Редактирование Отдела</h4>
-    <div v-if="updateError" class="error-message">{{ updateError.message }}</div>
+    <div v-if="updateError" class="error-message">
+      {{ updateError.message }}
+    </div>
     <input
-        v-model.number="editDepartment.name"
-        placeholder="Название отдела"
-        type="text"
-    >
+      v-model.number="editDepartment.name"
+      placeholder="Название отдела"
+      type="text"
+    />
     <input
-        v-model.number="editDepartment.comment"
-        placeholder="Комментарий"
-        type="text"
+      v-model.number="editDepartment.comment"
+      placeholder="Комментарий"
+      type="text"
+    />
+    <select
+      v-model="editDepartment.organization_id"
+      @change="filterDepartments"
     >
-    <select v-model="editDepartment.organization_id" @change="filterDepartments">
       <option :value="null">Выберите организацию</option>
       <option v-for="org in organizations" :key="org.id" :value="org.id">
         {{ org.name }}
@@ -21,9 +26,10 @@
     <select v-model="editDepartment.parent_id">
       <option :value="null">Без родительского отдела</option>
       <option
-          v-for="dept in filteredDepartments"
-          :key="dept.id"
-          :value="dept.id">
+        v-for="dept in filteredDepartments"
+        :key="dept.id"
+        :value="dept.id"
+      >
         {{ dept.name }} ({{ getOrganizationName(dept.organization_id) }})
       </option>
     </select>
@@ -35,22 +41,22 @@
 </template>
 
 <script>
-import {fetchDepartments, updateDepartment} from "@/http/departmentAPI.js";
+import { fetchDepartments, updateDepartment } from '@/http/departmentAPI.js';
 
 export default {
   props: {
     cancel: {
       type: Function,
-      required: true
+      required: true,
     },
     department: {
       type: Object,
-      required: true
+      required: true,
     },
     organizations: {
       type: Array,
       required: true,
-      default: () => []
+      default: () => [],
     },
   },
   data() {
@@ -59,14 +65,16 @@ export default {
         id: this.department ? this.department.id : null,
         name: this.department ? this.department.name : '',
         comment: this.department ? this.department.comment : '',
-        organization_id: this.department ? this.department.organization_id : null,
-        parent_id: this.department ? this.department.parent_id : null
+        organization_id: this.department
+          ? this.department.organization_id
+          : null,
+        parent_id: this.department ? this.department.parent_id : null,
       },
       departments: [],
       filteredDepartments: [],
       updateError: null, // Добавляем состояние для ошибки обновления
-      updatingDepartmentId: null // Для отслеживания какой отдела показывать ошибку
-    }
+      updatingDepartmentId: null, // Для отслеживания какой отдела показывать ошибку
+    };
   },
   methods: {
     async getDepartments() {
@@ -79,7 +87,7 @@ export default {
       }
     },
     getOrganizationName(orgId) {
-      const org = this.organizations.find(o => o.id === orgId);
+      const org = this.organizations.find((o) => o.id === orgId);
       return org ? org.name : 'Нет организации';
     },
     filterDepartments() {
@@ -93,14 +101,14 @@ export default {
       excludedIds.push(this.editDepartment.id); // Добавляем сам отдел в исключения
 
       // Отделы без родительского отдела, исключая текущий и его дочерние
-      const availableDepartments = this.departments.filter(d =>
-          !excludedIds.includes(d.id)
+      const availableDepartments = this.departments.filter(
+        (d) => !excludedIds.includes(d.id)
       );
 
       // Если выбрана организация, показываем только ее отделы
       if (this.editDepartment.organization_id) {
-        return availableDepartments.filter(d =>
-            d.organization_id === this.editDepartment.organization_id
+        return availableDepartments.filter(
+          (d) => d.organization_id === this.editDepartment.organization_id
         );
       }
       return availableDepartments;
@@ -108,9 +116,11 @@ export default {
     // Рекурсивно получаем все ID дочерних отделов
     getChildDepartmentIds(parentId) {
       const childIds = [];
-      const directChildren = this.departments.filter(d => d.parent_id === parentId);
+      const directChildren = this.departments.filter(
+        (d) => d.parent_id === parentId
+      );
 
-      directChildren.forEach(child => {
+      directChildren.forEach((child) => {
         childIds.push(child.id);
         // Рекурсивно добавляем ID дочерних отделов
         const nestedChildIds = this.getChildDepartmentIds(child.id);
@@ -128,7 +138,7 @@ export default {
         if (this.editDepartment.id === this.editDepartment.parent_id) {
           this.updateError = {
             id: this.editDepartment.id,
-            message: 'Отдел не может быть родительским для самого себя'
+            message: 'Отдел не может быть родительским для самого себя',
           };
           return;
         }
@@ -138,7 +148,7 @@ export default {
           name: this.editDepartment.name,
           comment: this.editDepartment.comment,
           parent_id: this.editDepartment.parent_id,
-          organization_id: this.editDepartment.organization_id
+          organization_id: this.editDepartment.organization_id,
         };
 
         await updateDepartment(departmentData);
@@ -146,27 +156,30 @@ export default {
         this.cancel();
         this.$emit('departmentUpdated');
       } catch (error) {
-        if (error.response && error.response.data && error.response.data.errors) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.errors
+        ) {
           this.updateError = {
             id: this.editDepartment,
-            message: error.response.data.errors[0].message
+            message: error.response.data.errors[0].message,
           };
         } else {
           this.updateError = {
             id: this.editDepartment,
-            message: 'Произошла ошибка при обновлении отдела'
+            message: 'Произошла ошибка при обновлении отдела',
           };
         }
         console.error('Ошибка при обновлении отдела:', error);
       }
-    }
+    },
   },
   mounted() {
     this.getDepartments();
-  }
+  },
 };
 </script>
-
 
 <style lang="scss" scoped>
 .error-message {
@@ -189,7 +202,8 @@ form {
     text-align: center;
   }
 
-  input, select {
+  input,
+  select {
     width: 100%;
     padding: 10px 12px;
     margin-bottom: 15px;
@@ -231,16 +245,16 @@ form {
       font-weight: 500;
       transition: all 0.2s;
 
-      &[type="submit"] {
+      &[type='submit'] {
         background-color: #792ec9;
         color: white;
 
         &:hover {
-          background-color: #792ec9
+          background-color: #792ec9;
         }
       }
 
-      &[type="button"] {
+      &[type='button'] {
         background-color: #f5f5f5;
         color: #333;
         border: 1px solid #ddd;

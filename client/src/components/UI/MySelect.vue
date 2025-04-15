@@ -1,11 +1,7 @@
 <template>
   <select :value="modelValue" class="form-select" @change="changeOption">
     <option disabled value="">Сортировка по...</option>
-    <option
-        v-for="option in options"
-        :key="option.value"
-        :value="option.value"
-    >
+    <option v-for="option in options" :key="option.value" :value="option.value">
       {{ option.name }}
     </option>
   </select>
@@ -13,27 +9,26 @@
 
 <script>
 export default {
-  name: "MySelect",
+  name: 'MySelect',
 
   props: {
     modelValue: {
       type: String,
       // required: true
-      default: ""
+      default: '',
     },
     options: {
       type: Array,
       // required: true,
-      default: () => []
-    }
+      default: () => [],
+    },
   },
   methods: {
     changeOption(event) {
-      this.$emit("update:modelValue", event.target.value);
-
-    }
-  }
-}
+      this.$emit('update:modelValue', event.target.value);
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -61,8 +56,8 @@ $transition-duration: 0.2s;
   border-radius: $border-radius;
   appearance: none;
   transition:
-      border-color $transition-duration ease-in-out,
-      box-shadow $transition-duration ease-in-out;
+    border-color $transition-duration ease-in-out,
+    box-shadow $transition-duration ease-in-out;
 
   &:focus {
     outline: none;

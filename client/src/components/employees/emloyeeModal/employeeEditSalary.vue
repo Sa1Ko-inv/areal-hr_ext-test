@@ -1,4 +1,4 @@
-<template >
+<template>
   <form @submit.prevent="updateSalary">
     <h4>Изменение зарплаты сотрудника</h4>
     <div v-if="error" class="error-message">{{ error }}</div>
@@ -10,37 +10,34 @@
     />
 
     <div class="form-actions">
-      <button type="submit">
-        Сохранить
-      </button>
+      <button type="submit">Сохранить</button>
       <button type="button" @click="cancel">Отмена</button>
     </div>
   </form>
 </template>
 
 <script>
-import {changeSalary} from "@/http/employeeAPI.js";
+import { changeSalary } from '@/http/employeeAPI.js';
 
 export default {
   props: {
     employeeId: {
       type: [Number, String],
-      required: true
+      required: true,
     },
     currentSalary: {
       type: Object,
-      default: null
+      default: null,
     },
     cancel: {
       type: Function,
-      default: () => {
-      }
-    }
+      default: () => {},
+    },
   },
   data() {
     return {
       formData: {
-        salary: this.currentSalary || null
+        salary: this.currentSalary || null,
       },
       error: null,
     };
@@ -50,7 +47,7 @@ export default {
     async updateSalary() {
       try {
         await changeSalary(this.employeeId, {
-          salary: this.formData.salary
+          salary: this.formData.salary,
         });
         this.cancel();
         this.$emit('updateSalary');
@@ -58,8 +55,8 @@ export default {
         console.log('Ошибка при обновлении зарплаты:', error);
       }
     },
-  }
-}
+  },
+};
 </script>
 
 <style lang="scss" scoped>

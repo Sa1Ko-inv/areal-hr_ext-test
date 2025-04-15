@@ -1,5 +1,10 @@
 <template>
-  <input :value="modelValue" @input="updateInput" :class="['input', sizeClass]" :type="type" />
+  <input
+    :value="modelValue"
+    @input="updateInput"
+    :class="['input', sizeClass]"
+    :type="type"
+  />
 </template>
 
 <script>
@@ -37,7 +42,9 @@ export default {
   border-radius: 4px;
   font-size: 14px;
   line-height: 1.5;
-  transition: border-color 0.3s, box-shadow 0.3s;
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
 
   &:focus {
     border-color: #792ec9;

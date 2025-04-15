@@ -8,80 +8,82 @@
       <h3>Личная информация</h3>
       <div class="form-group">
         <label>Фамилия:</label>
-        <input v-model="editedEmployee.last_name" type="text">
+        <input v-model="editedEmployee.last_name" type="text" />
       </div>
       <div class="form-group">
         <label>Имя:</label>
-        <input v-model="editedEmployee.first_name" type="text">
+        <input v-model="editedEmployee.first_name" type="text" />
       </div>
       <div class="form-group">
         <label>Отчество:</label>
-        <input v-model="editedEmployee.middle_name" type="text">
+        <input v-model="editedEmployee.middle_name" type="text" />
       </div>
       <div class="form-group">
         <label>Дата рождения:</label>
-        <input v-model="editedEmployee.birth_date" type="text">
+        <input v-model="editedEmployee.birth_date" type="text" />
       </div>
     </div>
     <div class="form-section" v-if="editedEmployee.passport">
       <h3>Данные паспорта</h3>
       <div class="form-group">
         <label>Серия:</label>
-        <input v-model="editedEmployee.passport.series" type="text">
+        <input v-model="editedEmployee.passport.series" type="text" />
       </div>
       <div class="form-group">
         <label>Номер:</label>
-        <input v-model="editedEmployee.passport.number" type="text">
+        <input v-model="editedEmployee.passport.number" type="text" />
       </div>
       <div class="form-group">
         <label>Кем выдан:</label>
-        <input v-model="editedEmployee.passport.issued_by" type="text">
+        <input v-model="editedEmployee.passport.issued_by" type="text" />
       </div>
       <div class="form-group">
         <label>Дата выдачи:</label>
-        <input v-model="editedEmployee.passport.issued_date" type="text">
+        <input v-model="editedEmployee.passport.issued_date" type="text" />
       </div>
       <div class="form-group">
         <label>Код подразделения:</label>
-        <input v-model="editedEmployee.passport.division_code" type="text">
+        <input v-model="editedEmployee.passport.division_code" type="text" />
       </div>
     </div>
     <div class="form-section" v-if="editedEmployee.address">
       <h3>Адрес</h3>
       <div class="form-group">
         <label>Регион:</label>
-        <input v-model="editedEmployee.address.region" type="text">
+        <input v-model="editedEmployee.address.region" type="text" />
       </div>
       <div class="form-group">
         <label>Населенный пункт:</label>
-        <input v-model="editedEmployee.address.locality" type="text">
+        <input v-model="editedEmployee.address.locality" type="text" />
       </div>
       <div class="form-group">
         <label>Улица:</label>
-        <input v-model="editedEmployee.address.street" type="text">
+        <input v-model="editedEmployee.address.street" type="text" />
       </div>
       <div class="form-group">
         <label>Дом:</label>
-        <input v-model="editedEmployee.address.house" type="text">
+        <input v-model="editedEmployee.address.house" type="text" />
       </div>
       <div class="form-group">
         <label>Корпус:</label>
-        <input v-model="editedEmployee.address.building" type="text">
+        <input v-model="editedEmployee.address.building" type="text" />
       </div>
       <div class="form-group">
         <label>Квартира:</label>
-        <input v-model="editedEmployee.address.apartment" type="text">
+        <input v-model="editedEmployee.address.apartment" type="text" />
       </div>
     </div>
     <div class="form-actions">
-      <button @click="saveEmployeeChanges" class="save-button">Сохранить</button>
+      <button @click="saveEmployeeChanges" class="save-button">
+        Сохранить
+      </button>
       <button @click="cancel" class="cancel-button">Отмена</button>
     </div>
   </div>
 </template>
 
 <script>
-import { updateEmployees } from "@/http/employeeAPI.js";
+import { updateEmployees } from '@/http/employeeAPI.js';
 
 export default {
   name: 'EmployeeEdit',
@@ -92,14 +94,14 @@ export default {
     },
     cancel: {
       type: Function,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
       editedEmployee: {},
       originalEmployee: {},
-      updateError: null
+      updateError: null,
     };
   },
   methods: {
@@ -121,35 +123,41 @@ export default {
     // Оптимизированный метод сохранения изменений
     async saveEmployeeChanges() {
       try {
-        const changedData = this.getChangedData(this.originalEmployee, this.editedEmployee);
+        const changedData = this.getChangedData(
+          this.originalEmployee,
+          this.editedEmployee
+        );
         if (Object.keys(changedData).length > 1) {
           await updateEmployees(this.employee.id, changedData);
           // Передаем полный обновленный объект
-          this.$emit('employee-updated', {...this.editedEmployee});
+          this.$emit('employee-updated', { ...this.editedEmployee });
         }
         this.cancel();
       } catch (error) {
-        if (error.response && error.response.data && error.response.data.errors) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.errors
+        ) {
           this.updateError = {
             id: this.employee.id,
-            message: error.response.data.errors[0].message
-          }
+            message: error.response.data.errors[0].message,
+          };
         } else {
           this.updateError = {
             id: this.employee.id,
-            message: 'Произошла ошибка при обновлении сотрудника'
-          }
+            message: 'Произошла ошибка при обновлении сотрудника',
+          };
         }
-        console.error("Ошибка при обновлении сотрудника:", error);
+        console.error('Ошибка при обновлении сотрудника:', error);
       }
-    }
-
+    },
   },
   created() {
     // Создаем глубокие копии объекта сотрудника при создании компонента
     this.editedEmployee = JSON.parse(JSON.stringify(this.employee));
     this.originalEmployee = JSON.parse(JSON.stringify(this.employee));
-  }
+  },
 };
 </script>
 
@@ -279,4 +287,3 @@ export default {
   }
 }
 </style>
-

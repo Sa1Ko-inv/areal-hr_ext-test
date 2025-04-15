@@ -60,7 +60,9 @@ $transition-duration: 0.2s;
   border: 1px solid $border-color;
   border-radius: 4px;
   font-size: 1rem;
-  transition: border-color $transition-duration ease, box-shadow $transition-duration ease;
+  transition:
+    border-color $transition-duration ease,
+    box-shadow $transition-duration ease;
 
   &:focus {
     outline: none;
@@ -79,7 +81,10 @@ $transition-duration: 0.2s;
   border-radius: calc($border-radius / 2);
   font-weight: 500;
   cursor: pointer;
-  transition: background-color $transition-duration ease, transform 0.1s ease, box-shadow $transition-duration ease;
+  transition:
+    background-color $transition-duration ease,
+    transform 0.1s ease,
+    box-shadow $transition-duration ease;
 
   &--primary {
     background-color: $primary-color;

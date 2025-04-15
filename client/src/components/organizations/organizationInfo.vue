@@ -3,55 +3,52 @@
     <h1>{{ organization.name }}</h1>
     <p v-if="organization.comment">{{ organization.comment }}</p>
 
-    <MyButton modifier="create" @click="showDialog">
-      Создать отдел
-    </MyButton>
+    <MyButton modifier="create" @click="showDialog"> Создать отдел </MyButton>
 
     <div class="departments-section">
       <h2>Отделы</h2>
 
       <organizationDepartmentTree
-          :departments="departments"
-          @departmentUpdated="handleDepartmentUpdate"
-          @departmentDeleted="departmentDeleted"
+        :departments="departments"
+        @departmentUpdated="handleDepartmentUpdate"
+        @departmentDeleted="departmentDeleted"
       />
     </div>
 
     <router-link to="/organization">
-      <MyButton modifier="create">
-        Вернуться к списку организаций
-      </MyButton>
-
+      <MyButton modifier="create"> Вернуться к списку организаций </MyButton>
     </router-link>
   </div>
 
   <MyModalWindow v-model:show="dialogVisible">
     <DepartmentCreateForm
-        :cancel="cancelCreate"
-        :organizationId="organization.id"
-        :departments="departments"
-        @created="loadOrganization"
+      :cancel="cancelCreate"
+      :organizationId="organization.id"
+      :departments="departments"
+      @created="loadOrganization"
     />
   </MyModalWindow>
-
-
 </template>
 
 <script>
-import organizationDepartmentTree from "@/components/organizations/organizationDepartmentTree.vue";
-import {fetchOrganizationWithDepartments} from "@/http/organizationAPI.js";
-import MyModalWindow from "@/components/UI/MyModalWindow.vue";
-import DepartmentCreateForm from "@/components/departments/departmentCreateForm.vue";
-import MyButton from "@/components/UI/MyButton.vue";
-
+import organizationDepartmentTree from '@/components/organizations/organizationDepartmentTree.vue';
+import { fetchOrganizationWithDepartments } from '@/http/organizationAPI.js';
+import MyModalWindow from '@/components/UI/MyModalWindow.vue';
+import DepartmentCreateForm from '@/components/departments/departmentCreateForm.vue';
+import MyButton from '@/components/UI/MyButton.vue';
 
 export default {
-  components: {MyButton, DepartmentCreateForm, MyModalWindow, organizationDepartmentTree},
+  components: {
+    MyButton,
+    DepartmentCreateForm,
+    MyModalWindow,
+    organizationDepartmentTree,
+  },
   data() {
     return {
       organization: {},
       departments: [],
-      dialogVisible: false
+      dialogVisible: false,
     };
   },
   async created() {
@@ -86,9 +83,11 @@ export default {
     },
 
     departmentDeleted(departmentId) {
-      this.departments = this.departments.filter(department => department.id !== departmentId);
+      this.departments = this.departments.filter(
+        (department) => department.id !== departmentId
+      );
       this.loadOrganization();
-      console.log(departmentId)
+      console.log(departmentId);
     },
   },
 };
@@ -142,7 +141,6 @@ export default {
   button {
     display: inline-block;
     padding: 10px 20px;
-
   }
 }
 </style>
