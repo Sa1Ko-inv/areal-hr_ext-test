@@ -6,85 +6,81 @@ const Files = require('../models/file');
 const Department = require('../models/department');
 const Position = require('../models/position');
 const Organization = require('../models/organization');
-const sequelize = require('../db');
+const sequelize = require('../../db');
 const historyService = require('./historyService'); // Импортируем historyService
 
 class HROperationsController {
     // Приём сотрудника на работу
     async hireEmployee(req, res, next) {
-        // Получаем данные из тела запроса
-        const {employee_id, department_id, position_id, salary} = req.body;
-
-        // Проверка обязательных полей (пример, можно расширить)
-        if (!employee_id || !department_id || !position_id || salary === undefined || salary === null) {
-            return res.status(400).json({error: 'Не все обязательные поля (employee_id, department_id, position_id, salary) предоставлены'});
-        }
-
+        const transaction = await sequelize.transaction();
         try {
-            // --- Получение названий для истории ---
+            const {employee_id, department_id, position_id, salary} = req.body;
+
+            if (!employee_id || !department_id || !position_id || salary === undefined) {
+                await transaction.rollback();
+                return res.status(400).json({error: 'Не все обязательные поля предоставлены'});
+            }
+
             let departmentNameString = 'N/A';
             let positionNameString = 'N/A';
 
-            // Получаем отдел и организацию
-            if (department_id) {
-                const dept = await Department.findOne({
-                    where: {id: department_id},
-                    include: [{model: Organization, attributes: ['name']}]
-                });
-                if (dept) {
-                    departmentNameString = `${dept.name}${dept.organization ? ` (${dept.organization.name})` : ''}`;
-                } else {
-                    console.warn(`Department with ID ${department_id} not found during hire logging.`);
+            // Получаем отдел и организацию с транзакцией
+            const dept = await Department.findOne({
+                where: {id: department_id},
+                include: [{model: Organization, attributes: ['name']}],
+                transaction
+            });
 
-                }
+            if (dept) {
+                departmentNameString = `${dept.name}${dept.organization ? ` (${dept.organization.name})` : ''}`;
+            } else {
+                await transaction.rollback();
+                return res.status(404).json({error: `Отдел с ID ${department_id} не найден`});
             }
 
-            // Получаем должность
-            if (position_id) {
-                const pos = await Position.findOne({
-                    where: {id: position_id}
-                });
-                if (pos) {
-                    positionNameString = pos.name;
-                } else {
-                    console.warn(`Position with ID ${position_id} not found during hire logging.`);
-                    // Можно вернуть ошибку, если должность обязательна и должна существовать
-                    // return res.status(404).json({ error: `Должность с ID ${position_id} не найдена` });
-                }
+            // Получаем должность с транзакцией
+            const pos = await Position.findOne({
+                where: {id: position_id},
+                transaction
+            });
+
+            if (pos) {
+                positionNameString = pos.name;
+            } else {
+                await transaction.rollback();
+                return res.status(404).json({error: `Должность с ID ${position_id} не найдена`});
             }
 
-            // Создаем операцию приема на работу
+            // Создаем операцию с транзакцией
             const operation = await HR_Operation.create({
                 type: 'hire',
                 employee_id,
-                department_id, // Сохраняем ID в самой операции
-                position_id,   // Сохраняем ID в самой операции
+                department_id,
+                position_id,
                 salary
-            });
+            }, {transaction});
 
-            // Записываем в историю названия
+            // Запись в историю с транзакцией
             await historyService.createHistoryEntry(
                 'Сотрудник',
                 employee_id,
                 'Принятие на работу',
                 {
-                    department: {old: null, new: departmentNameString}, // Используем название отдела
-                    position: {old: null, new: positionNameString},   // Используем название должности
+                    department: {old: null, new: departmentNameString},
+                    position: {old: null, new: positionNameString},
                     salary: {old: null, new: salary}
-                    // Если нужно также логировать ID:
-                    // department_id: { old: null, new: department_id },
-                    // position_id: { old: null, new: position_id },
                 },
-                `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
+                `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`,
+                transaction
             );
 
-            console.log('Сотрудник принят на работу:', operation.toJSON());
+            await transaction.commit();
             return res.json(operation);
         } catch (error) {
-            console.log('Ошибка при приёме сотрудника', error);
-            console.error('Stack trace:', error.stack); // Логируем стек ошибки
+            await transaction.rollback();
+            console.error('Ошибка при приёме сотрудника:', error.stack);
             return res.status(500).json({
-                error: 'Ошибка сервера при приёме сотрудника',
+                error: 'Ошибка сервера',
                 details: error.message
             });
         }
@@ -92,29 +88,31 @@ class HROperationsController {
 
     // Изменение зарплаты сотрудника
     async changeSalary(req, res, next) {
-        const {employee_id} = req.params;
-        const {salary} = req.body;
+        const transaction = await sequelize.transaction();
+
         try {
-            // Получаем последнюю HR операцию для сохранения текущих значений
+            const {employee_id} = req.params;
+            const {salary} = req.body;
+
             const lastOperation = await HR_Operation.findOne({
                 where: {employee_id},
-                order: [['createdAt', 'DESC']]
+                order: [['createdAt', 'DESC']],
+                transaction
             });
 
             if (!lastOperation) {
-                return res.status(404).json({error: 'Не найдена информация о сотруднике'});
+                await transaction.rollback();
+                return res.status(404).json({error: 'Информация о сотруднике не найдена'});
             }
 
-            // Создаем новую операцию, сохраняя текущие значения department_id и position_id
             const operation = await HR_Operation.create({
                 type: 'salary_change',
                 employee_id,
-                salary: salary,
+                salary,
                 department_id: lastOperation.department_id,
                 position_id: lastOperation.position_id
-            });
+            }, {transaction});
 
-            // Записываем в историю
             await historyService.createHistoryEntry(
                 'Сотрудник',
                 employee_id,
@@ -122,13 +120,15 @@ class HROperationsController {
                 {
                     salary: {old: lastOperation.salary, new: salary}
                 },
-                `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
+                `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`,
+                transaction
             );
 
-            console.log('Зарплата изменена:', operation.toJSON());
+            await transaction.commit();
             return res.json(operation);
         } catch (error) {
-            console.log('Ошибка при изменении зарплаты', error);
+            await transaction.rollback();
+            console.error('Ошибка при изменении зарплаты:', error.stack);
             return res.status(500).json({error: 'Ошибка сервера'});
         }
     }
@@ -145,14 +145,19 @@ class HROperationsController {
             return res.status(400).json({error: 'Не указан ID нового отдела (department_id)'});
         }
 
+        // Начинаем транзакцию
+        const transaction = await sequelize.transaction();
+
         try {
             // Получаем последнюю HR операцию для сохранения текущей зарплаты и старого отдела
             const lastOperation = await HR_Operation.findOne({
                 where: {employee_id},
-                order: [['createdAt', 'DESC']]
+                order: [['createdAt', 'DESC']],
+                transaction // Передаем транзакцию
             });
 
             if (!lastOperation) {
+                await transaction.rollback(); // Откатываем транзакцию при ошибке
                 return res.status(404).json({error: 'Не найдена информация о сотруднике или его предыдущих операциях'});
             }
 
@@ -166,7 +171,8 @@ class HROperationsController {
             if (lastOperation.department_id) {
                 const oldDept = await Department.findOne({
                     where: {id: lastOperation.department_id},
-                    include: [{model: Organization, attributes: ['name']}] // Включаем организацию
+                    include: [{model: Organization, attributes: ['name']}], // Включаем организацию
+                    transaction // Передаем транзакцию
                 });
                 if (oldDept) {
                     oldDepartmentInfo = oldDept; // Сохраняем для создания новой операции
@@ -177,16 +183,17 @@ class HROperationsController {
             // Получаем новый отдел и организацию
             const newDept = await Department.findOne({
                 where: {id: department_id},
-                include: [{model: Organization, attributes: ['name']}] // Включаем организацию
+                include: [{model: Organization, attributes: ['name']}], // Включаем организацию
+                transaction // Передаем транзакцию
             });
 
             if (!newDept) {
                 // Если новый отдел не найден, возвращаем ошибку
+                await transaction.rollback(); // Откатываем транзакцию при ошибке
                 return res.status(404).json({error: `Отдел с ID ${department_id} не найден`});
             }
             newDepartmentInfo = newDept; // Сохраняем для создания новой операции
             newDepartmentName = `${newDept.name}${newDept.organization ? ` (${newDept.organization.name})` : ''}`;
-            // --- Конец получения информации об отделах ---
 
 
             // Создаем новую операцию, сохраняя текущую зарплату и должность
@@ -197,7 +204,7 @@ class HROperationsController {
                 department_id: department_id, // Используем новый ID отдела
                 position_id: lastOperation.position_id, // Сохраняем текущую должность
                 salary: lastOperation.salary // Сохраняем текущую зарплату
-            });
+            }, {transaction}); // Передаем транзакцию
 
             // Записываем в историю названия отделов
             await historyService.createHistoryEntry(
@@ -209,15 +216,20 @@ class HROperationsController {
                         old: oldDepartmentName, // Название старого отдела (и организации)
                         new: newDepartmentName  // Название нового отдела (и организации)
                     },
-                    // Если нужно также логировать ID, можно добавить их отдельно:
-                    // department_id: { old: lastOperation.department_id, new: department_id },
                 },
-                `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
+                `${req.user.id} ${req.user.last_name || ''} ${req.user.first_name || ''} ${req.user.middle_name || ''}`,
+                transaction // Передаем транзакцию
             );
+
+            // Фиксируем транзакцию после успешного выполнения всех операций
+            await transaction.commit();
 
             console.log('Отдел изменен:', operation.toJSON());
             return res.json(operation);
         } catch (error) {
+            // Откатываем транзакцию в случае ошибки
+            await transaction.rollback();
+
             console.log('Ошибка при переводе сотрудника', error);
             // Логируем более подробную информацию об ошибке
             console.error('Stack trace:', error.stack);

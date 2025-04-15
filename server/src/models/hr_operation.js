@@ -1,8 +1,8 @@
-const sequelize = require('../db')
+const sequelize = require('../../db')
 const {DataTypes} = require("sequelize");
-const Employee = require("../models/employees");
-const Department = require("../models/department");
-const Position = require("../models/position");
+const Employee = require("./employees");
+const Department = require("./department");
+const Position = require("./position");
 
 const HR_Operation = sequelize.define("hr_operation", {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},

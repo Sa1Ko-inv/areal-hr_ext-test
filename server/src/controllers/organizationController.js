@@ -1,28 +1,35 @@
 const Organization = require('../models/organization')
 const ApiError = require('../error/ApiError');
 const Department = require("../models/department");
-const sequelize = require('../db');
+const sequelize = require('../../db');
 const historyService = require('./historyService');
 const History = require("../models/history");
 
 
 class OrganizationController {
     async createOrganization(req, res, next) {
-        const {name, comment} = req.body;
+        const transaction = await sequelize.transaction(); // Получаем транзакцию
         try {
-            const organization = await Organization.create(
-                {name, comment})
+            const {name, comment} = req.body;
+            const organization = await Organization.create({
+                name, comment
+            }, {transaction})
+
             await historyService.createHistoryEntry(
                 'Организация',
                 organization.id,
                 'create',
                 {name: {old: null, new: name}, comment: {old: null, new: comment}}, // old: null для создания// old: null для создания
-                `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
+                `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`,
+                transaction
             );
+            await transaction.commit()
             return res.json(organization);
 
         } catch (error) {
-            console.log('Ошибка при создании Организации', error)
+            await transaction.rollback();
+            console.log('Ошибка при создании Организации', error.stack)
+            return next(ApiError.internal({error: 'Ошибка при создании Организации', details: error.message}));
         }
     }
 
@@ -84,39 +91,63 @@ class OrganizationController {
     }
 
     async updateOrganization(req, res, next) {
-        const {id} = req.params;
-        const {name, comment} = req.body;
-
+        const transaction = await sequelize.transaction();
         try {
+            const {id} = req.params;
+            const {name, comment} = req.body;
+
             const organization = await Organization.findOne({
-                where: {id: id},
-                // paranoid: false // Ищем даже удаленные записи
+                where: {id},
+                transaction
             });
 
             if (!organization) {
+                await transaction.rollback();
                 return res.status(404).json({error: 'Организация не найдена'});
             }
 
-            const oldName = organization.name; // Получаем старое значение
-            const oldComment = organization.comment; // Получаем старое значение комментария
+            // Сохраняем старые значения
+            const oldValues = {
+                name: organization.name,
+                comment: organization.comment
+            };
 
-            // Записываем в историю
-            await historyService.createHistoryEntry(
-                'Организация',
-                id,
-                'update',
-                {
-                    name: {old: oldName, new: name || oldName},
-                    comment: {old: oldComment, new: comment}
-                },
-                `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
-            )
+            // Обновляем организацию
+            await organization.update({
+                name: name || oldValues.name,
+                comment: comment !== undefined ? comment : oldValues.comment
+            }, {transaction});
 
-            await organization.update({name, comment});
+            // Проверяем, были ли изменения
+            const changes = {};
+            if (name !== undefined && name !== oldValues.name) {
+                changes.name = {old: oldValues.name, new: name};
+            }
+            if (comment !== undefined && comment !== oldValues.comment) {
+                changes.comment = {old: oldValues.comment, new: comment};
+            }
+
+            // Записываем в историю только если были изменения
+            if (Object.keys(changes).length > 0) {
+                await historyService.createHistoryEntry(
+                    'Организация',
+                    id,
+                    'update',
+                    changes,
+                    `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`,
+                    transaction
+                );
+            }
+
+            await transaction.commit();
             return res.json(organization);
         } catch (error) {
-            console.log('Ошибка при обновлении Организации', error);
-            return res.status(500).json({error: 'Ошибка сервера'});
+            await transaction.rollback();
+            console.error('Ошибка при обновлении организации:', error.stack);
+            return res.status(500).json({
+                error: 'Ошибка сервера при обновлении организации',
+                details: error.message
+            });
         }
     }
 

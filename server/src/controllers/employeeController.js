@@ -3,7 +3,7 @@ const Passport = require('../models/passport');
 const Address = require('../models/address');
 const Files = require('../models/file');
 const path = require('path');
-const sequelize = require('../db');
+const sequelize = require('../../db');
 const fs = require('fs');
 const uuid = require('uuid');
 const historyService = require('./historyService');
@@ -15,12 +15,14 @@ const Organization = require("../models/organization"); // Импортируе�
 class EmployeeController {
     // Добавляем новый метод для загрузки файлов
     async uploadEmployeeFiles(req, res, next) {
+        const transaction = await sequelize.transaction();
         try {
             const employeeId = req.params.id;
 
             // Проверяем, существует ли сотрудник
-            const employee = await Employees.findByPk(employeeId);
+            const employee = await Employees.findByPk(employeeId, { transaction });
             if (!employee) {
+                await transaction.rollback();
                 return res.status(404).json({error: 'Сотрудник не найден'});
             }
 
@@ -51,11 +53,13 @@ class EmployeeController {
                             name: file.name,
                             file_url: fileName,
                             employee_id: employeeId
-                        });
+                        }, { transaction });
 
                         uploadedFiles.push(fileRecord);
                     } catch (fileError) {
                         console.log('Ошибка при обработке файла', fileError);
+                        await transaction.rollback();
+                        return res.status(500).json({error: 'Ошибка при обработке файла'});
                     }
                 }
             }
@@ -68,14 +72,17 @@ class EmployeeController {
                 {
                     files: {old: null, new: uploadedFiles.map(f => f.name)}
                 },
-                `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
+                `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`,
+                transaction
             );
 
+            await transaction.commit();
             return res.status(200).json({
                 success: true,
                 files: uploadedFiles
             });
         } catch (error) {
+            await transaction.rollback();
             console.log('Ошибка при загрузке файлов', error);
             return res.status(500).json({error: 'Ошибка сервера'});
         }
@@ -83,6 +90,7 @@ class EmployeeController {
 
 // Изменяем метод createEmployee, убирая из него обработку файлов
     async createEmployee(req, res, next) {
+        const transaction = await sequelize.transaction();
         try {
             // Получаем данные сотрудника из запроса
             const {
@@ -96,7 +104,7 @@ class EmployeeController {
                 first_name,
                 middle_name,
                 birth_date
-            });
+            }, { transaction });
 
             // Создаем запись паспорта
             let passportInstance = null;
@@ -104,7 +112,7 @@ class EmployeeController {
                 passportInstance = await Passport.create({
                     ...passport,
                     employee_id: employee.id
-                });
+                }, { transaction });
             }
 
             // Создаем запись адреса
@@ -113,7 +121,7 @@ class EmployeeController {
                 addressInstance = await Address.create({
                     ...address,
                     employee_id: employee.id
-                });
+                }, { transaction });
             }
 
             // Получаем созданного сотрудника со всеми связанными данными
@@ -123,7 +131,8 @@ class EmployeeController {
                     {model: Passport},
                     {model: Address},
                     {model: Files}
-                ]
+                ],
+                transaction
             });
 
             // Записываем в историю
@@ -139,11 +148,14 @@ class EmployeeController {
                     passport: passport ? {old: null, new: passport} : {old: null, new: null},
                     address: address ? {old: null, new: address} : {old: null, new: null}
                 },
-                `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
+                `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`,
+                transaction
             );
 
+            await transaction.commit();
             return res.status(201).json(createdEmployee);
         } catch (error) {
+            await transaction.rollback();
             console.log('Ошибка при создании сотрудника', error);
             return res.status(500).json({error: 'Ошибка сервера'});
         }
@@ -299,18 +311,21 @@ class EmployeeController {
     }
 
     async updateEmployee(req, res, next) {
-        const {id} = req.params;
+        const transaction = await sequelize.transaction();
         try {
+            const {id} = req.params;
             const employee = await Employees.findOne({
                 where: {id},
                 include: [
                     {model: Passport},
                     {model: Address},
                     {model: Files}
-                ]
+                ],
+                transaction
             });
 
             if (!employee) {
+                await transaction.rollback();
                 return res.status(404).json({error: 'Сотрудник не найден'});
             }
 
@@ -319,9 +334,9 @@ class EmployeeController {
             const oldFirstName = employee.first_name;
             const oldMiddleName = employee.middle_name;
             const oldBirthDate = employee.birth_date;
-            const oldPassport = employee.passport ? employee.passport.get({plain: true}) : null; // Получаем все данные паспорта
-            const oldAddress = employee.address ? {...employee.address.dataValues} : null; // Получаем все данные адреса
-            const oldFiles = employee.files.map(f => ({name: f.name, file_url: f.file_url})); // Сохраняем URL
+            const oldPassport = employee.passport ? employee.passport.get({plain: true}) : null;
+            const oldAddress = employee.address ? {...employee.address.dataValues} : null;
+            const oldFiles = employee.files.map(f => ({name: f.name, file_url: f.file_url}));
 
             // Обновляем данные сотрудника
             const {last_name, first_name, middle_name, birth_date, passport, address} = req.body;
@@ -331,18 +346,18 @@ class EmployeeController {
                 first_name: first_name || employee.first_name,
                 middle_name: middle_name || employee.middle_name,
                 birth_date: birth_date || employee.birth_date
-            });
+            }, { transaction });
 
             // Обновляем паспорт
             let updatedPassport = null;
             if (passport && employee.passport) {
-                await employee.passport.update(passport);
+                await employee.passport.update(passport, { transaction });
                 updatedPassport = employee.passport.get({plain: true});
             } else if (passport) {
                 const newPassport = await Passport.create({
                     ...passport,
                     employee_id: employee.id
-                });
+                }, { transaction });
                 updatedPassport = {...newPassport.dataValues};
             } else {
                 updatedPassport = oldPassport;
@@ -351,13 +366,13 @@ class EmployeeController {
             // Обновляем адрес
             let updatedAddress = null;
             if (address && employee.address) {
-                await employee.address.update(address);
+                await employee.address.update(address, { transaction });
                 updatedAddress = {...employee.address.dataValues};
             } else if (address) {
                 const newAddress = await Address.create({
                     ...address,
                     employee_id: employee.id
-                });
+                }, { transaction });
                 updatedAddress = {...newAddress.dataValues};
             } else {
                 updatedAddress = oldAddress;
@@ -369,37 +384,44 @@ class EmployeeController {
                 const files = Array.isArray(req.files.files) ? req.files.files : [req.files.files];
 
                 for (const file of files) {
-                    // Проверяем расширение файла
-                    const fileExt = path.extname(file.name).toLowerCase();
-                    if (fileExt !== '.jpg' && fileExt !== '.jpeg' && fileExt !== '.png') {
-                        continue; // Пропускаем файлы не jpg формата
+                    try {
+                        // Проверяем расширение файла
+                        const fileExt = path.extname(file.name).toLowerCase();
+                        if (fileExt !== '.jpg' && fileExt !== '.jpeg' && fileExt !== '.png') {
+                            continue;
+                        }
+
+                        // Создаем уникальное имя файла
+                        const fileName = uuid.v4() + fileExt;
+                        const filePath = path.resolve(__dirname, '..', 'static', fileName);
+
+                        // Сохраняем файл
+                        await file.mv(filePath);
+
+                        // Создаем запись о файле в БД
+                        const fileRecord = await Files.create({
+                            name: file.name,
+                            file_url: fileName,
+                            employee_id: employee.id
+                        }, { transaction });
+                        uploadedFiles.push(fileRecord);
+                    } catch (fileError) {
+                        console.log('Ошибка при обработке файла', fileError);
+                        await transaction.rollback();
+                        return res.status(500).json({error: 'Ошибка при обработке файла'});
                     }
-
-                    // Создаем уникальное имя файла
-                    const fileName = uuid.v4() + fileExt;
-                    const filePath = path.resolve(__dirname, '..', 'static', fileName);
-
-                    // Сохраняем файл
-                    await file.mv(filePath);
-
-                    // Создаем запись о файле в БД
-                    const fileRecord = await Files.create({
-                        name: file.name,
-                        file_url: fileName,
-                        employee_id: employee.id
-                    });
-                    uploadedFiles.push(fileRecord);
                 }
             }
+
             const newFiles = uploadedFiles.map(f => ({name: f.name, file_url: f.file_url}));
-            // Получаем обновленного сотрудника
             const updatedEmployee = await Employees.findOne({
                 where: {id},
                 include: [
                     {model: Passport},
                     {model: Address},
                     {model: Files}
-                ]
+                ],
+                transaction
             });
 
             // Подготавливаем данные для истории
@@ -408,8 +430,8 @@ class EmployeeController {
                 first_name: {old: oldFirstName, new: first_name || oldFirstName},
                 middle_name: {old: oldMiddleName, new: middle_name || oldMiddleName},
                 birth_date: {old: oldBirthDate, new: birth_date || oldBirthDate},
-                passport: {old: oldPassport, new: updatedPassport}, // Сравниваем старые и новые данные паспорта
-                address: {old: oldAddress, new: updatedAddress},   // Сравниваем старые и новые данные адреса
+                passport: {old: oldPassport, new: updatedPassport},
+                address: {old: oldAddress, new: updatedAddress},
                 files: {
                     old: oldFiles,
                     new: updatedEmployee.files.map(f => ({name: f.name, file_url: f.file_url}))
@@ -454,12 +476,15 @@ class EmployeeController {
                     id,
                     'update',
                     changedFields,
-                    `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
+                    `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`,
+                    transaction
                 );
             }
 
+            await transaction.commit();
             return res.json(updatedEmployee);
         } catch (error) {
+            await transaction.rollback();
             console.log('Ошибка при обновлении сотрудника', error);
             return res.status(500).json({error: 'Ошибка сервера'});
         }
