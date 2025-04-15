@@ -6,7 +6,7 @@ const Files = require('../models/file');
 const Department = require('../models/department');
 const Position = require('../models/position');
 const Organization = require('../models/organization');
-const sequelize = require('../../db');
+const sequelize = require('../db');
 const historyService = require('./historyService'); // Импортируем historyService
 
 class HROperationsController {

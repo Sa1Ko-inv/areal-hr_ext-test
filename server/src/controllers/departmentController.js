@@ -1,6 +1,6 @@
 const Department = require("../models/department");
 const historyService = require('./historyService');
-const sequelize = require('../../db');
+const sequelize = require('../db');
 const Organization = require("../models/organization"); // Импортируем historyService
 
 class DepartmentController {

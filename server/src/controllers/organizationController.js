@@ -1,7 +1,7 @@
 const Organization = require('../models/organization')
 const ApiError = require('../error/ApiError');
 const Department = require("../models/department");
-const sequelize = require('../../db');
+const sequelize = require('../db');
 const historyService = require('./historyService');
 const History = require("../models/history");
 

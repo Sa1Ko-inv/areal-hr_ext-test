@@ -1,5 +1,5 @@
 // models/history.js
-const sequelize = require('../../db');
+const sequelize = require('../db');
 const { DataTypes } = require('sequelize');
 
 const History = sequelize.define('history', {
