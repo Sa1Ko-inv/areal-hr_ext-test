@@ -1,10 +1,10 @@
 <template>
   <div class="positionList">
     <h3 class="positionList__title">Список должностей</h3>
-    <button @click="showCreatePosition">
+    <MyButton modifier="create" @click="showCreatePosition">
       Создать должность
-    </button>
-    <button style="margin-left: 10px" @click="showDeletePosition">Просмотр удаленных должностей</button>
+    </MyButton>
+    <MyButton modifier="showHistory" @click="showDeletePosition">Просмотр удаленных должностей</MyButton>
 
 
     <div class="positionList__items">
@@ -26,10 +26,10 @@
           :error="createError"
       />
     </MyModalWindow>
-  
+
 <!-- Модальное окно просмотра удаленных должностей -->
   <MyModalWindow v-model:show="dialogDeletePosition">
-    <PositionDeleteHistrory 
+    <PositionDeleteHistrory
     :cancel="cancelDialog"
     />
   </MyModalWindow>
@@ -40,9 +40,10 @@ import PositionItems from "@/components/positions/positionItems.vue";
 import PositionCreateForm from "@/components/positions/positionModal/positionCreateForm.vue";
 import MyModalWindow from "@/components/UI/MyModalWindow.vue";
 import PositionDeleteHistrory from "@/components/positions/positionModal/positionDeleteHistrory.vue";
+import MyButton from "@/components/UI/MyButton.vue";
 
 export default {
-  components: {PositionDeleteHistrory, MyModalWindow, PositionCreateForm, PositionItems},
+  components: {MyButton, PositionDeleteHistrory, MyModalWindow, PositionCreateForm, PositionItems},
   props: {
     positions: {
       type: Array,
@@ -112,23 +113,6 @@ export default {
     display: flex;
     flex-direction: column;
     gap: 8px;
-  }
-
-  button {
-    display: inline-block;
-    margin-top: 15px;
-    padding: 10px 20px;
-    background-color: #792ec9;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s;
-
-    &:hover {
-      background-color: #792ec9
-    }
   }
 }
 </style>

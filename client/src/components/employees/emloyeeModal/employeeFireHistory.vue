@@ -45,15 +45,33 @@
     </div>
   </div>
 
-  <button :disabled="currentPage === 1" @click="changePage(currentPage - 1)">Предыдущая</button>
-  <span>Страница {{ currentPage }} из {{ totalPages }}</span>
-  <button :disabled="currentPage === totalPages" @click="changePage(currentPage + 1)">Следующая</button>
+  <div class="history-footer">
+    <div class="pagination">
+      <MyButton
+          class="pagination-btn"
+          :disabled="currentPage === 1"
+          @click="changePage(currentPage - 1)"
+      >
+        Предыдущая
+      </MyButton>
+      <span class="page-info">Страница {{ currentPage }} из {{ totalPages || 1 }}</span>
+      <MyButton
+          class="pagination-btn"
+          :disabled="currentPage === totalPages || totalPages === 0"
+          @click="changePage(currentPage + 1)"
+      >
+        Следующая
+      </MyButton>
+    </div>
+  </div>
 </template>
 
 <script>
-import {fetchFiredHistory} from "@/http/employeeAPI.js"; // Или используйте fetch
+import {fetchFiredHistory} from "@/http/employeeAPI.js";
+import MyButton from "@/components/UI/MyButton.vue"; // Или используйте fetch
 
 export default {
+  components: {MyButton},
   props: {
     cancel: {
       type: Function,
@@ -160,5 +178,57 @@ table {
 .modal-actions {
   margin-top: 20px;
   text-align: right;
+}
+
+button {
+  margin: 15px 5px 0;
+  padding: 6px 12px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    background-color: #e0e0e0;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+.history-footer {
+  padding: 16px 20px;
+  border-top: 1px solid #eee;
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+
+    .pagination-btn {
+      padding: 8px 16px;
+      background-color: #f0f0f0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+
+      &:hover:not(:disabled) {
+        background-color: #e0e0e0;
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+
+    .page-info {
+      font-size: 0.9rem;
+      color: #666;
+    }
+  }
 }
 </style>

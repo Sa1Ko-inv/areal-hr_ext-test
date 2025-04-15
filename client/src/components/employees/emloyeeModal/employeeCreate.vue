@@ -10,7 +10,7 @@
         <h3 class="section-title">Личная информация</h3>
         <div class="form-group">
           <label for="first_name">Имя</label>
-          <input
+          <MyInput
               id="first_name"
               type="text"
               v-model="employeeData.first_name"
@@ -20,7 +20,7 @@
 
         <div class="form-group">
           <label for="last_name">Фамилия</label>
-          <input
+          <MyInput
               id="last_name"
               type="text"
               v-model="employeeData.last_name"
@@ -30,7 +30,7 @@
 
         <div class="form-group">
           <label for="middle_name">Отчество</label>
-          <input
+          <MyInput
               id="middle_name"
               type="text"
               v-model="employeeData.middle_name"
@@ -40,7 +40,7 @@
 
         <div class="form-group">
           <label for="birth_date">Дата рождения</label>
-          <input
+          <MyInput
               id="birth_date"
               type="text"
               v-model="employeeData.birth_date"
@@ -50,7 +50,7 @@
 
         <div class="form-group">
           <label for="files">Файлы сотрудника</label>
-          <input
+          <MyInput
               id="files"
               type="file"
               multiple
@@ -74,7 +74,7 @@
           <div class="form-row">
             <div class="form-group half">
               <label for="passport_series">Серия паспорта</label>
-              <input
+              <MyInput
                   id="passport_series"
                   type="text"
                   v-model="employeeData.passport.series"
@@ -84,7 +84,7 @@
 
             <div class="form-group half">
               <label for="passport_number">Номер паспорта</label>
-              <input
+              <MyInput
                   id="passport_number"
                   type="text"
                   v-model="employeeData.passport.number"
@@ -95,7 +95,7 @@
 
           <div class="form-group">
             <label for="issued_by">Кем выдан</label>
-            <input
+            <MyInput
                 id="issued_by"
                 type="text"
                 v-model="employeeData.passport.issued_by"
@@ -106,7 +106,7 @@
           <div class="form-row">
             <div class="form-group half">
               <label for="issued_date">Дата выдачи</label>
-              <input
+              <MyInput
                   id="issued_date"
                   type="text"
                   v-model="employeeData.passport.issued_date"
@@ -116,7 +116,7 @@
 
             <div class="form-group half">
               <label for="division_code">Код подразделения</label>
-              <input
+              <MyInput
                   id="division_code"
                   type="text"
                   v-model="employeeData.passport.division_code"
@@ -131,7 +131,7 @@
           <div class="form-row">
             <div class="form-group half">
               <label for="region">Регион</label>
-              <input
+              <MyInput
                   id="region"
                   type="text"
                   v-model="employeeData.address.region"
@@ -141,7 +141,7 @@
 
             <div class="form-group half">
               <label for="locality">Населенный пункт</label>
-              <input
+              <MyInput
                   id="locality"
                   type="text"
                   v-model="employeeData.address.locality"
@@ -152,7 +152,7 @@
 
           <div class="form-group">
             <label for="street">Улица</label>
-            <input
+            <MyInput
                 id="street"
                 type="text"
                 v-model="employeeData.address.street"
@@ -163,7 +163,7 @@
           <div class="form-row">
             <div class="form-group third">
               <label for="house">Дом</label>
-              <input
+              <MyInput
                   id="house"
                   type="text"
                   v-model="employeeData.address.house"
@@ -173,7 +173,7 @@
 
             <div class="form-group third">
               <label for="building">Корпус</label>
-              <input
+              <MyInput
                   id="building"
                   type="text"
                   v-model="employeeData.address.building"
@@ -183,7 +183,7 @@
 
             <div class="form-group third">
               <label for="apartment">Квартира</label>
-              <input
+              <MyInput
                   id="apartment"
                   type="text"
                   v-model="employeeData.address.apartment"
@@ -194,10 +194,10 @@
         </div>
 
         <div class="form-actions">
-          <button type="submit" class="btn btn-primary" :disabled="isSubmitting">
+          <MyButton type="submit" modifier="create" :disabled="isSubmitting">
             {{ isSubmitting ? 'Создание...' : 'Создать' }}
-          </button>
-          <button type="button" class="btn btn-secondary" @click="cancel" :disabled="isSubmitting">Отмена</button>
+          </MyButton>
+          <MyButton type="button" modifier="cancel" @click="cancel" :disabled="isSubmitting">Отмена</MyButton>
         </div>
     </form>
   </div>
@@ -205,8 +205,33 @@
 
 <script>
 import {createEmployees, uploadEmployeeFiles} from "@/http/employeeAPI.js";
+import MyInput from "@/components/UI/MyInput.vue";
+import MyButton from "@/components/UI/MyButton.vue";
+
+const EMPLOYEE_INITIAL_DATA = {
+  first_name: '',
+  last_name: '',
+  middle_name: '',
+  birth_date: '',
+  passport: {
+    series: '',
+    number: '',
+    issued_by: '',
+    issued_date: '',
+    division_code: '',
+  },
+  address: {
+    region: '',
+    locality: '',
+    street: '',
+    house: '',
+    apartment: '',
+    building: '',
+  }
+};
 
 export default {
+  components: {MyButton, MyInput},
   props: {
     cancel: {
       type: Function,
@@ -215,27 +240,7 @@ export default {
   },
   data() {
     return {
-      employeeData: {
-        first_name: '',
-        last_name: '',
-        middle_name: '',
-        birth_date: '',
-        passport: {
-          series: '',
-          number: '',
-          issued_by: '',
-          issued_date: '',
-          division_code: '',
-        },
-        address: {
-          region: '',
-          locality: '',
-          street: '',
-          house: '',
-          apartment: '',
-          building: '',
-        },
-      },
+      employeeData: {...EMPLOYEE_INITIAL_DATA},
       selectedFiles: [],
       createError: null,
       isSubmitting: false,
@@ -271,27 +276,7 @@ export default {
         this.$emit('created');
 
         // Сбрасываем форму
-        this.employeeData = {
-          first_name: '',
-          last_name: '',
-          middle_name: '',
-          birth_date: '',
-          passport: {
-            series: '',
-            number: '',
-            issued_by: '',
-            issued_date: '',
-            division_code: '',
-          },
-          address: {
-            region: '',
-            locality: '',
-            street: '',
-            house: '',
-            apartment: '',
-            building: '',
-          }
-        };
+        this.employeeData = {...EMPLOYEE_INITIAL_DATA};
         this.selectedFiles = [];
 
       } catch (error) {
@@ -370,7 +355,7 @@ $white: #fff;
 // Form sections
 .form-section {
   background-color: $background-color;
-  padding: 1.25rem;
+  padding: 2rem;
   border-radius: 6px;
   border: 1px solid $border-color;
 }
@@ -411,25 +396,6 @@ label {
   color: $text-color;
 }
 
-input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid $border-color;
-  border-radius: 4px;
-  font-size: 1rem;
-  transition: all 0.2s ease;
-
-  &:focus {
-    outline: none;
-    border-color: $primary-color;
-    box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
-  }
-
-  &::placeholder {
-    color: #aaa;
-  }
-}
-
 // Buttons
 .form-actions {
   display: flex;
@@ -438,44 +404,6 @@ input {
   margin-top: 1rem;
 }
 
-.btn {
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-}
-
-.btn-primary {
-  background-color: $primary-color;
-  color: $white;
-
-  &:hover {
-    background-color: $primary-color;
-    box-shadow: 0 4px 8px rgba($primary-color, 0.3);
-  }
-}
-
-.btn-secondary {
-  background-color: $white;
-  color: $primary-color;
-  border: 1px solid $primary-color;
-
-  &:hover {
-    background-color: $primary-light;
-    box-shadow: 0 4px 8px rgba($primary-color, 0.1);
-  }
-}
 
 // Error message
 .error-message {

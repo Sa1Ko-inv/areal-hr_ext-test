@@ -1,12 +1,12 @@
 <template>
   <div class="organizationList">
     <h3 class="organizationList__title">Список организаций</h3>
-    <button @click="showOrganizationCreate" class="organizationList__create-btn">
+    <MyButton modifier="create" @click="showOrganizationCreate">
       Создать организацию
-    </button>
-    <button style="margin-left: 10px" @click="showOrganizationDeleteHistory" class="organizationList__create-btn">
+    </MyButton>
+    <MyButton modifier="showHistory" style="margin-left: 10px" @click="showOrganizationDeleteHistory">
       Посмотреть удаленные организации
-    </button>
+    </MyButton>
     <div class="organizationList__items">
 
       <OrganizationItem
@@ -40,12 +40,13 @@
 
 <script>
 import OrganizationItem from "@/components/organizations/organizationItem.vue";
-import OrganizationCreateForm from "@/components/organizations/organizationCreateForm.vue";
+import OrganizationCreateForm from "@/components/organizations/organizationModal/organizationCreateForm.vue";
 import MyModalWindow from "@/components/UI/MyModalWindow.vue";
 import OrganizationDeleteHistory from "@/components/organizations/organizationModal/organizationDeleteHistory.vue";
+import MyButton from "@/components/UI/MyButton.vue";
 
 export default {
-  components: {OrganizationDeleteHistory, MyModalWindow, OrganizationCreateForm, OrganizationItem},
+  components: {MyButton, OrganizationDeleteHistory, MyModalWindow, OrganizationCreateForm, OrganizationItem},
   props: {
     organizations: {
       type: Array,
@@ -102,21 +103,6 @@ export default {
   &__title {
     color: #792ec9;
     margin-bottom: 20px;
-  }
-
-  &__create-btn {
-    padding: 8px 16px;
-    background-color: #792ec9;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    margin-bottom: 20px;
-    transition: all 0.2s ease;
-
-    &:hover {
-      background-color: #792ec9
-    }
   }
 
   &__items {

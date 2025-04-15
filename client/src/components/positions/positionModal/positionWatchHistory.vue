@@ -2,7 +2,7 @@
   <div class="history-modal">
     <div class="history-header">
       <h3>История должности</h3>
-      <button class="close-btn" @click="close">×</button>
+      <MyButton class="close-btn" @click="close">×</MyButton>
     </div>
 
     <div class="history-content">
@@ -47,21 +47,21 @@
 
     <div class="history-footer">
       <div class="pagination">
-        <button
+        <MyButton
             class="pagination-btn"
             :disabled="currentPage === 1"
             @click="changePage(currentPage - 1)"
         >
           Предыдущая
-        </button>
+        </MyButton>
         <span class="page-info">Страница {{ currentPage }} из {{ totalPages || 1 }}</span>
-        <button
+        <MyButton
             class="pagination-btn"
             :disabled="currentPage === totalPages || totalPages === 0"
             @click="changePage(currentPage + 1)"
         >
           Следующая
-        </button>
+        </MyButton>
       </div>
     </div>
   </div>
@@ -69,8 +69,10 @@
 
 <script>
 import {fetchPositionHistory} from "@/http/positionAPI.js";
+import MyButton from "@/components/UI/MyButton.vue";
 
 export default {
+  components: {MyButton},
   props: {
     position: {
       type: Object,

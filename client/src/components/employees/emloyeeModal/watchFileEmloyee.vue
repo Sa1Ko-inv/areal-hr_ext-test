@@ -29,18 +29,18 @@
       <div v-if="selectedFiles.length > 0" class="selected-files-list">
         <div v-for="(file, index) in selectedFiles" :key="index" class="selected-file-item">
           <span class="file-name">{{ file.name }}</span>
-          <button @click="removeSelectedFile(index)" class="remove-file-btn">×</button>
+          <MyButton @click="removeSelectedFile(index)" class="remove-file-btn">×</MyButton>
         </div>
       </div>
 
       <!-- Кнопка загрузки -->
-      <button
+      <MyButton
+          modifier="save"
           @click="uploadFiles"
           :disabled="selectedFiles.length === 0 || isUploading"
-          class="upload-btn"
       >
         {{ isUploading ? 'Загрузка...' : 'Загрузить файлы' }}
-      </button>
+      </MyButton>
 
       <!-- Сообщение об ошибке -->
       <div v-if="uploadError" class="upload-error">
@@ -90,13 +90,13 @@
             >
               Открыть
             </a>
-            <button
+            <MyButton
+                modifier="delete"
                 @click="confirmDeleteFile(file)"
-                class="delete-btn"
                 title="Удалить файл"
             >
               Удалить
-            </button>
+            </MyButton>
           </div>
         </div>
       </div>
@@ -108,8 +108,8 @@
         <h4>Подтверждение удаления</h4>
         <p>Вы действительно хотите удалить файл "{{ fileToDelete?.name }}"?</p>
         <div class="delete-confirm-actions">
-          <button @click="deleteFile" class="confirm-delete-btn">Удалить</button>
-          <button @click="cancelDelete" class="cancel-btn">Отмена</button>
+          <MyButton modifier="delete" @click="deleteFile" >Удалить</MyButton>
+          <MyButton modifier="cansel" @click="cancelDelete">Отмена</MyButton>
         </div>
       </div>
     </div>
@@ -118,8 +118,10 @@
 
 <script>
 import { uploadEmployeeFiles, deleteEmployeeFile } from "@/http/employeeAPI.js";
+import MyButton from "@/components/UI/MyButton.vue";
 
 export default {
+  components: {MyButton},
   props: {
     employee: {
       type: Object,
@@ -391,24 +393,6 @@ h4 {
   padding: 0 5px;
 }
 
-.upload-btn {
-  padding: 8px 16px;
-  background-color: #792ec9;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.upload-btn:hover:not(:disabled) {
-  background-color: #792ec9;
-}
-
-.upload-btn:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
 
 .upload-error {
   margin-top: 10px;
@@ -497,7 +481,7 @@ h4 {
   gap: 5px;
 }
 
-.view-btn, .delete-btn {
+.view-btn {
   flex: 1;
   padding: 6px 0;
   font-size: 13px;
@@ -512,19 +496,11 @@ h4 {
   text-decoration: none;
 }
 
-.delete-btn {
-  background-color: #ff4d4d;
-  color: white;
-  border: none;
-}
 
 .view-btn:hover {
   background-color: #792ec9;
 }
 
-.delete-btn:hover {
-  background-color: #e04141;
-}
 
 .delete-confirm-modal {
   position: fixed;
@@ -560,30 +536,6 @@ h4 {
   margin-top: 20px;
 }
 
-.confirm-delete-btn, .cancel-btn {
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  border: none;
-}
-
-.confirm-delete-btn {
-  background-color: #ff4d4d;
-  color: white;
-}
-
-.cancel-btn {
-  background-color: #e0e0e0;
-  color: #333;
-}
-
-.confirm-delete-btn:hover {
-  background-color: #e04141;
-}
-
-.cancel-btn:hover {
-  background-color: #d0d0d0;
-}
 
 @media (max-width: 600px) {
   .files-grid {

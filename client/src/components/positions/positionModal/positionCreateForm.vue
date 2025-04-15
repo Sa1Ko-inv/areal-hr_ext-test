@@ -1,5 +1,9 @@
 <script>
+import MyInput from "@/components/UI/MyInput.vue";
+import MyButton from "@/components/UI/MyButton.vue";
+
 export default {
+  components: {MyButton, MyInput},
   props: {
     cancel: {
       type: Function,
@@ -32,11 +36,12 @@ export default {
     <h4>Создание должности</h4>
 
     <div class="form-group">
-      <input
+      <MyInput
+          size="medium"
           v-model.number="position.name"
           placeholder="Название должности"
           type="text"
-      >
+      />
     </div>
     <!-- Отображение ошибки для поля name -->
     <div v-if="error" class="error-message">
@@ -44,8 +49,8 @@ export default {
     </div>
 
     <div class="form-actions">
-      <button type="submit">Добавить должность</button>
-      <button type="button" @click="cancel()">Отмена</button>
+      <MyButton modifier="create" type="submit">Добавить должность</MyButton>
+      <MyButton modifier="cancel" type="button" @click="cancel()">Отмена</MyButton>
     </div>
   </form>
 </template>
@@ -66,59 +71,11 @@ form {
     text-align: center;
   }
 
-  input {
-    width: 100%;
-    padding: 10px 12px;
-    margin-bottom: 15px;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    font-size: 14px;
-    transition: border-color 0.3s;
-
-    &:focus {
-      outline: none;
-      border-color: #792ec9;
-      box-shadow: 0 0 0 2px rgba(121, 46, 201, 0.2);
-    }
-
-    &::placeholder {
-      color: #aaa;
-    }
-  }
-
   div {
     display: flex;
     gap: 10px;
     margin-top: 10px;
 
-    button {
-      flex: 1;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: all 0.2s;
-
-      &:first-child {
-        background-color: #792ec9;
-        color: white;
-
-        &:hover {
-          background-color: #792ec9
-        }
-      }
-
-      &:last-child {
-        background-color: #f5f5f5;
-        color: #333;
-        border: 1px solid #ddd;
-
-        &:hover {
-          background-color: #eaeaea;
-        }
-      }
-    }
   }
 }
 

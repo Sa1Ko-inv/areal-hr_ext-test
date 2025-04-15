@@ -1,12 +1,12 @@
 <template>
   <div class="employeeList">
     <h3>Список сотрудников</h3>
-    <button @click="showEmployeeCreate">Создать сотрудника</button>
-    <button @click="showFireHistory">Просмотр уволенных сотрудников</button>
+    <MyButton modifier="create" @click="showEmployeeCreate">Создать сотрудника</MyButton>
+    <MyButton modifier="showHistory" @click="showFireHistory">Просмотр уволенных сотрудников</MyButton>
 
     <!-- Добавляем поле для поиска с кнопкой -->
     <div class="search-container">
-      <input
+      <MyInput
           type="text"
           v-model="searchQuery"
           placeholder="Поиск по ФИО..."
@@ -55,9 +55,13 @@ import EmployeeItem from "@/components/employees/employeeItem.vue";
 import EmployeeFireHistory from "@/components/employees/emloyeeModal/employeeFireHistory.vue";
 import EmployeeCreate from "@/components/employees/emloyeeModal/employeeCreate.vue";
 import MySelect from "@/components/UI/MySelect.vue";
+import MyInput from "@/components/UI/MyInput.vue";
+import MyButton from "@/components/UI/MyButton.vue";
 
 export default {
   components: {
+    MyButton,
+    MyInput,
     MySelect,
     EmployeeCreate,
     MyModalWindow,
@@ -184,48 +188,19 @@ $button-padding: 10px 18px;
 
   button {
     padding: $button-padding;
-    background-color: $primary-color;
-    color: white;
-    border: none;
-    border-radius: calc($border-radius / 2);
-    cursor: pointer;
-    margin-right: 10px;
     margin-bottom: 15px;
-    transition: background-color 0.2s ease;
 
-    &:hover {
-      background-color: $primary-color-dark;
-    }
-
-    &:last-child {
-      margin-right: 0;
-    }
   }
 }
 
 .search-container {
   position: relative;
-  max-width: 400px;
+  max-width: 1280px;
   margin-bottom: 20px;
-
-  .search-input {
-    width: 100%;
-    padding: 10px 40px 10px 15px;
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
-    font-size: 1rem;
-    transition: border-color 0.3s ease;
-
-    &:focus {
-      outline: none;
-      border-color: $primary-color;
-      box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
-    }
-  }
 
   .search-button {
     position: absolute;
-    right: 10px;
+    right: -15px;
     top: 50%;
     transform: translateY(-50%);
     background: none;

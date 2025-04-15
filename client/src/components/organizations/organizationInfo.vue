@@ -3,9 +3,9 @@
     <h1>{{ organization.name }}</h1>
     <p v-if="organization.comment">{{ organization.comment }}</p>
 
-    <button @click="showDialog">
+    <MyButton modifier="create" @click="showDialog">
       Создать отдел
-    </button>
+    </MyButton>
 
     <div class="departments-section">
       <h2>Отделы</h2>
@@ -18,9 +18,9 @@
     </div>
 
     <router-link to="/organization">
-      <button>
+      <MyButton modifier="create">
         Вернуться к списку организаций
-      </button>
+      </MyButton>
 
     </router-link>
   </div>
@@ -42,10 +42,11 @@ import organizationDepartmentTree from "@/components/organizations/organizationD
 import {fetchOrganizationWithDepartments} from "@/http/organizationAPI.js";
 import MyModalWindow from "@/components/UI/MyModalWindow.vue";
 import DepartmentCreateForm from "@/components/departments/departmentCreateForm.vue";
+import MyButton from "@/components/UI/MyButton.vue";
 
 
 export default {
-  components: {DepartmentCreateForm, MyModalWindow, organizationDepartmentTree},
+  components: {MyButton, DepartmentCreateForm, MyModalWindow, organizationDepartmentTree},
   data() {
     return {
       organization: {},
@@ -140,19 +141,8 @@ export default {
 
   button {
     display: inline-block;
-    margin-top: 15px;
     padding: 10px 20px;
-    background-color: #792ec9;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s;
 
-    &:hover {
-      background-color: #792ec9
-    }
   }
 }
 </style>

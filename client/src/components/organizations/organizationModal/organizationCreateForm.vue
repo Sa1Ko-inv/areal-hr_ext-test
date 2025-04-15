@@ -4,7 +4,7 @@
 
     <div class="form-group">
       <label>Название организации</label>
-      <input v-model.number="name" type="text" class="form-input">
+      <MyInput v-model.number="name" type="text" class="form-input"/>
       <div v-if="error" class="error-message">{{ error }}</div>
     </div>
 
@@ -14,14 +14,18 @@
     </div>
 
     <div class="form-actions">
-      <button type="submit" class="form-button form-button--submit">Создать</button>
-      <button type="button" @click="cancel" class="form-button form-button--cancel">Отмена</button>
+      <MyButton modifier="create" type="submit">Создать</MyButton>
+      <MyButton modifier="cancel" type="button" @click="cancel">Отмена</MyButton>
     </div>
   </form>
 </template>
 
 <script>
+import MyInput from "@/components/UI/MyInput.vue";
+import MyButton from "@/components/UI/MyButton.vue";
+
 export default {
+  components: {MyButton, MyInput},
   props: {
     cancel: {
       type: Function,
@@ -60,13 +64,14 @@ export default {
   font-weight: normal;
 }
 .organization-create-form {
-  width: 600px;
+  width: 100%;
 
   h3 {
     color: #792ec9;
     margin-bottom: 20px;
   }
 }
+
 
 .form-group {
   margin-bottom: 15px;
@@ -82,15 +87,11 @@ export default {
 }
 
 .form-input {
-  width: 593px;
-  padding: 8px 5px;
-  border: 1px solid #792ec9;
-  border-radius: 4px;
-  font-size: 16px;
+  width: 765px;
 }
 
 .form-textarea {
-  width: 593px;
+  width: 780px;
   padding: 8px 5px;
   height: 100px;
   border: 1px solid #792ec9;
@@ -105,31 +106,4 @@ export default {
   margin-top: 20px;
 }
 
-.form-button {
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-weight: 500;
-  cursor: pointer;
-  border: 1px solid;
-
-  &--submit {
-    background-color: #792ec9;
-    color: white;
-    border-color: #792ec9;
-
-    &:hover {
-      background-color: #792ec9
-    }
-  }
-
-  &--cancel {
-    background-color: transparent;
-    color: #d32f2f;
-    border-color: #d32f2f;
-
-    &:hover {
-      background-color: rgba(#d32f2f, 0.1);
-    }
-  }
-}
 </style>

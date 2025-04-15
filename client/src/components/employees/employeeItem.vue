@@ -1,3 +1,4 @@
+MyB
 <template>
   <div class="employee-card">
     <div class="employee-card__sections">
@@ -6,7 +7,7 @@
         <div class="section__content">
           <div class="info-item">
             <strong class="info-item__key">ФИО:</strong>
-            <span class="info-item__value">{{employee.id}} {{ employee.last_name }} {{ employee.first_name }} {{
+            <span class="info-item__value">{{ employee.id }} {{ employee.last_name }} {{ employee.first_name }} {{
                 employee.middle_name
               }}</span>
           </div>
@@ -111,21 +112,13 @@
       </section>
     </div>
     <div class="employee-card__actions">
-      <button class="action-button" @click="showFilesDialog">Просмотреть файлы</button>
-      <button class="action-button action-button--danger" v-if="hrInfo && hrInfo.status === 'hired'"
-              @click="fire_Employee">Уволить
-      </button>
-      <button class="action-button action-button--success" v-if="!hrInfo || hrInfo.status !== 'hired'"
-              @click="showHireDialog">Принять на работу
-      </button>
-      <button class="action-button" v-if="hrInfo && hrInfo.status === 'hired'" @click="showChangeSalaryDialog">Изменить
-        зарплату
-      </button>
-      <button class="action-button" v-if="hrInfo && hrInfo.status === 'hired'" @click="showChangeDepartmentDialog">
-        Изменить отдел
-      </button>
-      <button class="action-button" @click="showEditDialog">Редактировать</button>
-      <button class="action-button" @click="showHistoryDialog">История</button>
+      <MyButton style="background-color: #28a745; color: white; border: #28a745" v-if="!hrInfo || hrInfo.status !== 'hired'" @click="showHireDialog">Принять на работу</MyButton>
+      <MyButton modifier="edit" v-if="hrInfo && hrInfo.status === 'hired'" @click="showChangeSalaryDialog">Изменить зарплату</MyButton>
+      <MyButton modifier="edit" v-if="hrInfo && hrInfo.status === 'hired'" @click="showChangeDepartmentDialog">Изменить отдел</MyButton>
+      <MyButton modifier="edit" @click="showEditDialog">Редактировать</MyButton>
+      <MyButton modifier="showHistory" @click="showFilesDialog">Просмотреть файлы</MyButton>
+      <MyButton modifier="showHistory" @click="showHistoryDialog">История</MyButton>
+      <MyButton modifier="delete" v-if="hrInfo && hrInfo.status === 'hired'" @click="fire_Employee">Уволить</MyButton>
     </div>
 
     <!--Модальное окно просмотра файлов сотрудника-->
@@ -197,10 +190,12 @@ import EmployeeEditSalary from "@/components/employees/emloyeeModal/employeeEdit
 import EmployeeHire from "@/components/employees/emloyeeModal/employeeHire.vue";
 import EmployeeWatchHistory from "@/components/employees/emloyeeModal/employeeWatchHistory.vue";
 import EmployeeEdit from "@/components/employees/emloyeeModal/employeeEdit.vue";
+import MyButton from "@/components/UI/MyButton.vue";
 
 export default {
   name: 'EmployeeDetailCard',
   components: {
+    MyButton,
     EmployeeEdit,
     EmployeeWatchHistory,
     EmployeeHire,
@@ -342,8 +337,6 @@ $box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
 $font-family: 'Arial', sans-serif;
 $section-gap: 20px;
 $item-gap: 12px;
-$button-padding: 10px 18px;
-$button-gap: 10px;
 
 .employee-card {
   max-width: 1300px;
@@ -379,7 +372,6 @@ $button-gap: 10px;
   &__actions {
     display: flex;
     flex-wrap: wrap;
-    gap: $button-gap;
     padding-top: $section-gap;
     border-top: 1px solid $border-color;
     margin-top: $section-gap;
@@ -438,52 +430,4 @@ $button-gap: 10px;
   }
 }
 
-.action-button {
-  padding: $button-padding;
-  background-color: $primary-color;
-  color: white;
-  border: none;
-  border-radius: calc($border-radius / 2);
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
-  font-weight: 500;
-  font-size: 0.9rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-  &:hover {
-    background-color: $primary-color-dark;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-    transform: translateY(-1px);
-  }
-
-  &:active {
-    transform: translateY(0);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  }
-
-  &:disabled {
-    background-color: #cccccc;
-    color: #666666;
-    box-shadow: none;
-    cursor: not-allowed;
-    transform: none;
-  }
-
-  // Модификаторы для разных типов кнопок
-  &--danger {
-    background-color: $danger-color;
-
-    &:hover {
-      background-color: $danger-color-dark;
-    }
-  }
-
-  &--success {
-    background-color: $success-color;
-
-    &:hover {
-      background-color: $success-color-dark;
-    }
-  }
-}
 </style>

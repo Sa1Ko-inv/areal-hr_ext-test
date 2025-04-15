@@ -6,10 +6,10 @@
         <span class="department-comment"><strong>Комментарий:</strong>{{department.comment}}</span>
       </div>
 
-      <div class="department-buttons">
-        <button @click="editDepartment(department)">Редактировать</button>
-        <button @click="showHistory(department)">История</button>
-        <button @click="deleteDepartment(department)">Удалить</button>
+      <div class="department-buttons" style="">
+        <MyButton modifier="edit" @click="editDepartment(department)">Редактировать</MyButton>
+        <MyButton modifier="showHistory" @click="showHistory(department)">История</MyButton>
+        <MyButton modifier="delete" @click="deleteDepartment(department)">Удалить</MyButton>
       </div>
 
       <MyModalWindow v-model:show="dialogVisible">
@@ -46,10 +46,11 @@ import DepartmentEditForm from "@/components/departments/departmentEditForm.vue"
 import {fetchOrganizations} from "@/http/organizationAPI.js";
 import {deleteDepartment as apiDeleteDepartment} from "@/http/departmentAPI.js";
 import DepartmentWatchHistory from "@/components/departments/departmentModal/departmentWatchHistory.vue";
+import MyButton from "@/components/UI/MyButton.vue";
 
 export default {
   name: 'OrganizationDepartmentTree',
-  components: {DepartmentWatchHistory, DepartmentEditForm, MyModalWindow },
+  components: {MyButton, DepartmentWatchHistory, DepartmentEditForm, MyModalWindow },
   data() {
     return {
       selectedDepartment: null,
@@ -169,38 +170,9 @@ export default {
     }
 
     .department-buttons {
+      width: 200px;
       display: flex;
-      gap: 10px;
       margin-top: 8px;
-      padding-left: 15px;
-
-      button {
-        padding: 6px 12px;
-        border-radius: 4px;
-        font-size: 14px;
-        cursor: pointer;
-        transition: all 0.2s;
-
-        &:first-child {
-          background-color: #792ec9;
-          color: white;
-          border: none;
-
-          &:hover {
-            background-color: #792ec9
-          }
-        }
-
-        &:last-child {
-          background-color: white;
-          color: #d32f2f;
-          border: 1px solid #d32f2f;
-
-          &:hover {
-            background-color: #ffebee;
-          }
-        }
-      }
     }
 
     .department-children {

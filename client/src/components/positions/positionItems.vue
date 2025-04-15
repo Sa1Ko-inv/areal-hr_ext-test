@@ -5,37 +5,36 @@
     </div>
     <div class="position__edit" v-else>
       <div class="position__edit-container">
-        <input
+        <MyInput
             v-model="editedName"
             type="text"
+            size="medium"
+            placeholder="Введите название должности"
+            :error="!!error"
             class="position__edit-input"
-        >
+        />
         <div v-if="error" class="position__error">
           {{ error }}
         </div>
       </div>
 
-      <button @click="saveEdit" class="position__button position__button--save">Сохранить</button>
-      <button @click="cancelEdit" class="position__button position__button--cancel">Отмена</button>
+      <div class="position__actions">
+        <MyButton @click="saveEdit" modifier="save">Сохранить</MyButton>
+        <MyButton @click="cancelEdit" modifier="cancel">Отмена</MyButton>
+      </div>
     </div>
     <div class="position__btn" v-if="!isEditing">
-      <button @click="startEdit" class="position__button position__button--edit">
-        Редактировать
-      </button>
-      <button @click="deletePositions" class="position__button position__button--delete">
-        Удалить
-      </button>
-      <button @click="showHistoryDialog" class="position__button position__button--edit">
-        История
-      </button>
+      <MyButton @click="startEdit" modifier="edit">Редактировать</MyButton>
+      <MyButton @click="showHistoryDialog" modifier="edit">История</MyButton>
+      <MyButton @click="deletePositions" modifier="delete">Удалить</MyButton>
     </div>
   </div>
 
-<!-- Модальное окно просмотра истории должности -->
+  <!-- Модальное окно просмотра истории должности -->
   <MyModalWindow v-model:show="dialogVisibleHistory">
     <PositionWatchHistory
-    :position="position"
-    :close="canselModal"
+        :position="position"
+        :close="canselModal"
     />
   </MyModalWindow>
 </template>
@@ -43,25 +42,27 @@
 <script>
 import MyModalWindow from "@/components/UI/MyModalWindow.vue";
 import PositionWatchHistory from "@/components/positions/positionModal/positionWatchHistory.vue";
+import MyInput from "@/components/UI/MyInput.vue";
+import MyButton from "@/components/UI/MyButton.vue";
 
 export default {
-  components: {PositionWatchHistory, MyModalWindow},
+  components: { MyButton, MyInput, PositionWatchHistory, MyModalWindow },
   props: {
     position: {
       type: Object,
-      required: true
+      required: true,
     },
     error: {
       type: String,
-      default: null
-    }
+      default: null,
+    },
   },
   data() {
     return {
       isEditing: false,
       editedName: this.position.name,
       dialogVisibleHistory: false,
-    }
+    };
   },
   methods: {
     startEdit() {
@@ -87,18 +88,17 @@ export default {
       }
     },
 
-  //   Методы истории
-  //   Открытие модального окна истории
+    // Методы истории
+    // Открытие модального окна истории
     showHistoryDialog() {
       this.dialogVisibleHistory = true;
     },
-  // Закрытие модальных окон
+    // Закрытие модальных окон
     canselModal() {
       this.dialogVisibleHistory = false;
     },
-
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -122,109 +122,32 @@ export default {
   &__info {
     flex: 1;
   }
-  &__error {
-    color: #d32f2f;
-    font-size: 14px;
-    margin-top: 8px;
-  }
-  &__name {
-    strong {
-      color: #792ec9;
-    }
-  }
-
-  &__btn {
-    display: flex;
-    gap: 10px;
-  }
 
   &__edit {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
     align-items: center;
+    //flex-direction: column;
+    gap: 35px;
     flex: 1;
 
     &-container {
       display: flex;
       flex-direction: column;
-      flex: 1;
-    }
-
-    &-input {
-      padding: 6px 12px;
-      border: 1px solid #792ec9;
-      border-radius: 4px;
-      font-size: 16px;
-
-      &.input-error {
-        border-color: #d32f2f;
-      }
+      width: 100%;
     }
   }
 
-  &__button {
-    padding: 6px 12px;
-    border-radius: 6px;
+  &__actions {
+    display: flex;
+    //gap: 10px;
+    justify-content: flex-start;
+    //margin-top: 10px;
+  }
+
+  &__error {
+    color: #d32f2f;
     font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    border: 1px solid #792ec9;
-
-    &--edit {
-      background-color: transparent;
-      color: #792ec9;
-
-      &:hover {
-        background-color: rgba(#792ec9, 0.1);
-      }
-    }
-
-    &--delete {
-      background-color: transparent;
-      color: #d32f2f;
-      border-color: #d32f2f;
-
-      &:hover {
-        background-color: rgba(#d32f2f, 0.1);
-      }
-    }
-
-    &--save {
-      background-color: transparent;
-      color: #792ec9;
-      border-color: #792ec9;
-
-      &:hover {
-        background-color: rgba(#792ec9, 0.1);
-      }
-    }
-
-    &--cancel {
-      background-color: transparent;
-      color: #d32f2f;
-      border-color: #d32f2f;
-
-      &:hover {
-        background-color: rgba(#d32f2f, 0.1);
-      }
-    }
+    margin-top: 8px;
   }
-}
-
-.error-message {
-  color: #d32f2f;
-  font-size: 14px;
-  margin-top: 4px;
-}
-
-.general-error {
-  background-color: #ffebee;
-  padding: 8px 12px;
-  border-radius: 4px;
-  margin-bottom: 16px;
-  border-left: 3px solid #d32f2f;
-  width: 100%;
 }
 </style>

@@ -14,24 +14,24 @@
       </router-link>
 
       <div class="organization__btn">
-        <button @click="startEdit" class="organization__button organization__button--edit">
+        <MyButton modifier="edit" @click="startEdit" >
           Редактировать
-        </button>
-        <button @click="showHistoryDialog" class="organization__button organization__button--edit">
+        </MyButton>
+        <MyButton modifier="showHistory" @click="showHistoryDialog" class="organization__button organization__button--edit">
           История
-        </button>
-        <button @click="deleteOrganization" class="organization__button organization__button--delete">
+        </MyButton>
+        <MyButton modifier="delete" @click="deleteOrganization" class="organization__button organization__button--delete">
           Удалить
-        </button>
+        </MyButton>
       </div>
     </div>
 
     <div class="organization__edit" v-else>
       <div class="organization__edit-top">
-        <input v-model.number="editedName" type="text" class="organization__edit-input" placeholder="Название">
+        <MyInput v-model.number="editedName" type="text" placeholder="Название"/>
         <div class="organization__edit-buttons">
-          <button @click="saveEdit" class="organization__button organization__button--save">Сохранить</button>
-          <button @click="cancelEdit" class="organization__button organization__button--cancel">Отмена</button>
+          <MyButton modifier="save" @click="saveEdit">Сохранить</MyButton>
+          <MyButton modifier="cancel" @click="cancelEdit">Отмена</MyButton>
         </div>
       </div>
       <textarea v-model.number="editedComment" class="organization__edit-textarea" placeholder="Комментарий"></textarea>
@@ -54,9 +54,11 @@
 <script>
 import OrganizationWatchHistory from "@/components/organizations/organizationModal/organizationWatchHistory.vue";
 import MyModalWindow from "@/components/UI/MyModalWindow.vue";
+import MyButton from "@/components/UI/MyButton.vue";
+import MyInput from "@/components/UI/MyInput.vue";
 
 export default {
-  components: {MyModalWindow, OrganizationWatchHistory},
+  components: {MyInput, MyButton, MyModalWindow, OrganizationWatchHistory},
   props: {
     organization: {
       type: Object,
@@ -153,11 +155,6 @@ export default {
     }
   }
 
-  &__btn {
-    display: flex;
-    gap: 10px;
-  }
-
   &__edit {
     display: flex;
     flex-direction: column;
@@ -177,15 +174,6 @@ export default {
       gap: 10px;
     }
 
-    &-input {
-      padding: 8px 12px;
-      border: 1px solid #792ec9;
-      border-radius: 4px;
-      font-size: 16px;
-      flex: 1;
-      min-width: 200px;
-    }
-
     &-textarea {
       width: 960px;
       padding: 8px 5px;
@@ -194,57 +182,6 @@ export default {
       font-size: 16px;
       min-height: 80px;
       resize: vertical;
-    }
-  }
-
-  &__button {
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    border: 1px solid;
-    white-space: nowrap;
-
-    &--edit {
-      background-color: transparent;
-      color: #792ec9;
-      border-color: #792ec9;
-
-      &:hover {
-        background-color: rgba(#792ec9, 0.1);
-      }
-    }
-
-    &--delete {
-      background-color: transparent;
-      color: #d32f2f;
-      border-color: #d32f2f;
-
-      &:hover {
-        background-color: rgba(#d32f2f, 0.1);
-      }
-    }
-
-    &--save {
-      background-color: transparent;
-      color: #792ec9;
-      border-color: #792ec9;
-
-      &:hover {
-        background-color: rgba(#792ec9, 0.1);
-      }
-    }
-
-    &--cancel {
-      background-color: transparent;
-      color: #d32f2f;
-      border-color: #d32f2f;
-
-      &:hover {
-        background-color: rgba(#d32f2f, 0.1);
-      }
     }
   }
 }
