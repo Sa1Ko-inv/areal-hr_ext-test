@@ -9,7 +9,7 @@
         Нет записей в истории
       </div>
       <div v-else class="history-list">
-        <div v-for="item in history" class="history-item">
+        <div v-for="item in history" :key="item" class="history-item">
           <div class="history-item-header">
             <div class="operation-info">
               <span

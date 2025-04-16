@@ -1,25 +1,25 @@
 import { MAIN_ROUTE, ORGANIZATION_ROUTE, POSITION_ROUTE } from '@/utils/consts';
 import { createRouter, createWebHistory } from 'vue-router';
-import position from '@/pages/position.vue';
-import Employee from '@/pages/employee.vue';
-import organization from '@/pages/organization.vue';
+import positionPage from '@/pages/positionPage.vue';
+import employeePage from '@/pages/employeePage.vue';
+import organizationPage from '@/pages/organizationPage.vue';
 import organizationInfo from '@/components/organizations/organizationInfo.vue';
 
 const routes = [
   {
     path: POSITION_ROUTE,
     name: 'position',
-    component: position,
+    component: positionPage,
   },
 
   {
     path: MAIN_ROUTE,
-    component: Employee,
+    component: employeePage,
   },
 
   {
     path: ORGANIZATION_ROUTE,
-    component: organization,
+    component: organizationPage,
   },
 
   {

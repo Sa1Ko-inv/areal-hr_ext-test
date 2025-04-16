@@ -270,6 +270,7 @@ export default {
       dialogVisibleHistory: false,
       dialogVisibleEdit: false,
       hrInfo: null, // Инициализировано как null для лучшей обработки состояния загрузки
+      localEmployee: {...this.employee},
     };
   },
   methods: {
@@ -347,16 +348,20 @@ export default {
     // Обработка события загрузки файлов
     async handleFilesUploaded(newFiles) {
       // Обновляем локальные данные без запроса к серверу
-      if (!this.employee.files) {
-        this.employee.files = [];
+      if (!this.localEmployee.files) {
+        this.localEmployee.files = [];
       }
-      this.employee.files = [...this.employee.files, ...newFiles];
+      this.localEmployee.files = [...this.localEmployee.files, ...newFiles];
+      // Уведомляем родительский компонент об обновлении
+      this.$emit('update', { ...this.localEmployee });
     },
     // Обработка события удаления файла
     async handleFileDeleted(fileId) {
-      this.employee.files = this.employee.files.filter(
+      this.localEmployee.files = this.localEmployee.files.filter(
         (file) => file.id !== fileId
       );
+      // Уведомляем родительский компонент об обновлении
+      this.$emit('update', { ...this.localEmployee });
     },
     handleEmployeeUpdated(updatedEmployee) {
       // Обновляем локальные данные

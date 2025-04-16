@@ -62,7 +62,6 @@
 import { fetchOrganizations } from '@/http/organizationAPI.js';
 import { fetchDepartments } from '@/http/departmentAPI.js';
 import { fetchPositions } from '@/http/positionAPI.js';
-import employee from '@/pages/employee.vue';
 
 export default {
   props: {

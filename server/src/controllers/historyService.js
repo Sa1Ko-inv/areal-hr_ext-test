@@ -17,7 +17,7 @@ class HistoryService {
     // Обрабатываем вложенные объекты
     for (const key in cleanObj) {
       if (
-        cleanObj.hasOwnProperty(key) &&
+        Object.prototype.hasOwnProperty.call(cleanObj, key) &&
         typeof cleanObj[key] === 'object' &&
         cleanObj[key] !== null
       ) {
@@ -35,7 +35,7 @@ class HistoryService {
     const cleanedFields = {};
 
     for (const key in changed_fields) {
-      if (changed_fields.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(changed_fields, key)) {
         const field = changed_fields[key];
 
         cleanedFields[key] = {

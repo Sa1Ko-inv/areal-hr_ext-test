@@ -11,7 +11,7 @@ const historyService = require('./historyService'); // Импортируем hi
 
 class HROperationsController {
   // Приём сотрудника на работу
-  async hireEmployee(req, res, next) {
+  async hireEmployee(req, res) {
     const transaction = await sequelize.transaction();
     try {
       const { employee_id, department_id, position_id, salary } = req.body;
@@ -101,7 +101,7 @@ class HROperationsController {
   }
 
   // Изменение зарплаты сотрудника
-  async changeSalary(req, res, next) {
+  async changeSalary(req, res) {
     const transaction = await sequelize.transaction();
 
     try {
@@ -153,9 +153,9 @@ class HROperationsController {
   }
 
   // Перевод сотрудника в другой отдел
-  async changeDepartment(req, res, next) {
+  async changeDepartment(req, res) {
     const { employee_id } = req.params;
-    // Убедитесь, что department_id приходит в теле запроса
+
     const { department_id } = req.body;
 
     // Проверка наличия нового department_id
@@ -178,17 +178,15 @@ class HROperationsController {
 
       if (!lastOperation) {
         await transaction.rollback(); // Откатываем транзакцию при ошибке
-        return res
-          .status(404)
-          .json({
-            error:
-              'Не найдена информация о сотруднике или его предыдущих операциях',
-          });
+        return res.status(404).json({
+          error:
+            'Не найдена информация о сотруднике или его предыдущих операциях',
+        });
       }
 
       // --- Получение информации о старом и новом отделах ---
-      let oldDepartmentInfo = null;
-      let newDepartmentInfo = null;
+      // let oldDepartmentInfo = null;
+      // let newDepartmentInfo = null;
       let oldDepartmentName = 'N/A'; // Значение по умолчанию
       let newDepartmentName = 'N/A'; // Значение по умолчанию
 
@@ -200,7 +198,7 @@ class HROperationsController {
           transaction, // Передаем транзакцию
         });
         if (oldDept) {
-          oldDepartmentInfo = oldDept; // Сохраняем для создания новой операции
+          // oldDepartmentInfo = oldDept; // Сохраняем для создания новой операции
           oldDepartmentName = `${oldDept.name}${oldDept.organization ? ` (${oldDept.organization.name})` : ''}`;
         }
       }
@@ -219,7 +217,7 @@ class HROperationsController {
           .status(404)
           .json({ error: `Отдел с ID ${department_id} не найден` });
       }
-      newDepartmentInfo = newDept; // Сохраняем для создания новой операции
+      // newDepartmentInfo = newDept; // Сохраняем для создания новой операции
       newDepartmentName = `${newDept.name}${newDept.organization ? ` (${newDept.organization.name})` : ''}`;
 
       // Создаем новую операцию, сохраняя текущую зарплату и должность
@@ -271,7 +269,7 @@ class HROperationsController {
   }
 
   // Увольнение сотрудника (с мягким удалением и всех связанных данных)
-  async fireEmployee(req, res, next) {
+  async fireEmployee(req, res) {
     const { employee_id } = req.params;
     const transaction = await sequelize.transaction();
 
@@ -389,7 +387,7 @@ class HROperationsController {
   }
 
   // Получение всех кадровых операций
-  async getAllOperations(req, res, next) {
+  async getAllOperations(req, res) {
     try {
       const operations = await HR_Operation.findAll({
         order: [['createdAt', 'DESC']], // Сортировка по дате создания (новые сначала)
@@ -404,7 +402,7 @@ class HROperationsController {
   }
 
   // Получение HR информации о сотруднике
-  async getEmployeeHRInfo(req, res, next) {
+  async getEmployeeHRInfo(req, res) {
     const { employee_id } = req.params;
 
     try {

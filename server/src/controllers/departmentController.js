@@ -4,11 +4,11 @@ const sequelize = require('../db');
 const Organization = require('../models/organization'); // Импортируем historyService
 
 class DepartmentController {
-  async createDepartment(req, res, next) {
+  async createDepartment(req, res) {
     const transaction = await sequelize.transaction();
     try {
       let organizationId = req.body.organization_id;
-      const { name, parent_id } = req.body;
+      const { name } = req.body;
 
       // Переменные для хранения названий
       let organizationName = null;
@@ -74,7 +74,7 @@ class DepartmentController {
     }
   }
 
-  async getAllDepartment(req, res, next) {
+  async getAllDepartment(req, res) {
     try {
       const departments = await Department.findAll({
         where: {
@@ -94,7 +94,7 @@ class DepartmentController {
     }
   }
 
-  async updateDepartment(req, res, next) {
+  async updateDepartment(req, res) {
     const transaction = await sequelize.transaction();
     try {
       const { id } = req.params;
@@ -139,12 +139,10 @@ class DepartmentController {
           // Если parent_id стал null, то организация должна быть указана в запросе
           if (!newOrganizationId) {
             await transaction.rollback();
-            return res
-              .status(400)
-              .json({
-                error:
-                  'При удалении родительского отдела необходимо указать organization_id',
-              });
+            return res.status(400).json({
+              error:
+                'При удалении родительского отдела необходимо указать organization_id',
+            });
           }
 
           // Получаем название новой организации
@@ -246,7 +244,7 @@ class DepartmentController {
     }
   }
 
-  async deleteDepartment(req, res, next) {
+  async deleteDepartment(req, res) {
     const transaction = await sequelize.transaction();
     try {
       const { id } = req.params;
@@ -265,9 +263,7 @@ class DepartmentController {
 
       // Сохраняем старые значения для истории
       const oldName = department.name;
-      const oldParentId = department.parent_id;
       const oldParentName = department.parent ? department.parent.name : null;
-      const oldOrganizationId = department.organization_id;
       const oldOrganizationName = department.organization
         ? department.organization.name
         : null;

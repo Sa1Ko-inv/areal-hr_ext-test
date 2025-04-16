@@ -78,7 +78,7 @@ export default {
       this.dialogDeletePosition = true;
     },
 
-    createPosition(position, callback) {
+    createPosition(position) {
       this.$emit('create', position);
       this.dialogCreatePosition = false;
     },

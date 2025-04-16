@@ -14,7 +14,7 @@ const Organization = require('../models/organization'); // Импортируе�
 //Топ версия
 class EmployeeController {
   // Добавляем новый метод для загрузки файлов
-  async uploadEmployeeFiles(req, res, next) {
+  async uploadEmployeeFiles(req, res) {
     const transaction = await sequelize.transaction();
     try {
       const employeeId = req.params.id;
@@ -96,7 +96,7 @@ class EmployeeController {
   }
 
   // Изменяем метод createEmployee, убирая из него обработку файлов
-  async createEmployee(req, res, next) {
+  async createEmployee(req, res) {
     const transaction = await sequelize.transaction();
     try {
       // Получаем данные сотрудника из запроса
@@ -120,29 +120,29 @@ class EmployeeController {
         { transaction }
       );
 
-      // Создаем запись паспорта
-      let passportInstance = null;
-      if (passport) {
-        passportInstance = await Passport.create(
-          {
-            ...passport,
-            employee_id: employee.id,
-          },
-          { transaction }
-        );
-      }
-
-      // Создаем запись адреса
-      let addressInstance = null;
-      if (address) {
-        addressInstance = await Address.create(
-          {
-            ...address,
-            employee_id: employee.id,
-          },
-          { transaction }
-        );
-      }
+      // // Создаем запись паспорта
+      // let passportInstance = null;
+      // if (passport) {
+      //   passportInstance = await Passport.create(
+      //     {
+      //       ...passport,
+      //       employee_id: employee.id,
+      //     },
+      //     { transaction }
+      //   );
+      // }
+      //
+      // // Создаем запись адреса
+      // let addressInstance = null;
+      // if (address) {
+      //   addressInstance = await Address.create(
+      //     {
+      //       ...address,
+      //       employee_id: employee.id,
+      //     },
+      //     { transaction }
+      //   );
+      // }
 
       // Получаем созданного сотрудника со всеми связанными данными
       const createdEmployee = await Employees.findOne({
@@ -181,7 +181,7 @@ class EmployeeController {
     }
   }
 
-  async getAllEmployees(req, res, next) {
+  async getAllEmployees(req, res) {
     try {
       const {
         page = 1,
@@ -319,7 +319,7 @@ class EmployeeController {
     }
   }
 
-  async getOneEmployee(req, res, next) {
+  async getOneEmployee(req, res) {
     const { id } = req.params;
     try {
       const employee = await Employees.findOne({
@@ -338,7 +338,7 @@ class EmployeeController {
     }
   }
 
-  async updateEmployee(req, res, next) {
+  async updateEmployee(req, res) {
     const transaction = await sequelize.transaction();
     try {
       const { id } = req.params;
@@ -471,10 +471,6 @@ class EmployeeController {
         }
       }
 
-      const newFiles = uploadedFiles.map((f) => ({
-        name: f.name,
-        file_url: f.file_url,
-      }));
       const updatedEmployee = await Employees.findOne({
         where: { id },
         include: [{ model: Passport }, { model: Address }, { model: Files }],
@@ -562,7 +558,7 @@ class EmployeeController {
     }
   }
 
-  async deleteEmployee(req, res, next) {
+  async deleteEmployee(req, res) {
     const { id } = req.params;
     // Создаем транзакцию для обеспечения целостности данных
     const transaction = await sequelize.transaction();
@@ -649,7 +645,7 @@ class EmployeeController {
 
   // УДАЛИТЬ ПОСЛЕ РАЗРАБОТКИ
 
-  async hardDeleteEmployee(req, res, next) {
+  async hardDeleteEmployee(req, res) {
     const { id } = req.params;
     try {
       // Находим сотрудника, включая удаленные записи
@@ -690,7 +686,7 @@ class EmployeeController {
     }
   }
 
-  async deleteFile(req, res, next) {
+  async deleteFile(req, res) {
     const { id } = req.params;
     try {
       const file = await Files.findByPk(id);
@@ -709,7 +705,7 @@ class EmployeeController {
     }
   }
 
-  async hardDeleteFile(req, res, next) {
+  async hardDeleteFile(req, res) {
     const { id } = req.params;
     try {
       // Находим файл, включая удаленные записи
@@ -735,7 +731,7 @@ class EmployeeController {
     }
   }
 
-  async restoreEmployee(req, res, next) {
+  async restoreEmployee(req, res) {
     const { id } = req.params;
     try {
       // Находим удаленного сотрудника
@@ -801,7 +797,7 @@ class EmployeeController {
     }
   }
 
-  async restoreFile(req, res, next) {
+  async restoreFile(req, res) {
     const { id } = req.params;
     try {
       // Находим удаленный файл

@@ -3,7 +3,7 @@ const User = require('../models/user');
 const argon2 = require('argon2');
 const sequelize = require('../db');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+// const bcrypt = require('bcrypt');
 const historyService = require('./historyService');
 
 const generateJWT = (id, login, role, last_name, first_name, middle_name) => {

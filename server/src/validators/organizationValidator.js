@@ -1,6 +1,4 @@
 const Joi = require('joi');
-const Organization = require('../models/organization');
-const { Op } = require('sequelize');
 
 const organizationSchema = Joi.object({
   name: Joi.string()

@@ -1,7 +1,4 @@
 const Joi = require('joi');
-const Position = require('../models/position');
-const Organization = require('../models/organization');
-const { Op } = require('sequelize');
 
 const positionSchema = Joi.object({
   name: Joi.string()

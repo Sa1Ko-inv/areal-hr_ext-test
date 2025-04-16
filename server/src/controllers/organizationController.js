@@ -44,7 +44,7 @@ class OrganizationController {
   }
 
   // Получение всех организаций
-  async getAllOrganization(req, res, next) {
+  async getAllOrganization(req, res) {
     try {
       let { page, limit } = req.query;
       page = page || 1;
@@ -65,7 +65,7 @@ class OrganizationController {
   }
 
   // Получение организации по ID с ее отделами
-  async getOrganizationWithDepartments(req, res, next) {
+  async getOrganizationWithDepartments(req, res) {
     try {
       const { id } = req.params;
       const organization = await Organization.findOne({
@@ -102,7 +102,7 @@ class OrganizationController {
     }
   }
 
-  async updateOrganization(req, res, next) {
+  async updateOrganization(req, res) {
     const transaction = await sequelize.transaction();
     try {
       const { id } = req.params;
@@ -166,7 +166,7 @@ class OrganizationController {
     }
   }
 
-  async deleteOrganization(req, res, next) {
+  async deleteOrganization(req, res) {
     const { id } = req.params;
     const transaction = await sequelize.transaction(); // Получаем транзакцию
 

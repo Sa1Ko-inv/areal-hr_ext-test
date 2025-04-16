@@ -1,7 +1,4 @@
 const Joi = require('joi');
-const Employee = require('../models/employees');
-const Department = require('../models/department');
-const Position = require('../models/position');
 
 const hireSchema = Joi.object({
   employee_id: Joi.number().integer().positive().required().messages({
