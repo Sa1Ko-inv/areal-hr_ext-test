@@ -1,9 +1,10 @@
-import { MAIN_ROUTE, ORGANIZATION_ROUTE, POSITION_ROUTE } from '@/utils/consts';
+import {LOGIN_ROUTE, MAIN_ROUTE, ORGANIZATION_ROUTE, POSITION_ROUTE} from '@/utils/consts';
 import { createRouter, createWebHistory } from 'vue-router';
 import positionPage from '@/pages/positionPage.vue';
 import employeePage from '@/pages/employeePage.vue';
 import organizationPage from '@/pages/organizationPage.vue';
 import organizationInfo from '@/components/organizations/organizationInfo.vue';
+import loginPage from "@/pages/loginPage.vue";
 
 const routes = [
   {
@@ -27,6 +28,12 @@ const routes = [
     name: 'Organization',
     component: organizationInfo,
   },
+
+  {
+    path: LOGIN_ROUTE,
+    name: 'Login',
+    component: loginPage,
+  }
 ];
 
 const router = createRouter({

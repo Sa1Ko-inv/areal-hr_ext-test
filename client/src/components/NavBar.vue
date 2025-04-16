@@ -2,15 +2,16 @@
 import {
   POSITION_ROUTE,
   MAIN_ROUTE,
-  ORGANIZATION_ROUTE,
+  ORGANIZATION_ROUTE, LOGIN_ROUTE,
 } from '@/utils/consts.js';
 
 export default {
+  methods: {},
   data() {
     return {};
   },
   setup() {
-    return { POSITION_ROUTE, MAIN_ROUTE, ORGANIZATION_ROUTE };
+    return { POSITION_ROUTE, MAIN_ROUTE, ORGANIZATION_ROUTE, LOGIN_ROUTE };
   },
 };
 </script>
@@ -30,7 +31,7 @@ export default {
         >Должности</router-link
       >
     </div>
-    <router-link to="" class="navbar__link">Выход</router-link>
+    <router-link :to="LOGIN_ROUTE" class="navbar__link">Вход</router-link>
   </nav>
 </template>
 
