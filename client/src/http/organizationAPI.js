@@ -1,4 +1,4 @@
-import { $host } from '@/http/index.js';
+import { $authHost, $host } from '@/http/index.js';
 // Получение всех организаций
 export const fetchOrganizations = async (page = 1, limit = 10) => {
   const response = await $host.get('api/organization', {
@@ -17,17 +17,17 @@ export const fetchOrganizationWithDepartments = async (id) => {
 };
 // Создание организации
 export const createOrganization = async (name, comment) => {
-  const response = await $host.post(`api/organization`, { name, comment });
+  const response = await $authHost.post(`api/organization`, { name, comment });
   return response;
 };
 // Обновление организации
 export const updateOrganization = async (id, name, comment) => {
-  const response = await $host.put(`api/organization/${id}`, { name, comment });
+  const response = await $authHost.put(`api/organization/${id}`, { name, comment });
   return response;
 };
 // Удаление организации
 export const deleteOrganization = async (id) => {
-  const response = await $host.delete(`api/organization/${id}`);
+  const response = await $authHost.delete(`api/organization/${id}`);
   return response;
 };
 
@@ -42,6 +42,7 @@ export const fetchOrganizationHistory = async (id, page = 1, limit = 10) => {
   return response.data;
 };
 
+// Получение истории удаленных организаций
 export const fetchDeletedOrganizations = async (page = 1, limit = 10) => {
   const response = await $host.get('api/organization/delete', {
     params: {

@@ -34,7 +34,7 @@ export const uploadEmployeeFiles = async (employeeId, formData) => {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
-    }
+    },
   );
   return response;
 };
@@ -61,7 +61,7 @@ export const hireEmployee = async (data) => {
 export const changeDepartment = async (employeeId, data) => {
   const response = await $authHost.put(
     `api/hr_operation/department/${employeeId}`,
-    data
+    data,
   );
   return response.data;
 };
@@ -70,7 +70,7 @@ export const changeDepartment = async (employeeId, data) => {
 export const changeSalary = async (employeeId, data) => {
   const response = await $authHost.put(
     `api/hr_operation/salary/${employeeId}`,
-    data
+    data,
   );
   return response.data;
 };
@@ -82,11 +82,7 @@ export const fireEmployee = async (employeeId) => {
 };
 
 // Получение истории сотрудника
-export const fetchEmployeeHistory = async (
-  employeeId,
-  page = 1,
-  limit = 10
-) => {
+export const fetchEmployeeHistory = async (employeeId, page = 1, limit = 10) => {
   const response = await $host.get(`api/employee/${employeeId}/history`, {
     params: {
       page: page,

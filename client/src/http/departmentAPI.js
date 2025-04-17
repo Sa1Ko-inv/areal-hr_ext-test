@@ -1,4 +1,4 @@
-import { $host } from '@/http/index.js';
+import { $authHost, $host } from '@/http/index.js';
 
 export const fetchDepartments = async () => {
   const response = await $host.get(`api/department/`);
@@ -6,12 +6,12 @@ export const fetchDepartments = async () => {
 };
 
 export const createDepartment = async (departmentData) => {
-  const response = await $host.post('api/department', departmentData);
+  const response = await $authHost.post('api/department', departmentData);
   return response.data;
 };
 
 export const updateDepartment = async (departmentData) => {
-  const response = await $host.put(
+  const response = await $authHost.put(
     `api/department/${departmentData.id}`,
     departmentData
   );
@@ -19,7 +19,7 @@ export const updateDepartment = async (departmentData) => {
 };
 
 export const deleteDepartment = async (id) => {
-  const response = await $host.delete(`api/department/${id}`);
+  const response = await $authHost.delete(`api/department/${id}`);
   return response;
 };
 
