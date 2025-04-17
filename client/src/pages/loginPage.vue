@@ -20,15 +20,18 @@
 import { UserStore } from '@/store/UserStore.js';
 import { login } from '@/http/userAPI.js';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 // Обозначение переменных
 const logined = ref('');
 const password = ref('');
 const userStore = UserStore();
+const router = useRouter();
+
 
 
 const Check = () => {
-  console.log(userStore.isAuth);
+  console.log(userStore.isAuth, 'Пользователь:', userStore.user, 'Роль:', userStore.role);
 };
 
 const signIn = async () => {
@@ -37,6 +40,7 @@ const signIn = async () => {
     userStore.setUser(`${response.last_name} ${response.first_name} ${response.middle_name}`);
     userStore.setIsAuth(true);
     userStore.setRole(response.role);
+    await router.push('/');
     console.log('Пользователь:', userStore.user, 'Роль:', userStore.role, 'Авторизован:', userStore.isAuth);
   } catch (error) {
     this.error = 'Ошибка входа. Проверьте логин и пароль.';

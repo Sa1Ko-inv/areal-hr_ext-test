@@ -1,4 +1,4 @@
-import { $host } from './index';
+import { $authHost, $host } from './index';
 
 export const fetchPositions = async (page = 1, limit = 100) => {
   const response = await $host.get('api/position', {
@@ -11,7 +11,7 @@ export const fetchPositions = async (page = 1, limit = 100) => {
 };
 
 export const createPosition = async (name) => {
-  const response = await $host.post('api/position', { name });
+  const response = await $authHost.post('api/position', { name });
   return response;
 };
 

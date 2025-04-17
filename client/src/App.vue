@@ -9,12 +9,13 @@ export default defineComponent({
   data() {
     return {
       userStore: UserStore(),
-      loading: false,
+      loading: true,
     };
   },
   methods: {
     async checkUser() {
       try {
+        this.userStore.setIsLoading(true);
         const data = await check();
         this.userStore.setUser(data);
         this.userStore.setIsAuth(true);
@@ -22,9 +23,11 @@ export default defineComponent({
       } catch (error) {
         console.error('Ошибка при проверке пользователя:', error);
       } finally {
+        this.userStore.setIsLoading(false);
         this.loading = false;
       }
-    }
+    },
+
   },
   mounted() {
     this.checkUser();
@@ -35,10 +38,23 @@ export default defineComponent({
 
 <template>
   <div class="app">
-    <NavBar />
-
-    <router-view></router-view>
+    <div v-if="loading">
+      <div class="spinner">Загрузка...</div>
+    </div>
+    <div v-else>
+      <NavBar
+        v-if="this.userStore.isAuth === true"
+      />
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px; /* Или любая другая подходящая высота */
+  font-size: 1.2em;}
+</style>

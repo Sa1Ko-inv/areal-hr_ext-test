@@ -1,12 +1,6 @@
-import { $host } from '@/http/index.js';
+import { $authHost, $host } from '@/http/index.js';
 
-export const fetchEmployees = async (
-  page = 1,
-  limit = 10,
-  sortBy = null,
-  sortOrder = 'ASC',
-  searchQuery = ''
-) => {
+export const fetchEmployees = async (page = 1, limit = 10, sortBy = null, sortOrder = 'ASC', searchQuery = '') => {
   const params = {
     page,
     limit,
@@ -27,13 +21,13 @@ export const fetchEmployees = async (
 
 // Создание сотрудника
 export const createEmployees = async (employeeData) => {
-  const response = await $host.post('api/employee/', employeeData);
+  const response = await $authHost.post('api/employee/', employeeData);
   return response.data;
 };
 
 // Загрузка файлов для существующего сотрудника
 export const uploadEmployeeFiles = async (employeeId, formData) => {
-  const response = await $host.post(
+  const response = await $authHost.post(
     `api/employee/${employeeId}/files`,
     formData,
     {
@@ -47,25 +41,25 @@ export const uploadEmployeeFiles = async (employeeId, formData) => {
 
 // Удаление файла
 export const deleteEmployeeFile = async (fileId) => {
-  const response = await $host.delete(`api/employee/file/${fileId}`);
+  const response = await $authHost.delete(`api/employee/file/${fileId}`);
   return response.data;
 };
 
 // Редактирование сотрудника
 export const updateEmployees = async (employeeId, employeeData) => {
-  const response = await $host.put(`api/employee/${employeeId}`, employeeData);
+  const response = await $authHost.put(`api/employee/${employeeId}`, employeeData);
   return response.data;
 };
 
 // Принятие сотрудника на работу
 export const hireEmployee = async (data) => {
-  const response = await $host.post('api/hr_operation/hire', data);
+  const response = await $authHost.post('api/hr_operation/hire', data);
   return response.data;
 };
 
 // Изменение отдела сотрудника
 export const changeDepartment = async (employeeId, data) => {
-  const response = await $host.put(
+  const response = await $authHost.put(
     `api/hr_operation/department/${employeeId}`,
     data
   );
@@ -74,7 +68,7 @@ export const changeDepartment = async (employeeId, data) => {
 
 // Изменение зарплаты сотрудника
 export const changeSalary = async (employeeId, data) => {
-  const response = await $host.put(
+  const response = await $authHost.put(
     `api/hr_operation/salary/${employeeId}`,
     data
   );
@@ -83,7 +77,7 @@ export const changeSalary = async (employeeId, data) => {
 
 // Уволить сотрудника
 export const fireEmployee = async (employeeId) => {
-  const response = await $host.post(`api/hr_operation/fire/${employeeId}`);
+  const response = await $authHost.post(`api/hr_operation/fire/${employeeId}`);
   return response.data;
 };
 

@@ -5,6 +5,7 @@ export const UserStore = defineStore("user", {
     isAuth: false, // Состояние авторизации
     user: {}, // Данные пользователя
     role: null, // Роль пользователя
+    isLoading: false,
   }),
   actions: {
     // Установка состояния авторизации
@@ -34,5 +35,8 @@ export const UserStore = defineStore("user", {
       this.role = null;
       localStorage.removeItem("token");
     },
+    setIsLoading(loading) {
+      this.isLoading = loading;
+    }
   },
 });

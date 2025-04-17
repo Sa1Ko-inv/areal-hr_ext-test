@@ -34,11 +34,10 @@ export default {
       <router-link :to="POSITION_ROUTE" class="navbar__link"
         >Должности</router-link
       >
-      <router-link :to="USER_ROUTER" class="navbar__link"
+      <router-link v-if="this.userStore.role === 'admin'" :to="USER_ROUTER" class="navbar__link"
         >Пользователи</router-link>
     </div>
-    <router-link :to="LOGIN_ROUTE" class="navbar__link">Вход</router-link>
-    <button @click="console.log(this.userStore.isAuth, this.userStore.user)">Получить</button>
+    <router-link @click="this.userStore.logout" :to="LOGIN_ROUTE" class="navbar__link">Выход</router-link>
 
   </nav>
 </template>
