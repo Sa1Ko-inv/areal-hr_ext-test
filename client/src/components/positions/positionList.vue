@@ -5,8 +5,8 @@
       Создать должность
     </MyButton>
     <MyButton modifier="showHistory" @click="showDeletePosition"
-      >Просмотр удаленных должностей</MyButton
-    >
+      >Просмотр удаленных должностей
+    </MyButton>
 
     <div class="positionList__items">
       <PositionItems
@@ -40,6 +40,7 @@ import PositionCreateForm from '@/components/positions/positionModal/positionCre
 import MyModalWindow from '@/components/UI/MyModalWindow.vue';
 import PositionDeleteHistrory from '@/components/positions/positionModal/positionDeleteHistrory.vue';
 import MyButton from '@/components/UI/MyButton.vue';
+import { UserStore } from '@/store/UserStore.js';
 
 export default {
   components: {
@@ -66,13 +67,19 @@ export default {
   },
   data() {
     return {
+      userStore: UserStore(),
       dialogCreatePosition: false,
       dialogDeletePosition: false,
     };
   },
   methods: {
     showCreatePosition() {
-      this.dialogCreatePosition = true;
+      if (this.userStore.role !== 'admin') {
+        alert('У вас нет прав для создания должности');
+        return;
+      } else {
+        this.dialogCreatePosition = true;
+      }
     },
     showDeletePosition() {
       this.dialogDeletePosition = true;

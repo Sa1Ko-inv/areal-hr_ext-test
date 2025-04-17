@@ -34,15 +34,10 @@ const Check = () => {
 const signIn = async () => {
   try {
     const response = await login(logined.value, password.value);
-    // console.log(response);
     userStore.setUser(`${response.last_name} ${response.first_name} ${response.middle_name}`);
     userStore.setIsAuth(true);
     userStore.setRole(response.role);
     console.log('Пользователь:', userStore.user, 'Роль:', userStore.role, 'Авторизован:', userStore.isAuth);
-    // console.log('Пользователь:', userStore.user);
-    // this.UserStore.setIsAuth(true);
-    // this.UserStore.setRole(response.user.role);
-    // console.log(useUserStore.isAuth);
   } catch (error) {
     this.error = 'Ошибка входа. Проверьте логин и пароль.';
     console.error('Ошибка входа:', error);

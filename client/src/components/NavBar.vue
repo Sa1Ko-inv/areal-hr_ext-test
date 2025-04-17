@@ -2,16 +2,20 @@
 import {
   POSITION_ROUTE,
   MAIN_ROUTE,
-  ORGANIZATION_ROUTE, LOGIN_ROUTE,
+  ORGANIZATION_ROUTE, LOGIN_ROUTE, USER_ROUTER,
 } from '@/utils/consts.js';
+import {UserStore} from "@/store/UserStore.js";
 
 export default {
-  methods: {},
+  methods: {
+  },
   data() {
-    return {};
+    return {
+      userStore: UserStore(),
+    };
   },
   setup() {
-    return { POSITION_ROUTE, MAIN_ROUTE, ORGANIZATION_ROUTE, LOGIN_ROUTE };
+    return { POSITION_ROUTE, MAIN_ROUTE, ORGANIZATION_ROUTE, LOGIN_ROUTE, USER_ROUTER };
   },
 };
 </script>
@@ -30,8 +34,12 @@ export default {
       <router-link :to="POSITION_ROUTE" class="navbar__link"
         >Должности</router-link
       >
+      <router-link :to="USER_ROUTER" class="navbar__link"
+        >Пользователи</router-link>
     </div>
     <router-link :to="LOGIN_ROUTE" class="navbar__link">Вход</router-link>
+    <button @click="console.log(this.userStore.isAuth, this.userStore.user)">Получить</button>
+
   </nav>
 </template>
 
