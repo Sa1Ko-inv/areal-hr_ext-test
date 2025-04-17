@@ -5,7 +5,7 @@
       Создать должность
     </MyButton>
     <MyButton modifier="showHistory" @click="showDeletePosition"
-      >Просмотр удаленных должностей
+    >Просмотр удаленных должностей
     </MyButton>
 
     <div class="positionList__items">
@@ -74,12 +74,7 @@ export default {
   },
   methods: {
     showCreatePosition() {
-      if (this.userStore.role !== 'admin') {
-        alert('У вас нет прав для создания должности');
-        return;
-      } else {
-        this.dialogCreatePosition = true;
-      }
+      this.dialogCreatePosition = true;
     },
     showDeletePosition() {
       this.dialogDeletePosition = true;

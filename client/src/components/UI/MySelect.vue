@@ -1,6 +1,6 @@
 <template>
   <select :value="modelValue" class="form-select" @change="changeOption">
-    <option disabled value="">Сортировка по...</option>
+    <option disabled value="" v-if="placeholder">{{placeholder}}</option>
     <option v-for="option in options" :key="option.value" :value="option.value">
       {{ option.name }}
     </option>
@@ -22,6 +22,10 @@ export default {
       // required: true,
       default: () => [],
     },
+    placeholder: {
+      type: String,
+      default: ''
+    },
   },
   methods: {
     changeOption(event) {
@@ -42,7 +46,7 @@ $border-radius: 8px;
 $transition-duration: 0.2s;
 
 .form-select {
-  width: 100%;
+  width: calc(100% + 25px);
   padding: 10px 15px;
   font-size: 1rem;
   line-height: 1.5;

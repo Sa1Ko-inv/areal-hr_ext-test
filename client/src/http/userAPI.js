@@ -26,3 +26,27 @@ export const check = async () => {
   localStorage.setItem('token', data.token);
   return jwtDecode(data.token);
 };
+
+// Получение пользователей
+export const fetchUsers = async (page = 1, limit = 10) => {
+  const response = await $host.get('api/user', {
+    params: {
+      page: page,
+      limit: limit,
+    },
+  });
+  return response.data;
+}
+
+//Создание пользователя
+export const createUser = async (last_name, first_name, middle_name, login, password, role) => {
+  const { data } = await $authHost.post('api/user/create', {
+    last_name,
+    first_name,
+    middle_name,
+    login,
+    password,
+    role,
+  });
+  return data;
+};

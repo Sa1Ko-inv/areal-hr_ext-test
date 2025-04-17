@@ -30,6 +30,7 @@
       <MySelect
         v-model="selectedSort"
         :options="sortOptions"
+        placeholder="Сортировка по..."
         @change="handleSortChange"
       />
     </div>
