@@ -1,12 +1,37 @@
 <script setup>
 import MyButton from '@/components/UI/MyButton.vue';
+import MyModalWindow from '@/components/UI/MyModalWindow.vue';
+import UserEdit from '@/components/user/userModal/userEdit.vue';
+import { ref } from 'vue';
+import UserWatchHistory from '@/components/user/userModal/userWatchHistory.vue';
 
-defineProps({
+const props = defineProps({
   user: {
     type: Object,
     required: true,
   },
-})
+});
+
+const emit = defineEmits(['deletePositions', 'user-update']);
+
+// Объявляем переменные
+const dialogVisibleEdit = ref(false);
+const dialogVisibleHistory = ref(false);
+
+// Функция для открытия модального окна редактирования
+const showEditDialog = () => {
+  dialogVisibleEdit.value = true;
+};
+// Функция для открытия модального окна истории
+const showHistoryDialog = () => {
+  dialogVisibleHistory.value = true;
+};
+
+// Функция закрытия модальный окон
+const canselModal = () => {
+  dialogVisibleEdit.value = false
+  dialogVisibleHistory.value = false;
+}
 
 const getRoleName = (role) => {
   switch (role) {
@@ -18,6 +43,11 @@ const getRoleName = (role) => {
       return role;
   }
 };
+
+//Функция обновления пользователя
+const userUpdated = () => {
+  emit('user-update');
+}
 </script>
 
 <template>
@@ -38,10 +68,23 @@ const getRoleName = (role) => {
     </div>
     <div class="user-card__divider"></div>
     <div class="user-card__actions">
-      <MyButton @click="deletePositions" modifier="edit">Редактировать</MyButton>
+      <MyButton @click="showEditDialog" modifier="edit">Редактировать</MyButton>
       <MyButton @click="showHistoryDialog" modifier="showHistory">История</MyButton>
       <MyButton @click="deletePositions" modifier="delete">Удалить</MyButton>
     </div>
+
+    <!--  Модальное окно для редактирования пользователя  -->
+    <MyModalWindow v-model:show="dialogVisibleEdit">
+      <UserEdit
+      :user="user"
+      @user-update="userUpdated"
+      :cancel="canselModal"
+      />
+    </MyModalWindow>
+    <!--  Модальное окно для истории пользователя  -->
+    <MyModalWindow v-model:show="dialogVisibleHistory">
+      <UserWatchHistory />
+    </MyModalWindow>
   </div>
 </template>
 

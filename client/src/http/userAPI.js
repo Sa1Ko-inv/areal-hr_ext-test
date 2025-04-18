@@ -50,3 +50,10 @@ export const createUser = async (last_name, first_name, middle_name, login, pass
   });
   return data;
 };
+
+// Редактирование пользователя
+export const updateUser = async (userId, userData) => {
+  const response = await $authHost.put(`api/user/${userId}`, userData);
+  console.log("Пользователь обновлен с данными:", userData)
+  return response.data;
+};

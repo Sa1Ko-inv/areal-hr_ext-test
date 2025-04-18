@@ -34,6 +34,10 @@ const createUser = (user) => {
   console.log(user)
   dialogCreateUser.value = false;
 };
+
+const userUpdate = () => {
+  emit('update');
+}
 </script>
 
 <template>
@@ -50,6 +54,7 @@ const createUser = (user) => {
       v-for="user in users"
       :user="user"
       :key="user.id"
+      @user-update="userUpdate"
       />
     </div>
   </div>

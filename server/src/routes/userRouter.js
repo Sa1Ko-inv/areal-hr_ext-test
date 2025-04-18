@@ -26,13 +26,12 @@ router.post(
   userController.createUser
 ); // Создание нового пользователя
 router.get('/', userController.getAllUsers); // Получение всех пользователей
-router.put(
-  '/:id',
-  authMiddleware,
-  checkRole('admin'),
-  validate(userUpdateSchema),
+router.put('/:id', authMiddleware, checkRole('admin'),
+  // validate(userUpdateSchema),
   userController.updateUser
 ); // Обновление данных пользователя по ID
+
+
 router.delete(
   '/:id',
   authMiddleware,

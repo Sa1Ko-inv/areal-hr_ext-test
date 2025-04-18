@@ -2,6 +2,7 @@
   <UserList
     :users="users"
     @create="createUsers"
+    @update="handleUserUpdate"
   />
 
   <!--Пагинация-->
@@ -69,6 +70,14 @@ const createUsers = async (user) => {
       createError.value = 'Произошла ошибка при создании пользователя';
     }
     console.error('Ошибка при создании пользователя:', error);
+  }
+}
+
+const handleUserUpdate = () => {
+  try {
+    getUser();
+  } catch (error) {
+    console.error('Ошибка при обновлении пользователя', error);
   }
 }
 
