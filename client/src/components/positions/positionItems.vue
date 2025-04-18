@@ -88,7 +88,6 @@ export default {
     },
 
     // Методы истории
-    // Открытие модального окна истории
     showHistoryDialog() {
       this.dialogVisibleHistory = true;
     },
