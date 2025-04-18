@@ -128,7 +128,7 @@ h3 {
 }
 .search-container {
   position: relative;
-  max-width: 1280px;
+  max-width: 100%;
   margin-bottom: 20px;
 
   .search-button {
