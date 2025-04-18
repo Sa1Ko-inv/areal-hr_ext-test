@@ -136,17 +136,59 @@ class UserController {
   //Получение всех пользователей
   async getAllUsers(req, res, next) {
     try {
-      let { page, limit } = req.query;
-      page = page || 1;
-      limit = limit || 10;
-      let offset = page * limit - limit;
-      const { count, rows } = await User.findAndCountAll({
-        limit,
-        offset,
+      const {
+        page = 1,
+        limit = 10,
+        sortOrder = 'ASC',
+        search = '',
+      } = req.query;
+      const offset = (page - 1) * limit;
+
+      // Сначала получаем всех пользователей без пагинации
+      const allUser = await User.findAll({
         distinct: true,
-        order: [['first_name', 'ASC']],
       });
-      return res.json({ count, rows });
+
+      // Преобразуем данные
+      const userFilter = allUser.map((user) => {
+        const usr = user.toJSON();
+        return usr;
+      });
+
+      // Применяем поиск по ФИО, если параметр search указан
+      let filteredUsers = userFilter;
+      if (search && search.trim() !== '') {
+        const searchLower = search.toLowerCase().trim();
+        filteredUsers = userFilter.filter((user) => {
+          const fullName =
+            `${user.last_name} ${user.first_name} ${user.middle_name || ''}`.toLowerCase();
+          const lastName = user.last_name.toLowerCase();
+          const firstName = user.first_name.toLowerCase();
+          const middleName = (user.middle_name || '').toLowerCase();
+
+          return (
+            fullName.includes(searchLower) ||
+            lastName.includes(searchLower) ||
+            firstName.includes(searchLower) ||
+            middleName.includes(searchLower)
+          );
+        });
+      }
+
+      let sortedUser;
+      sortedUser = [...filteredUsers].sort((a, b) => {
+        return sortOrder.toUpperCase() === 'ASC'
+          ? a.last_name.localeCompare(b.last_name)
+          : b.last_name.localeCompare(a.last_name);
+      });
+
+      const paginatedUser = sortedUser.slice(offset, offset + limit);
+      const totalCount = sortedUser.length;
+
+      return res.json({
+        count: totalCount,
+        rows: paginatedUser,
+      })
     } catch (error) {
       return next(ApiError.internal(error.message));
     }

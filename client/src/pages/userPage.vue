@@ -3,6 +3,7 @@
     :users="users"
     @create="createUsers"
     @update="handleUserUpdate"
+    @search="handleSearch"
   />
 
   <!--Пагинация-->
@@ -41,17 +42,24 @@ const currentPage = ref(1);
 const pageSize = ref(3);
 const totalItems = ref(0);
 const createError = ref(null);
+const searchQuery = ref('');
 
 // Функция для получения пользователей
 const getUser = async () => {
   try {
-    const response = await fetchUsers(currentPage.value, pageSize.value);
+    const response = await fetchUsers(currentPage.value, pageSize.value, searchQuery.value);
     console.log(response);
-    users.value = response.rows;
-    totalItems.value = response.count;
+    users.value = response.data.rows;
+    totalItems.value = response.data.count;
   } catch (error) {
     console.error('Ошибка при получении пользователей:', error);
   }
+};
+// Функция переноса на первую страницу при поиске
+const handleSearch = (query) => {
+  searchQuery.value = query;
+  currentPage.value = 1; // Сбрасываем на первую страницу при новом поиске
+  getUser();
 };
 
 // Функция для создания пользователя

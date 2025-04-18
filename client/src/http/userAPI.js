@@ -28,15 +28,18 @@ export const check = async () => {
 };
 
 // Получение пользователей
-export const fetchUsers = async (page = 1, limit = 10) => {
-  const response = await $host.get('api/user', {
-    params: {
-      page: page,
-      limit: limit,
-    },
-  });
-  return response.data;
-}
+export const fetchUsers = async (page = 1, limit = 10, searchQuery = '') => {
+  const params = {
+    page: page,
+    limit: limit,
+  };
+  if (searchQuery) {
+    params.search = searchQuery;
+  }
+
+  const response = await $host.get('api/user', { params });
+  return response;
+};
 
 //Создание пользователя
 export const createUser = async (last_name, first_name, middle_name, login, password, role) => {
@@ -54,6 +57,6 @@ export const createUser = async (last_name, first_name, middle_name, login, pass
 // Редактирование пользователя
 export const updateUser = async (userId, userData) => {
   const response = await $authHost.put(`api/user/${userId}`, userData);
-  console.log("Пользователь обновлен с данными:", userData)
+  console.log('Пользователь обновлен с данными:', userData);
   return response.data;
 };
