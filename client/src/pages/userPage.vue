@@ -40,7 +40,7 @@ import UserList from '@/components/user/userList.vue';
 // Задаем переменные
 const users = ref([]);
 const currentPage = ref(1);
-const pageSize = ref(3);
+const pageSize = ref(7);
 const totalItems = ref(0);
 const createError = ref(null);
 const searchQuery = ref('');

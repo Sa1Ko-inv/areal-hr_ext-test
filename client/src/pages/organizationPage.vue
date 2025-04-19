@@ -50,7 +50,7 @@ export default {
       updateError: null, // Добавляем состояние для ошибки обновления
       updatingOrganizationId: null, // Для отслеживания какой организации показывать ошибку
       currentPage: 1,
-      pageSize: 5,
+      pageSize: 7,
       totalItems: 0,
     };
   },

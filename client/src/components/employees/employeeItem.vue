@@ -7,10 +7,8 @@ MyB
         <div class="section__content">
           <div class="info-item">
             <strong class="info-item__key">ФИО:</strong>
-            <span class="info-item__value"
-              >{{ employee.id }} {{ employee.last_name }}
-              {{ employee.first_name }} {{ employee.middle_name }}</span
-            >
+            <span class="info-item__value">
+              {{ employee.last_name }} {{ employee.first_name }} {{ employee.middle_name }}</span>
           </div>
           <div class="info-item">
             <strong class="info-item__key">Дата рождения:</strong>

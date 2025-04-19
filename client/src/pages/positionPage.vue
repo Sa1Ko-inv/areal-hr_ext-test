@@ -16,7 +16,7 @@ export default {
       updateError: null, // Добавляем состояние для ошибки обновления
       updatingPositionId: null, // Для отслеживания какой должности показывать ошибку
       currentPage: 1,
-      pageSize: 9,
+      pageSize: 10,
       totalItems: 0,
     };
   },
