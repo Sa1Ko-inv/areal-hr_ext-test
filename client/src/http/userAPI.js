@@ -61,6 +61,11 @@ export const updateUser = async (userId, userData) => {
   return response.data;
 };
 
+export const deleteUser = async (userId) => {
+  const response = await $authHost.delete(`api/user/${userId}`);
+  return response.data;
+};
+
 // Получение истории пользователя
 export const fetchUserHistory = async (userId, page = 1, limit = 10) => {
   const response = await $host.get(`api/user/${userId}/history`, {

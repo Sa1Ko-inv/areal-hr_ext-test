@@ -4,6 +4,7 @@
     @create="createUsers"
     @update="handleUserUpdate"
     @search="handleSearch"
+    @delete="deletedUser"
   />
 
   <!--Пагинация-->
@@ -33,7 +34,7 @@
 <script setup>
 
 import { computed, onMounted, ref } from 'vue';
-import { createUser, fetchUsers } from '@/http/userAPI.js';
+import { createUser, deleteUser, fetchUsers } from '@/http/userAPI.js';
 import UserList from '@/components/user/userList.vue';
 
 // Задаем переменные
@@ -86,6 +87,19 @@ const handleUserUpdate = () => {
     getUser();
   } catch (error) {
     console.error('Ошибка при обновлении пользователя', error);
+  }
+}
+
+// Функция для удаления пользователя
+const deletedUser = async (id) => {
+  try {
+    await deleteUser(id)
+    users.value = users.value.filter((user) => user.id !== id);
+    getUser()
+    alert('Пользователь успешно удален');
+  } catch (error) {
+    console.error('Ошибка при удалении пользователя:', error);
+    alert('Ошибка при удалении пользователя');
   }
 }
 

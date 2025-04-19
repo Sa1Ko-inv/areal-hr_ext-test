@@ -61,6 +61,10 @@ const clearSearch = () => {
   searchQuery.value = '';
   emit('search', '')
 }
+// Функция удаления пользователя
+const deleteUser = async (id) => {
+    emit('delete', id);
+}
 </script>
 
 <template>
@@ -95,6 +99,7 @@ const clearSearch = () => {
       :user="user"
       :key="user.id"
       @user-update="userUpdate"
+      @deleteUsers="deleteUser"
       />
     </div>
   </div>

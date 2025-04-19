@@ -12,7 +12,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['deletePositions', 'user-update']);
+const emit = defineEmits(['deleteUsers', 'user-update']);
 
 // Объявляем переменные
 const dialogVisibleEdit = ref(false);
@@ -32,7 +32,7 @@ const canselModal = () => {
   dialogVisibleEdit.value = false
   dialogVisibleHistory.value = false;
 }
-
+// Функция для получения названия роли
 const getRoleName = (role) => {
   switch (role) {
     case 'admin':
@@ -43,6 +43,13 @@ const getRoleName = (role) => {
       return role;
   }
 };
+
+// Функция удаления пользователя
+const deleteUsers = async () => {
+  if(confirm('Вы уверены, что хотите удалить пользователя?')) {
+    emit('deleteUsers', props.user.id);
+  }
+}
 
 //Функция обновления пользователя
 const userUpdated = () => {
@@ -70,7 +77,7 @@ const userUpdated = () => {
     <div class="user-card__actions">
       <MyButton @click="showEditDialog" modifier="edit">Редактировать</MyButton>
       <MyButton @click="showHistoryDialog" modifier="showHistory">История</MyButton>
-      <MyButton @click="deletePositions" modifier="delete">Удалить</MyButton>
+      <MyButton @click="deleteUsers" modifier="delete">Удалить</MyButton>
     </div>
 
     <!--  Модальное окно для редактирования пользователя  -->
@@ -85,7 +92,7 @@ const userUpdated = () => {
     <MyModalWindow v-model:show="dialogVisibleHistory">
       <UserWatchHistory
       :userId="props.user.id"
-      :cansel="canselModal"
+      :cancel="canselModal"
       />
     </MyModalWindow>
   </div>

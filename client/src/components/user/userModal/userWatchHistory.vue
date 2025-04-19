@@ -38,14 +38,14 @@
                       class="old-value"
                     >
                       <span>Было:</span>
-                      <div v-html="field.old, fieldName"></div>
+                      <div v-html="field.old"></div>
                     </div>
                     <div
                       v-if="field.new !== null && field.new !== undefined"
                       class="new-value"
                     >
                       <span>Стало:</span>
-                      <div v-html="field.new, fieldName"></div>
+                      <div v-html="field.new"></div>
                     </div>
                   </div>
                 </li>
