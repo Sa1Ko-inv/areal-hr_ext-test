@@ -83,7 +83,10 @@ const userUpdated = () => {
     </MyModalWindow>
     <!--  Модальное окно для истории пользователя  -->
     <MyModalWindow v-model:show="dialogVisibleHistory">
-      <UserWatchHistory />
+      <UserWatchHistory
+      :userId="props.user.id"
+      :cansel="canselModal"
+      />
     </MyModalWindow>
   </div>
 </template>

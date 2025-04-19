@@ -60,3 +60,14 @@ export const updateUser = async (userId, userData) => {
   console.log('Пользователь обновлен с данными:', userData);
   return response.data;
 };
+
+// Получение истории пользователя
+export const fetchUserHistory = async (userId, page = 1, limit = 10) => {
+  const response = await $host.get(`api/user/${userId}/history`, {
+    params: {
+      page: page,
+      limit: limit,
+    },
+  });
+  return response.data;
+};

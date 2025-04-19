@@ -7,17 +7,12 @@ const jwt = require('jsonwebtoken');
 const historyService = require('./historyService');
 
 const generateJWT = (id, login, role, last_name, first_name, middle_name) => {
-  return jwt.sign(
-    { id, login, role, last_name, first_name, middle_name },
-    process.env.SECRET_KEY,
-    { expiresIn: '24h' }
-  );
+  return jwt.sign({ id, login, role, last_name, first_name, middle_name }, process.env.SECRET_KEY, { expiresIn: '24h' });
 };
 
 class UserController {
   async registration(req, res) {
-    const { first_name, last_name, middle_name, login, password, role } =
-      req.body;
+    const { first_name, last_name, middle_name, login, password, role } = req.body;
 
     const hashedPassword = await argon2.hash(password, {
       type: argon2.argon2id,
@@ -48,14 +43,7 @@ class UserController {
     if (!isValidPassword) {
       return next(ApiError.internal('Указан неверный пароль'));
     }
-    const token = generateJWT(
-      user.id,
-      user.login,
-      user.role,
-      user.last_name,
-      user.first_name,
-      user.middle_name
-    );
+    const token = generateJWT(user.id, user.login, user.role, user.last_name, user.first_name, user.middle_name);
     return res.json({ token }); //Передавать токен
   }
 
@@ -84,8 +72,7 @@ class UserController {
   async createUser(req, res, next) {
     const transaction = await sequelize.transaction();
     try {
-      const { first_name, last_name, middle_name, login, password, role } =
-        req.body;
+      const { first_name, last_name, middle_name, login, password, role } = req.body;
 
       // Хеширование пароля
       const hashPassword = await argon2.hash(password, {
@@ -136,12 +123,7 @@ class UserController {
   //Получение всех пользователей
   async getAllUsers(req, res, next) {
     try {
-      const {
-        page = 1,
-        limit = 10,
-        sortOrder = 'ASC',
-        search = '',
-      } = req.query;
+      const { page = 1, limit = 10, sortOrder = 'ASC', search = '' } = req.query;
       const offset = (page - 1) * limit;
 
       // Сначала получаем всех пользователей без пагинации
@@ -160,8 +142,7 @@ class UserController {
       if (search && search.trim() !== '') {
         const searchLower = search.toLowerCase().trim();
         filteredUsers = userFilter.filter((user) => {
-          const fullName =
-            `${user.last_name} ${user.first_name} ${user.middle_name || ''}`.toLowerCase();
+          const fullName = `${user.last_name} ${user.first_name} ${user.middle_name || ''}`.toLowerCase();
           const lastName = user.last_name.toLowerCase();
           const firstName = user.first_name.toLowerCase();
           const middleName = (user.middle_name || '').toLowerCase();
@@ -188,7 +169,7 @@ class UserController {
       return res.json({
         count: totalCount,
         rows: paginatedUser,
-      })
+      });
     } catch (error) {
       return next(ApiError.internal(error.message));
     }
@@ -198,8 +179,7 @@ class UserController {
   async updateUser(req, res, next) {
     const transaction = await sequelize.transaction();
     try {
-      const { first_name, last_name, middle_name, login, password, role } =
-        req.body;
+      const { first_name, last_name, middle_name, login, password, role } = req.body;
       const user = await User.findByPk(req.params.id, { transaction });
 
       if (!user) {
@@ -315,6 +295,19 @@ class UserController {
       await transaction.rollback();
       console.error('Ошибка при удалении пользователя:', error.stack);
       return next(ApiError.internal('Ошибка при удалении пользователя'));
+    }
+  }
+
+  // Получение истории для конкретного пользователя
+  async getUserHistory(req, res, next) {
+    const { userId } = req.params;
+    const { page, limit } = req.query;
+    try {
+      const { count, rows } = await historyService.getHistoryForObject('Пользователь', userId, page, limit);
+      return res.json({ count, rows });
+    } catch (error) {
+      console.error('Ошибка при получении истории пользователя:', error);
+      return next(ApiError.internal('Ошибка при получении истории пользователя'));
     }
   }
 }
