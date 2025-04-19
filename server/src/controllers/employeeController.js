@@ -30,9 +30,7 @@ class EmployeeController {
       const uploadedFiles = [];
       if (req.files && req.files.files) {
         // Преобразуем в массив, даже если это один файл
-        const files = Array.isArray(req.files.files)
-          ? req.files.files
-          : [req.files.files];
+        const files = Array.isArray(req.files.files) ? req.files.files : [req.files.files];
 
         for (const file of files) {
           try {
@@ -64,9 +62,7 @@ class EmployeeController {
           } catch (fileError) {
             console.log('Ошибка при обработке файла', fileError);
             await transaction.rollback();
-            return res
-              .status(500)
-              .json({ error: 'Ошибка при обработке файла' });
+            return res.status(500).json({ error: 'Ошибка при обработке файла' });
           }
         }
       }
@@ -100,14 +96,7 @@ class EmployeeController {
     const transaction = await sequelize.transaction();
     try {
       // Получаем данные сотрудника из запроса
-      const {
-        last_name,
-        first_name,
-        middle_name,
-        birth_date,
-        passport,
-        address,
-      } = req.body;
+      const { last_name, first_name, middle_name, birth_date, passport, address } = req.body;
 
       // Создаем запись сотрудника
       const employee = await Employees.create(
@@ -119,30 +108,6 @@ class EmployeeController {
         },
         { transaction }
       );
-
-      // // Создаем запись паспорта
-      // let passportInstance = null;
-      // if (passport) {
-      //   passportInstance = await Passport.create(
-      //     {
-      //       ...passport,
-      //       employee_id: employee.id,
-      //     },
-      //     { transaction }
-      //   );
-      // }
-      //
-      // // Создаем запись адреса
-      // let addressInstance = null;
-      // if (address) {
-      //   addressInstance = await Address.create(
-      //     {
-      //       ...address,
-      //       employee_id: employee.id,
-      //     },
-      //     { transaction }
-      //   );
-      // }
 
       // Получаем созданного сотрудника со всеми связанными данными
       const createdEmployee = await Employees.findOne({
@@ -161,12 +126,8 @@ class EmployeeController {
           first_name: { old: null, new: first_name },
           middle_name: { old: null, new: middle_name },
           birth_date: { old: null, new: birth_date },
-          passport: passport
-            ? { old: null, new: passport }
-            : { old: null, new: null },
-          address: address
-            ? { old: null, new: address }
-            : { old: null, new: null },
+          passport: passport ? { old: null, new: passport } : { old: null, new: null },
+          address: address ? { old: null, new: address } : { old: null, new: null },
         },
         `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`,
         transaction
@@ -183,13 +144,7 @@ class EmployeeController {
 
   async getAllEmployees(req, res) {
     try {
-      const {
-        page = 1,
-        limit = 10,
-        sortBy,
-        sortOrder = 'ASC',
-        search = '',
-      } = req.query;
+      const { page = 1, limit = 10, sortBy, sortOrder = 'ASC', search = '' } = req.query;
       const offset = (page - 1) * limit;
 
       // Сначала получаем всех сотрудников без пагинации
@@ -223,27 +178,19 @@ class EmployeeController {
         const emp = employee.toJSON();
 
         // Находим все операции изменения отдела
-        const departmentChanges = emp.hr_operations.filter(
-          (op) => op.type === 'department_change'
-        );
+        const departmentChanges = emp.hr_operations.filter((op) => op.type === 'department_change');
 
         // Если есть изменения отдела, берём последнее
         if (departmentChanges.length > 0) {
           // Сортируем по дате создания (от новых к старым)
-          departmentChanges.sort(
-            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-          );
+          departmentChanges.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
           emp.lastDepartment = departmentChanges[0].department;
-          emp.lastOrganization =
-            departmentChanges[0].department?.organization || null;
+          emp.lastOrganization = departmentChanges[0].department?.organization || null;
         } else {
           // Если изменений не было, ищем операцию найма
-          const hireOperation = emp.hr_operations.find(
-            (op) => op.type === 'hire'
-          );
+          const hireOperation = emp.hr_operations.find((op) => op.type === 'hire');
           emp.lastDepartment = hireOperation ? hireOperation.department : null;
-          emp.lastOrganization =
-            hireOperation?.department?.organization || null;
+          emp.lastOrganization = hireOperation?.department?.organization || null;
         }
 
         return emp;
@@ -254,8 +201,7 @@ class EmployeeController {
       if (search && search.trim() !== '') {
         const searchLower = search.toLowerCase().trim();
         filteredEmployees = employeesWithLastDepartmentInfo.filter((emp) => {
-          const fullName =
-            `${emp.last_name} ${emp.first_name} ${emp.middle_name || ''}`.toLowerCase();
+          const fullName = `${emp.last_name} ${emp.first_name} ${emp.middle_name || ''}`.toLowerCase();
           const lastName = emp.last_name.toLowerCase();
           const firstName = emp.first_name.toLowerCase();
           const middleName = (emp.middle_name || '').toLowerCase();
@@ -277,9 +223,7 @@ class EmployeeController {
           const deptNameA = (a.lastDepartment && a.lastDepartment.name) || '';
           const deptNameB = (b.lastDepartment && b.lastDepartment.name) || '';
 
-          return sortOrder.toUpperCase() === 'ASC'
-            ? deptNameA.localeCompare(deptNameB)
-            : deptNameB.localeCompare(deptNameA);
+          return sortOrder.toUpperCase() === 'ASC' ? deptNameA.localeCompare(deptNameB) : deptNameB.localeCompare(deptNameA);
         });
       } else if (sortBy === 'organization') {
         // Сортируем по ID организации
@@ -358,26 +302,15 @@ class EmployeeController {
       const oldFirstName = employee.first_name;
       const oldMiddleName = employee.middle_name;
       const oldBirthDate = employee.birth_date;
-      const oldPassport = employee.passport
-        ? employee.passport.get({ plain: true })
-        : null;
-      const oldAddress = employee.address
-        ? { ...employee.address.dataValues }
-        : null;
+      const oldPassport = employee.passport ? employee.passport.get({ plain: true }) : null;
+      const oldAddress = employee.address ? { ...employee.address.dataValues } : null;
       const oldFiles = employee.files.map((f) => ({
         name: f.name,
         file_url: f.file_url,
       }));
 
       // Обновляем данные сотрудника
-      const {
-        last_name,
-        first_name,
-        middle_name,
-        birth_date,
-        passport,
-        address,
-      } = req.body;
+      const { last_name, first_name, middle_name, birth_date, passport, address } = req.body;
 
       await employee.update(
         {
@@ -428,19 +361,13 @@ class EmployeeController {
       // Обрабатываем новые файлы
       const uploadedFiles = [];
       if (req.files) {
-        const files = Array.isArray(req.files.files)
-          ? req.files.files
-          : [req.files.files];
+        const files = Array.isArray(req.files.files) ? req.files.files : [req.files.files];
 
         for (const file of files) {
           try {
             // Проверяем расширение файла
             const fileExt = path.extname(file.name).toLowerCase();
-            if (
-              fileExt !== '.jpg' &&
-              fileExt !== '.jpeg' &&
-              fileExt !== '.png'
-            ) {
+            if (fileExt !== '.jpg' && fileExt !== '.jpeg' && fileExt !== '.png') {
               continue;
             }
 
@@ -464,9 +391,7 @@ class EmployeeController {
           } catch (fileError) {
             console.log('Ошибка при обработке файла', fileError);
             await transaction.rollback();
-            return res
-              .status(500)
-              .json({ error: 'Ошибка при обработке файла' });
+            return res.status(500).json({ error: 'Ошибка при обработке файла' });
           }
         }
       }
@@ -509,10 +434,7 @@ class EmployeeController {
         } else if (key === 'passport' || key === 'address') {
           if (historyData[key].old === null && historyData[key].new !== null) {
             changedFields[key] = { old: null, new: historyData[key].new };
-          } else if (
-            historyData[key].old !== null &&
-            historyData[key].new === null
-          ) {
+          } else if (historyData[key].old !== null && historyData[key].new === null) {
             changedFields[key] = { old: historyData[key].old, new: null };
           } else if (historyData[key].old && historyData[key].new) {
             let hasChanged = false;
@@ -580,12 +502,8 @@ class EmployeeController {
       const oldFirstName = employee.first_name;
       const oldMiddleName = employee.middle_name;
       const oldBirthDate = employee.birth_date;
-      const oldPassport = employee.passport
-        ? { ...employee.passport.dataValues }
-        : null; // Получаем все данные
-      const oldAddress = employee.address
-        ? { ...employee.address.dataValues }
-        : null; // Получаем все данные
+      const oldPassport = employee.passport ? { ...employee.passport.dataValues } : null; // Получаем все данные
+      const oldAddress = employee.address ? { ...employee.address.dataValues } : null; // Получаем все данные
       const oldFiles = employee.files.map((f) => f.name);
 
       // Удаляем связанные записи (мягкое удаление)
@@ -628,8 +546,7 @@ class EmployeeController {
       );
 
       return res.json({
-        message:
-          'Сотрудник и все связанные данные успешно удалены (мягкое удаление)',
+        message: 'Сотрудник и все связанные данные успешно удалены (мягкое удаление)',
         employeeId: id,
       });
     } catch (error) {
@@ -662,12 +579,7 @@ class EmployeeController {
       // Удаляем физические файлы с сервера
       if (employee.files && employee.files.length > 0) {
         for (const file of employee.files) {
-          const filePath = path.resolve(
-            __dirname,
-            '..',
-            'static',
-            file.file_url
-          );
+          const filePath = path.resolve(__dirname, '..', 'static', file.file_url);
           if (fs.existsSync(filePath)) {
             fs.unlinkSync(filePath);
           }
@@ -831,12 +743,7 @@ class EmployeeController {
     const { employee_id } = req.params;
     const { page, limit } = req.query;
     try {
-      const { count, rows } = await historyService.getHistoryForObject(
-        'Сотрудник',
-        employee_id,
-        page,
-        limit
-      );
+      const { count, rows } = await historyService.getHistoryForObject('Сотрудник', employee_id, page, limit);
       return res.json({ count, rows });
     } catch (error) {
       console.error('Ошибка при получении истории сотрудника', error);

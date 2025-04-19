@@ -25,8 +25,7 @@ module.exports = {
       object_type: {
         type: Sequelize.STRING,
         allowNull: false,
-        comment:
-          'Тип объекта (Организация, Отдел, Должность, Сотрудник, Кадровая операция)',
+        comment: 'Тип объекта (Организация, Отдел, Должность, Сотрудник, Кадровая операция)',
       },
       object_id: {
         type: Sequelize.INTEGER,
@@ -36,8 +35,7 @@ module.exports = {
       changed_fields: {
         type: Sequelize.JSONB,
         allowNull: false,
-        comment:
-          "JSON-объект с измененными полями (ключ: имя поля, значение: {old: 'старое значение', new: 'новое значение'})",
+        comment: "JSON-объект с измененными полями (ключ: имя поля, значение: {old: 'старое значение', new: 'новое значение'})",
       },
       operation_type: {
         type: Sequelize.STRING,

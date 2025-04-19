@@ -3,5 +3,6 @@
   "singleQuote": true,
   "bracketSpacing": true,
   "trailingComma": "es5",
-  "requirePragma": true
+  "requirePragma": true,
+  "printWidth": 130
 }

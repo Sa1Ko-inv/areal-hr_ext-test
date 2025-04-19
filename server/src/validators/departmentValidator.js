@@ -29,8 +29,7 @@ const departmentSchema = Joi.object({
   parent_id: Joi.number().integer().positive().allow(null).optional().messages({
     'number.base': 'ID родительского отдела должен быть числом',
     'number.integer': 'ID родительского отдела должен быть целым числом',
-    'number.positive':
-      'ID родительского отдела должен быть положительным числом',
+    'number.positive': 'ID родительского отдела должен быть положительным числом',
   }),
 });
 

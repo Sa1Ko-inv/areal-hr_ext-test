@@ -28,6 +28,6 @@ module.exports = {
   async down(queryInterface) {
     await queryInterface.bulkDelete('users', {
       login: 'ADMIN',
-    })
+    });
   },
 };

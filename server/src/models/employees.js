@@ -30,9 +30,7 @@ const Employees = sequelize.define(
           if (isValid(parsedDate)) {
             this.setDataValue('birth_date', parsedDate);
           } else {
-            throw new Error(
-              'Неверный формат даты. Используйте формат dd/MM/yyyy'
-            );
+            throw new Error('Неверный формат даты. Используйте формат dd/MM/yyyy');
           }
         } else {
           this.setDataValue('birth_date', value);

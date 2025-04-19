@@ -248,12 +248,7 @@ class OrganizationController {
     const { id } = req.params;
     const { page, limit } = req.query;
     try {
-      const { count, rows } = await historyService.getHistoryForObject(
-        'Организация',
-        id,
-        page,
-        limit
-      );
+      const { count, rows } = await historyService.getHistoryForObject('Организация', id, page, limit);
       return res.json({ count, rows });
     } catch (error) {
       console.error('Ошибка при получении истории организации:', error);

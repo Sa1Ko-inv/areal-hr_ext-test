@@ -16,16 +16,9 @@ class HROperationsController {
     try {
       const { employee_id, department_id, position_id, salary } = req.body;
 
-      if (
-        !employee_id ||
-        !department_id ||
-        !position_id ||
-        salary === undefined
-      ) {
+      if (!employee_id || !department_id || !position_id || salary === undefined) {
         await transaction.rollback();
-        return res
-          .status(400)
-          .json({ error: 'Не все обязательные поля предоставлены' });
+        return res.status(400).json({ error: 'Не все обязательные поля предоставлены' });
       }
 
       let departmentNameString = 'N/A';
@@ -42,9 +35,7 @@ class HROperationsController {
         departmentNameString = `${dept.name}${dept.organization ? ` (${dept.organization.name})` : ''}`;
       } else {
         await transaction.rollback();
-        return res
-          .status(404)
-          .json({ error: `Отдел с ID ${department_id} не найден` });
+        return res.status(404).json({ error: `Отдел с ID ${department_id} не найден` });
       }
 
       // Получаем должность с транзакцией
@@ -57,9 +48,7 @@ class HROperationsController {
         positionNameString = pos.name;
       } else {
         await transaction.rollback();
-        return res
-          .status(404)
-          .json({ error: `Должность с ID ${position_id} не найдена` });
+        return res.status(404).json({ error: `Должность с ID ${position_id} не найдена` });
       }
 
       // Создаем операцию с транзакцией
@@ -116,9 +105,7 @@ class HROperationsController {
 
       if (!lastOperation) {
         await transaction.rollback();
-        return res
-          .status(404)
-          .json({ error: 'Информация о сотруднике не найдена' });
+        return res.status(404).json({ error: 'Информация о сотруднике не найдена' });
       }
 
       const operation = await HR_Operation.create(
@@ -160,9 +147,7 @@ class HROperationsController {
 
     // Проверка наличия нового department_id
     if (department_id === undefined || department_id === null) {
-      return res
-        .status(400)
-        .json({ error: 'Не указан ID нового отдела (department_id)' });
+      return res.status(400).json({ error: 'Не указан ID нового отдела (department_id)' });
     }
 
     // Начинаем транзакцию
@@ -179,8 +164,7 @@ class HROperationsController {
       if (!lastOperation) {
         await transaction.rollback(); // Откатываем транзакцию при ошибке
         return res.status(404).json({
-          error:
-            'Не найдена информация о сотруднике или его предыдущих операциях',
+          error: 'Не найдена информация о сотруднике или его предыдущих операциях',
         });
       }
 
@@ -213,9 +197,7 @@ class HROperationsController {
       if (!newDept) {
         // Если новый отдел не найден, возвращаем ошибку
         await transaction.rollback(); // Откатываем транзакцию при ошибке
-        return res
-          .status(404)
-          .json({ error: `Отдел с ID ${department_id} не найден` });
+        return res.status(404).json({ error: `Отдел с ID ${department_id} не найден` });
       }
       // newDepartmentInfo = newDept; // Сохраняем для создания новой операции
       newDepartmentName = `${newDept.name}${newDept.organization ? ` (${newDept.organization.name})` : ''}`;
@@ -437,9 +419,7 @@ class HROperationsController {
         department: latestOperation.department
           ? `${latestOperation.department.name}${latestOperation.department.organization ? ` (${latestOperation.department.organization.name})` : ''}`
           : null,
-        position: latestOperation.position
-          ? latestOperation.position.name
-          : null,
+        position: latestOperation.position ? latestOperation.position.name : null,
         department_id: latestOperation.department_id,
         position_id: latestOperation.position_id,
       };
@@ -458,10 +438,7 @@ class HROperationsController {
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 10; // Или другое значение по умолчанию
 
-      const historyData = await historyService.getFiredEmployeesHistory(
-        page,
-        limit
-      );
+      const historyData = await historyService.getFiredEmployeesHistory(page, limit);
 
       return res.json(historyData); // Отправляем данные клиенту { count, rows }
     } catch (error) {

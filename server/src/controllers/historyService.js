@@ -16,11 +16,7 @@ class HistoryService {
 
     // Обрабатываем вложенные объекты
     for (const key in cleanObj) {
-      if (
-        Object.prototype.hasOwnProperty.call(cleanObj, key) &&
-        typeof cleanObj[key] === 'object' &&
-        cleanObj[key] !== null
-      ) {
+      if (Object.prototype.hasOwnProperty.call(cleanObj, key) && typeof cleanObj[key] === 'object' && cleanObj[key] !== null) {
         cleanObj[key] = this._cleanObjectForHistory(cleanObj[key]);
       }
     }
@@ -48,13 +44,7 @@ class HistoryService {
     return cleanedFields;
   }
 
-  async createHistoryEntry(
-    object_type,
-    object_id,
-    operation_type,
-    changed_fields,
-    changed_by = null
-  ) {
+  async createHistoryEntry(object_type, object_id, operation_type, changed_fields, changed_by = null) {
     try {
       // Очищаем поля changed_fields от служебных полей
       const cleanedChangedFields = this._cleanChangedFields(changed_fields);
@@ -126,10 +116,7 @@ class HistoryService {
       // Очистка данных не требуется здесь, так как мы читаем уже очищенное
       return { count, rows };
     } catch (error) {
-      console.error(
-        'Ошибка при получении истории уволенных сотрудников:',
-        error
-      );
+      console.error('Ошибка при получении истории уволенных сотрудников:', error);
       throw error; // Пробрасываем ошибку для обработки выше
     }
   }

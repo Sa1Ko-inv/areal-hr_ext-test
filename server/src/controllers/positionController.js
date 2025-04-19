@@ -105,12 +105,7 @@ class PositionController {
     const { id } = req.params;
     const { page, limit } = req.query;
     try {
-      const { count, rows } = await historyService.getHistoryForObject(
-        'Должность',
-        id,
-        page,
-        limit
-      );
+      const { count, rows } = await historyService.getHistoryForObject('Должность', id, page, limit);
       return res.json({ count, rows });
     } catch (error) {
       console.error('Ошибка при получении истории должности', error);

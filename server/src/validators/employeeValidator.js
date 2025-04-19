@@ -77,8 +77,7 @@ const employeeSchema = Joi.object({
         'string.base': 'Код подразделения должен быть строкой',
         'string.empty': 'Код подразделения не может быть пустым',
         'string.length': 'Код подразделения должен быть в формате XXX-XXX',
-        'string.pattern.base':
-          'Код подразделения должен быть в формате XXX-XXX (только цифры)',
+        'string.pattern.base': 'Код подразделения должен быть в формате XXX-XXX (только цифры)',
         'any.required': 'Код подразделения является обязательным полем',
       }),
   }).optional(), // Паспорт не обязателен (можно передать или нет)
@@ -94,10 +93,8 @@ const employeeSchema = Joi.object({
     locality: Joi.string().min(2).max(100).required().messages({
       'string.base': 'Населенный пункт должен быть строкой',
       'string.empty': 'Населенный пункт не может быть пустым',
-      'string.min':
-        'Населенный пункт должен содержать минимум {#limit} символа',
-      'string.max':
-        'Населенный пункт должен содержать максимум {#limit} символов',
+      'string.min': 'Населенный пункт должен содержать минимум {#limit} символа',
+      'string.max': 'Населенный пункт должен содержать максимум {#limit} символов',
       'any.required': 'Населенный пункт является обязательным полем',
     }),
     street: Joi.string().min(2).max(100).required().messages({
@@ -200,8 +197,7 @@ const employeeUpdateSchema = Joi.object({
           'string.base': 'Код подразделения должен быть строкой',
           'string.empty': 'Код подразделения не может быть пустым',
           'string.length': 'Код подразделения должен быть в формате XXX-XXX',
-          'string.pattern.base':
-            'Код подразделения должен быть в формате XXX-XXX (только цифры)',
+          'string.pattern.base': 'Код подразделения должен быть в формате XXX-XXX (только цифры)',
         }),
     }),
   address: Joi.object()
@@ -219,10 +215,8 @@ const employeeUpdateSchema = Joi.object({
       locality: Joi.string().min(2).max(100).optional().messages({
         'string.base': 'Населенный пункт должен быть строкой',
         'string.empty': 'Населенный пункт не может быть пустым',
-        'string.min':
-          'Населенный пункт должен содержать минимум {#limit} символа',
-        'string.max':
-          'Населенный пункт должен содержать максимум {#limit} символов',
+        'string.min': 'Населенный пункт должен содержать минимум {#limit} символа',
+        'string.max': 'Населенный пункт должен содержать максимум {#limit} символов',
       }),
       street: Joi.string().min(2).max(100).optional().messages({
         'string.base': 'Улица должна быть строкой',

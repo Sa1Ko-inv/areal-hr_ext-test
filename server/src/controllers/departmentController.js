@@ -23,9 +23,7 @@ class DepartmentController {
 
         if (!parentDepartment) {
           await transaction.rollback();
-          return res
-            .status(404)
-            .json({ error: 'Родительский отдел не найден' });
+          return res.status(404).json({ error: 'Родительский отдел не найден' });
         }
 
         organizationId = parentDepartment.organization_id;
@@ -116,9 +114,7 @@ class DepartmentController {
       const oldParentId = department.parent_id;
       const oldParentName = department.parent ? department.parent.name : null;
       const oldOrganizationId = department.organization_id;
-      const oldOrganizationName = department.organization
-        ? department.organization.name
-        : null;
+      const oldOrganizationName = department.organization ? department.organization.name : null;
 
       let newOrganizationId = updateData.organization_id;
       let newParentName = null;
@@ -140,16 +136,12 @@ class DepartmentController {
           if (!newOrganizationId) {
             await transaction.rollback();
             return res.status(400).json({
-              error:
-                'При удалении родительского отдела необходимо указать organization_id',
+              error: 'При удалении родительского отдела необходимо указать organization_id',
             });
           }
 
           // Получаем название новой организации
-          const newOrganization = await Organization.findByPk(
-            newOrganizationId,
-            { transaction }
-          );
+          const newOrganization = await Organization.findByPk(newOrganizationId, { transaction });
           if (newOrganization) {
             newOrganizationName = newOrganization.name;
           }
@@ -163,16 +155,12 @@ class DepartmentController {
 
           if (!newParentDepartment) {
             await transaction.rollback();
-            return res
-              .status(404)
-              .json({ error: 'Новый родительский отдел не найден' });
+            return res.status(404).json({ error: 'Новый родительский отдел не найден' });
           }
 
           newOrganizationId = newParentDepartment.organization_id;
           newParentName = newParentDepartment.name;
-          newOrganizationName = newParentDepartment.organization
-            ? newParentDepartment.organization.name
-            : null;
+          newOrganizationName = newParentDepartment.organization ? newParentDepartment.organization.name : null;
         }
       } else if (newOrganizationId && newOrganizationId !== oldOrganizationId) {
         // Если изменилась только организация
@@ -264,9 +252,7 @@ class DepartmentController {
       // Сохраняем старые значения для истории
       const oldName = department.name;
       const oldParentName = department.parent ? department.parent.name : null;
-      const oldOrganizationName = department.organization
-        ? department.organization.name
-        : null;
+      const oldOrganizationName = department.organization ? department.organization.name : null;
 
       // Находим все дочерние отделы (включая вложенные)
       const findAllChildren = async (parentId) => {
@@ -321,12 +307,7 @@ class DepartmentController {
     const { id } = req.params;
     const { page, limit } = req.query;
     try {
-      const { count, rows } = await historyService.getHistoryForObject(
-        'Отдел',
-        id,
-        page,
-        limit
-      );
+      const { count, rows } = await historyService.getHistoryForObject('Отдел', id, page, limit);
       return res.json({ count, rows });
     } catch (error) {
       console.error('Ошибка при получении истории отдела', error);

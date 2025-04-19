@@ -8,14 +8,18 @@ const historyService = require('./historyService');
 const History = require('../models/history');
 
 const generateJWT = (id, login, role, last_name, first_name, middle_name) => {
-  return jwt.sign({
-    id,
-    login,
-    role,
-    last_name,
-    first_name,
-    middle_name,
-  }, process.env.SECRET_KEY, { expiresIn: '24h' });
+  return jwt.sign(
+    {
+      id,
+      login,
+      role,
+      last_name,
+      first_name,
+      middle_name,
+    },
+    process.env.SECRET_KEY,
+    { expiresIn: '24h' }
+  );
 };
 
 class UserController {
@@ -63,7 +67,7 @@ class UserController {
       req.user.role,
       req.user.last_name,
       req.user.first_name,
-      req.user.middle_name,
+      req.user.middle_name
     );
     return res.json({
       token,
@@ -100,7 +104,7 @@ class UserController {
           password: hashPassword,
           role,
         },
-        { transaction },
+        { transaction }
       );
 
       // Запись в историю
@@ -116,7 +120,7 @@ class UserController {
           role: { old: null, new: role },
         },
         `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`,
-        transaction,
+        transaction
       );
 
       await transaction.commit();
@@ -244,7 +248,7 @@ class UserController {
           'update',
           changedFields,
           `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`,
-          transaction,
+          transaction
         );
       }
 
@@ -293,7 +297,7 @@ class UserController {
             role: { old: oldValues.role, new: null },
           },
           `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`,
-          transaction,
+          transaction
         );
 
         await transaction.commit();
@@ -334,14 +338,13 @@ class UserController {
           object_type: 'Пользователь',
           operation_type: 'delete',
         },
-      })
+      });
       return res.json({ count, rows });
     } catch (error) {
       console.error('Ошибка при получении удаленных пользователей:', error);
       return next(ApiError.internal(error.message));
     }
   }
-
 }
 
 module.exports = new UserController();
