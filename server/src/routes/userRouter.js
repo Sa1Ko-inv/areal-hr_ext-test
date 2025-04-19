@@ -12,10 +12,16 @@ router.get('/auth', authMiddleware, userController.check); // Проверка �
 
 router.post('/create', authMiddleware, checkRole('admin'), validate(userCreateSchema), userController.createUser); // Создание нового пользователя
 router.get('/', userController.getAllUsers); // Получение всех пользователей
-router.put('/:id', authMiddleware, checkRole('admin'),
+router.put(
+  '/:id',
+  authMiddleware,
+  checkRole('admin'),
   // validate(userUpdateSchema),
-  userController.updateUser); // Обновление данных пользователя по ID
-router.get('/:userId/history', userController.getUserHistory) // Получение истории для конкретного пользователя
+  userController.updateUser
+); // Обновление данных пользователя по ID
+
+router.get('/:userId/history', userController.getUserHistory); // Получение истории для конкретного пользователя
+router.get('/delete', userController.getDeletedUsers)
 
 router.delete('/:id', authMiddleware, checkRole('admin'), userController.deleteUser); // Удаление пользователя по ID
 

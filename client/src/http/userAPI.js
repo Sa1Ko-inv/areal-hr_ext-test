@@ -76,3 +76,14 @@ export const fetchUserHistory = async (userId, page = 1, limit = 10) => {
   });
   return response.data;
 };
+
+// Получение удаленных пользователей
+export const fetchDeletedUsers = async (page = 1, limit = 10) => {
+  const response = await $host.get('api/user/delete', {
+    params: {
+      page: page,
+      limit: limit,
+    },
+  });
+  return response.data;
+}

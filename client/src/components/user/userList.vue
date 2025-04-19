@@ -113,7 +113,9 @@ const deleteUser = async (id) => {
   </MyModalWindow>
   <!-- Модальное окно просмотра удаленных пользователей -->
   <MyModalWindow v-model:show="dialogDeleteUser">
-    <UserDeleteHistory />
+    <UserDeleteHistory
+    :cancel="closeModal"
+    />
   </MyModalWindow>
 
 </template>
