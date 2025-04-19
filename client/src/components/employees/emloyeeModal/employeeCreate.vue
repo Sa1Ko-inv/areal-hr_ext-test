@@ -201,7 +201,9 @@
           modifier="cancel"
           @click="cancel"
           :disabled="isSubmitting"
-          >Отмена</MyButton
+          >
+          Отмена
+        </MyButton
         >
       </div>
     </form>
@@ -303,20 +305,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-// Variables
-$primary-color: #792ec9;
-$primary-light: $primary-color;
-$primary-dark: $primary-color;
-$text-color: #333;
-$border-color: #ddd;
-$error-color: #e74c3c;
-$success-color: #2ecc71;
-$background-color: #f9f9f9;
-$white: #fff;
-
+@import "@/styles/base";
 .selected-files {
   margin-top: 10px;
-  font-size: 0.9em;
+  font-size: $font-size-text;
 
   ul {
     margin-top: 5px;
@@ -329,9 +321,9 @@ $white: #fff;
   max-width: 800px;
   margin: 0 auto;
   padding: 2rem;
-  background-color: $white;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: $background-color-light;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
 }
 
 .employee-form {
@@ -343,17 +335,17 @@ $white: #fff;
 // Typography
 .form-title {
   color: $primary-color;
-  font-size: 1.8rem;
+  font-size: $font-size-title;
   margin-bottom: 1rem;
   text-align: center;
   font-weight: 600;
-  border-bottom: 2px solid $primary-light;
+  border-bottom: 2px solid $primary-color;
   padding-bottom: 0.75rem;
 }
 
 .section-title {
-  color: $primary-dark;
-  font-size: 1.2rem;
+  color: $primary-color-dark;
+  font-size: $font-size-title;
   margin-bottom: 1rem;
   font-weight: 500;
   padding-left: 0.5rem;
@@ -362,7 +354,7 @@ $white: #fff;
 
 // Form sections
 .form-section {
-  background-color: $background-color;
+  background-color: $background-color-light;
   padding: 2rem;
   border-radius: 6px;
   border: 1px solid $border-color;
@@ -401,7 +393,7 @@ label {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 500;
-  color: $text-color;
+  color: $text-color-primary;
 }
 
 // Buttons
@@ -414,11 +406,11 @@ label {
 
 // Error message
 .error-message {
-  background-color: rgba($error-color, 0.1);
-  color: $error-color;
+  background-color: rgba($danger-color, 0.1);
+  color: $danger-color;
   padding: 0.75rem;
   border-radius: 4px;
   margin-bottom: 1rem;
-  border-left: 3px solid $error-color;
+  border-left: 3px solid $danger-color;
 }
 </style>

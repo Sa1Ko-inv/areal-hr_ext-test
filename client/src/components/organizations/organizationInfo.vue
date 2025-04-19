@@ -93,21 +93,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "@/styles/base";
 .organization-info {
   max-width: 900px;
   margin: 0 auto;
   padding: 20px;
 
   h1 {
-    color: #792ec9;
+    color: $primary-color;
     margin-bottom: 10px;
-    font-size: 2rem;
+    font-size: $font-size-title;
   }
 
   p {
-    color: #555;
+    color: $text-color-secondary;
     margin-bottom: 25px;
-    font-size: 1rem;
+    font-size: $font-size-text;
     line-height: 1.5;
   }
 
@@ -115,24 +116,24 @@ export default {
     margin: 30px 0;
 
     h2 {
-      color: #792ec9;
-      font-size: 1.5rem;
+      color: $primary-color;
+      font-size: $font-size-title;
       margin-bottom: 15px;
       padding-bottom: 8px;
-      border-bottom: 2px solid rgba(121, 46, 201, 0.2);
+      border-bottom: 2px solid rgba($primary-color-dark, 0.2);
     }
   }
 
   a {
     display: inline-block;
-    color: #792ec9;
+    color: $primary-color;
     text-decoration: none;
     font-weight: 500;
     margin-top: 20px;
     transition: color 0.2s;
 
     &:hover {
-      color: #792ec9;
+      color: $primary-color;
       text-decoration: underline;
     }
   }

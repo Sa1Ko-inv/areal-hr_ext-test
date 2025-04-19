@@ -6,24 +6,14 @@
       class="department-item"
     >
       <div class="department-header" @click="toggleChildren(department)">
-        <span class="department-name"
-          ><strong>Название отдела:</strong>{{ department.name }}</span
-        >
-        <span class="department-comment"
-          ><strong>Комментарий:</strong>{{ department.comment }}</span
-        >
+        <span class="department-name"><strong>Название отдела:</strong>{{ department.name }}</span>
+        <span class="department-comment"><strong>Комментарий:</strong>{{ department.comment }}</span>
       </div>
 
       <div class="department-buttons" style="">
-        <MyButton modifier="edit" @click="editDepartment(department)"
-          >Редактировать</MyButton
-        >
-        <MyButton modifier="showHistory" @click="showHistory(department)"
-          >История</MyButton
-        >
-        <MyButton modifier="delete" @click="deleteDepartment(department)"
-          >Удалить</MyButton
-        >
+        <MyButton modifier="edit" @click="editDepartment(department)">Редактировать</MyButton>
+        <MyButton modifier="showHistory" @click="showHistory(department)">История</MyButton>
+        <MyButton modifier="delete" @click="deleteDepartment(department)">Удалить</MyButton>
       </div>
 
       <MyModalWindow v-model:show="dialogVisible">
@@ -141,6 +131,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "@/styles/base";
 .department-tree {
   list-style-type: none;
   padding: 0;
@@ -148,7 +139,7 @@ export default {
 
   .department-item {
     margin-bottom: 15px;
-    border-left: 2px solid #792ec9;
+    border-left: 2px solid $primary-color;
     padding-left: 15px;
 
     .department-header {
@@ -157,7 +148,7 @@ export default {
       gap: 5px;
       padding: 10px 15px;
       background-color: rgba(121, 46, 201, 0.05);
-      border-radius: 4px;
+      border-radius: $border-radius;
       cursor: pointer;
       transition: background-color 0.2s;
 
@@ -170,19 +161,19 @@ export default {
         display: block;
 
         strong {
-          color: #792ec9;
+          color: $primary-color;
           margin-right: 8px;
           font-weight: 600;
         }
       }
 
       .department-name {
-        font-size: 16px;
+        font-size: $font-size-text;
       }
 
       .department-comment {
-        font-size: 14px;
-        color: #666;
+        font-size: $font-size-text;
+        color: $text-color-secondary;
       }
     }
 

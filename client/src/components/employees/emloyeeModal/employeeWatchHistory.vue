@@ -309,10 +309,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "@/styles/base";
 .history-modal {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  background-color: $background-color-light;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
   display: flex;
   flex-direction: column;
   max-height: 80vh;
@@ -329,7 +330,7 @@ export default {
   border-bottom: 1px solid #eee;
   h3 {
     margin: 0;
-    font-size: 1.2rem;
+    font-size: 16px;
     font-weight: 600;
   }
   .close-btn {
@@ -337,9 +338,9 @@ export default {
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
-    color: #666;
+    color: $text-color-secondary;
     &:hover {
-      color: #333;
+      color: $text-color-primary;
     }
   }
 }
@@ -351,7 +352,7 @@ export default {
   .no-history {
     text-align: center;
     padding: 40px 0;
-    color: #666;
+    color: $text-color-secondary;
   }
   .history-list {
     display: flex;
@@ -360,14 +361,14 @@ export default {
   }
   .history-item {
     border: 1px solid #eee;
-    border-radius: 6px;
+    border-radius: $border-radius;
     overflow: hidden;
     .history-item-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 10px 16px;
-      background-color: #f9f9f9;
+      background-color: $background-color-light;
       .operation-info {
         display: flex;
         align-items: center;
@@ -375,36 +376,36 @@ export default {
         .operation-type {
           font-weight: 600;
           padding: 4px 8px;
-          border-radius: 4px;
-          font-size: 0.9rem;
+          border-radius: $border-radius;
+          font-size: $font-size-text;
         }
         .changed-by {
-          font-size: 0.85rem;
-          color: #555;
-          background-color: #f0f0f0;
+          font-size: $font-size-text;
+          color: $text-color-secondary;
+          background-color: $background-color-light;
           padding: 3px 8px;
-          border-radius: 12px;
+          border-radius: $border-radius;
         }
       }
       .operation-create {
-        background-color: #e3f7e3;
-        color: #2e7d32;
+        background-color: $success-color-dark;
+        color: $success-color;
       }
       .operation-update {
-        background-color: #f2e8ff;
-        color: #792ec9;
+        background-color: $background-color-light;
+        color: $primary-color;
       }
       .operation-delete {
-        background-color: #ffebee;
-        color: #c62828;
+        background-color: $background-color-light;
+        color: $danger-color;
       }
       .operation-hire {
-        background-color: #e3f7e3;
-        color: #2e7d32;
+        background-color: $background-color-light;
+        color: $success-color-dark;
       }
       .operation-fire {
-        background-color: #fbe9e7;
-        color: #d84315;
+        background-color: $danger-color-dark;
+        color: $danger-color;
       }
       .operation-department_change,
       .operation-salary_change {
@@ -412,14 +413,15 @@ export default {
         color: #f57f17;
       }
       .history-date {
-        font-size: 0.85rem;
-        color: #666;
+        font-size: $font-size-text;
+        color: $text-color-secondary;
       }
     }
     .history-item-content {
       padding: 16px;
       p {
         margin: 5px 0;
+        font-size: $font-size-text;
       }
       .changes {
         margin-top: 10px;
@@ -450,13 +452,13 @@ export default {
           gap: 4px;
           padding-left: 12px;
           .old-value {
-            color: #d32f2f;
+            color: $danger-color;
             span {
               font-weight: 500;
             }
           }
           .new-value {
-            color: #388e3c;
+            color: $success-color-dark;
             span {
               font-weight: 500;
             }
@@ -479,7 +481,7 @@ export default {
       padding: 8px 16px;
       background-color: #f0f0f0;
       border: none;
-      border-radius: 4px;
+      border-radius: $border-radius;
       cursor: pointer;
       &:hover:not(:disabled) {
         background-color: #e0e0e0;
@@ -490,7 +492,7 @@ export default {
       }
     }
     .page-info {
-      font-size: 0.9rem;
+      font-size: $font-size-text;
       color: #666;
     }
   }

@@ -119,7 +119,8 @@ export default {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
+@import "@/styles/base";
 .pagination {
   margin-top: 20px;
   display: flex;
@@ -131,9 +132,9 @@ export default {
 .pagination-button {
   padding: 5px 10px;
   border: 1px solid #ccc;
-  background-color: #f8f8f8;
+  background-color: $background-color-light;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: $border-radius;
 }
 
 .pagination-button:disabled {
@@ -142,6 +143,6 @@ export default {
 }
 
 .pagination-info {
-  font-size: 14px;
+  font-size: $font-size-text;
 }
 </style>

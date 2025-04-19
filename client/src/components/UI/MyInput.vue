@@ -34,8 +34,11 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import "@/styles/base";
+
 .input {
+  font-family: $font-family;
   width: 100%;
   padding: 10px 12px;
   border: 1px solid #e0e0e0;

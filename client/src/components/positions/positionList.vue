@@ -4,8 +4,8 @@
     <MyButton modifier="create" @click="showCreatePosition">
       Создать должность
     </MyButton>
-    <MyButton modifier="showHistory" @click="showDeletePosition"
-    >Просмотр удаленных должностей
+    <MyButton modifier="showHistory" @click="showDeletePosition">
+      Просмотр удаленных должностей
     </MyButton>
 
     <div class="positionList__items">
@@ -102,15 +102,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "@/styles/base";
 .positionList {
   padding: 16px;
-  border-radius: 10px;
-  background-color: white;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border-radius: $border-radius;
+  background-color: $background-color-light;
+  box-shadow: $box-shadow;
 
   &__title {
-    color: #792ec9;
-    font-size: 22px;
+    color: $primary-color;
+    font-size: $font-size-title;
     font-weight: 600;
     margin-top: 0;
     margin-bottom: 16px;

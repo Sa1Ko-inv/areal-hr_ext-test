@@ -17,13 +17,14 @@
         class="search-input"
         @input="debounceSearch"
       />
-      <button
+      <MyButton
+        modifier="cancel"
         v-if="searchQuery"
         @click="clearSearch"
         class="search-button clear-button"
       >
         ✕
-      </button>
+      </MyButton>
     </div>
 
     <div class="sort-container">
@@ -173,18 +174,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-$primary-color: #792ec9;
-$primary-color-dark: #6525a7;
-$border-color: #e0e0e0;
-$text-color-primary: #333;
-$background-color-light: #fff;
-$danger-color: #dc3545;
-$success-color: #28a745;
-$border-radius: 8px;
-$box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-$font-family: 'Arial', sans-serif;
+@import "@/styles/base";
 $section-gap: 20px;
-$button-padding: 10px 18px;
 
 .employeeList {
   max-width: 1300px;
@@ -195,7 +186,7 @@ $button-padding: 10px 18px;
   h3 {
     color: $primary-color;
     margin-bottom: 20px;
-    font-size: 1.5rem;
+    font-size: $font-size-title;
   }
 
   button {
@@ -218,7 +209,7 @@ $button-padding: 10px 18px;
     border: none;
     cursor: pointer;
     padding: 5px;
-    color: #666;
+    color: $text-color-secondary;
 
     &:hover {
       color: $text-color-primary;
@@ -237,10 +228,6 @@ $button-padding: 10px 18px;
 }
 
 .positionList__items {
-  //display: grid;
-  //grid-template-columns: 1fr;
-  //gap: $section-gap;
-
   @media (min-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -251,7 +238,7 @@ $button-padding: 10px 18px;
 }
 
 .no-results {
-  color: #666;
+  color: $text-color-secondary;
   font-style: italic;
   text-align: center;
   grid-column: 1 / -1;

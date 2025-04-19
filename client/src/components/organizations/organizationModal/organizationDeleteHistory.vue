@@ -113,6 +113,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "@/styles/base";
 .delete-history-modal {
   padding: 20px;
   min-width: 500px;
@@ -129,10 +130,10 @@ export default {
   cursor: pointer;
   line-height: 1;
   padding: 0 5px;
-  color: #666;
+  color: $text-color-secondary;
 
   &:hover {
-    color: #333;
+    color: $text-color-primary;
   }
 }
 
@@ -140,13 +141,13 @@ h4 {
   margin-top: 0;
   margin-bottom: 15px;
   text-align: center;
-  color: #333;
+  color: $text-color-primary;
 }
 
 .no-data {
   text-align: center;
   padding: 20px;
-  color: #666;
+  color: $text-color-secondary;
   font-style: italic;
 }
 
@@ -158,7 +159,7 @@ h4 {
   table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 14px;
+    font-size: $font-size-text;
 
     th,
     td {
@@ -168,18 +169,18 @@ h4 {
     }
 
     th {
-      background-color: #f5f5f5;
+      background-color: $background-color-light;
       font-weight: 600;
       position: sticky;
       top: 0;
     }
 
     tr:nth-child(even) {
-      background-color: #f9f9f9;
+      background-color: $background-color-light;
     }
 
     tr:hover {
-      background-color: #f0f0f0;
+      background-color: $background-color-light;
     }
   }
 }
@@ -187,14 +188,14 @@ h4 {
 button {
   margin: 15px 5px 0;
   padding: 6px 12px;
-  background-color: #f0f0f0;
+  background-color: $background-color-light;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: $border-radius;
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover:not(:disabled) {
-    background-color: #e0e0e0;
+    background-color: $background-color-light;
   }
 
   &:disabled {
@@ -205,8 +206,8 @@ button {
 
 span {
   margin: 0 10px;
-  font-size: 14px;
-  color: #666;
+  font-size: $font-size-text;
+  color: $text-color-secondary;
 }
 .pagination {
   margin-top: 20px;
@@ -219,9 +220,9 @@ span {
 .pagination-button {
   padding: 5px 10px;
   border: 1px solid #ccc;
-  background-color: #f8f8f8;
+  background-color: $background-color-light;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: $border-radius;
 }
 
 .pagination-button:disabled {
@@ -230,6 +231,6 @@ span {
 }
 
 .pagination-info {
-  font-size: 14px;
+  font-size: $font-size-text;
 }
 </style>

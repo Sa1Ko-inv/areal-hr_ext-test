@@ -63,7 +63,8 @@ const signIn = async () => {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import "@/styles/base";
 .auth-container {
   display: flex;
   justify-content: center;
@@ -73,9 +74,9 @@ const signIn = async () => {
 }
 
 .auth-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  background: $background-color-light;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
   padding: 40px;
   width: 600px;
   max-width: 600px;
@@ -83,10 +84,10 @@ const signIn = async () => {
 }
 
 .auth-title {
-  color: #792ec9;
+  color: $primary-color;
   text-align: center;
   margin-bottom: 30px;
-  font-size: 24px;
+  font-size: $font-size-title;
   font-weight: 600;
 }
 
@@ -104,10 +105,10 @@ const signIn = async () => {
 }
 
 .error-message {
-  color: #e74c3c;
+  color: $danger-color;
   text-align: center;
   margin-bottom: 15px;
-  font-size: 14px;
+  font-size: $font-size-text;
 }
 
 </style>

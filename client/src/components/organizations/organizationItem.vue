@@ -120,9 +120,6 @@ export default {
     showHistoryDialog() {
       this.dialogVisibleHistory = true;
     },
-    showDeleteOrganization() {
-      this.dialogVisibleDelete = true;
-    },
     cancelModal() {
       this.dialogVisibleHistory = false;
     },
@@ -131,32 +128,33 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "@/styles/base";
 .organization-link {
   text-decoration: none;
   color: inherit;
 }
 
 .organization {
-  border: 2px solid #792ec9;
-  border-radius: 8px;
+  border: 2px solid $primary-color;
+  border-radius: $border-radius;
   padding: 12px 16px;
   margin-top: 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 17px;
+  font-size: $font-size-text;
   font-weight: 500;
-  background-color: rgba(#792ec9, 0.03);
+  background-color: rgba($primary-color, 0.03);
   transition: all 0.2s ease;
 
   &__error {
-    color: #d32f2f;
-    font-size: 14px;
+    color: $danger-color;
+    font-size: $font-size-text;
     margin-top: 8px;
   }
 
   &:hover {
-    box-shadow: 0 2px 8px rgba(#792ec9, 0.2);
+    box-shadow: $box-shadow;
   }
 
   &__info {
@@ -168,7 +166,7 @@ export default {
     padding: 5px 0;
 
     strong {
-      color: #792ec9;
+      color: $primary-color;
     }
   }
 
@@ -194,9 +192,9 @@ export default {
     &-textarea {
       width: 960px;
       padding: 8px 5px;
-      border: 1px solid #792ec9;
-      border-radius: 4px;
-      font-size: 16px;
+      border: 1px solid $primary-color;
+      border-radius: $border-radius;
+      font-size: $font-size-text;
       min-height: 80px;
       resize: vertical;
     }

@@ -33,8 +33,8 @@
     </div>
 
     <div class="form-actions">
-      <button type="submit">Сохранить</button>
-      <button type="button" @click="cancel">Отмена</button>
+      <MyButton modifier="save" type="submit">Сохранить</MyButton>
+      <MyButton modifier="cancel" type="button" @click="cancel">Отмена</MyButton>
     </div>
   </form>
 </template>
@@ -43,8 +43,10 @@
 import { fetchOrganizations } from '@/http/organizationAPI.js';
 import { fetchDepartments } from '@/http/departmentAPI.js';
 import { changeDepartment } from '@/http/employeeAPI.js';
+import MyButton from '@/components/UI/MyButton.vue';
 
 export default {
+  components: { MyButton },
   props: {
     employeeId: {
       type: [Number, String],
@@ -129,26 +131,27 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "@/styles/base";
 .error-message {
-  color: #d32f2f;
-  font-size: 14px;
+  color: $danger-color;
+  font-size: $font-size-text;
   margin-bottom: 16px;
   padding: 8px;
   background-color: rgba(211, 47, 47, 0.1);
-  border-radius: 4px;
+  border-radius: $border-radius;
 }
 
 form {
-  max-width: 500px;
+  max-width: 100%;
   margin: 0 auto;
   padding: 20px;
-  border-radius: 8px;
-  background-color: #fff;
+  border-radius: $border-radius;
+  background-color: $background-color-light;
 
   h4 {
-    color: #792ec9;
+    color: $primary-color;
     margin-bottom: 20px;
-    font-size: 1.5rem;
+    font-size: $font-size-title;
     text-align: center;
   }
 }
@@ -160,21 +163,21 @@ form {
     display: block;
     margin-bottom: 8px;
     font-weight: 500;
-    color: #333;
+    color: $text-color-primary;
   }
 
   select {
     width: 100%;
     padding: 10px 12px;
     border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    font-size: 14px;
+    border-radius: $border-radius;
+    font-size: $font-size-text;
     transition: border-color 0.3s;
 
     &:focus {
       outline: none;
-      border-color: #792ec9;
-      box-shadow: 0 0 0 2px rgba(121, 46, 201, 0.2);
+      border-color: $primary-color;
+      box-shadow: $box-shadow;
     }
   }
 }
@@ -183,38 +186,50 @@ form {
   display: flex;
   gap: 10px;
   margin-top: 20px;
+}
 
-  button {
-    flex: 1;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.2s;
+select {
+  width: calc(100% + 25px);
+  padding: 10px 15px;
+  font-size: $font-size-text;
+  line-height: 1.5;
+  color: $text-color-primary;
+  background-color: $background-color-light;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23333' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px 12px;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  appearance: none;
+  transition:
+    border-color $transition-duration ease-in-out,
+    box-shadow $transition-duration ease-in-out;
 
-    &[type='submit'] {
-      background-color: #792ec9;
-      color: white;
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+  }
 
-      &:hover:not(:disabled) {
-        background-color: #792ec9;
-      }
+  &:disabled {
+    background-color: #f5f5f5;
+    color: $text-color-secondary;
+    cursor: not-allowed;
+  }
 
-      &:disabled {
-        background-color: #cccccc;
-        cursor: not-allowed;
-      }
+  option {
+    padding: 8px;
+    color: $text-color-primary;
+
+    &[disabled] {
+      color: $text-color-secondary;
     }
+  }
 
-    &[type='button'] {
-      background-color: #f5f5f5;
-      color: #333;
-      border: 1px solid #ddd;
-
-      &:hover {
-        background-color: #eaeaea;
-      }
+  option:not([disabled]) {
+    &:hover {
+      background-color: rgba($primary-color, 0.1);
     }
   }
 }

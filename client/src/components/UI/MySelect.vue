@@ -36,19 +36,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$primary-color: #792ec9;
-$primary-color-dark: #6525a7;
-$border-color: #e0e0e0;
-$text-color-primary: #333;
-$text-color-secondary: #666;
-$background-color-light: #fff;
-$border-radius: 8px;
-$transition-duration: 0.2s;
-
+@import "@/styles/base";
 .form-select {
   width: calc(100% + 25px);
   padding: 10px 15px;
-  font-size: 1rem;
+  font-size: $font-size-text;
   line-height: 1.5;
   color: $text-color-primary;
   background-color: $background-color-light;

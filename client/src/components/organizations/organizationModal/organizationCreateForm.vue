@@ -15,9 +15,7 @@
 
     <div class="form-actions">
       <MyButton modifier="create" type="submit">Создать</MyButton>
-      <MyButton modifier="cancel" type="button" @click="cancel"
-        >Отмена</MyButton
-      >
+      <MyButton modifier="cancel" type="button" @click="cancel">Отмена</MyButton>
     </div>
   </form>
 </template>
@@ -59,26 +57,30 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "@/styles/base";
 .error-message {
-  color: #d32f2f;
+  color: $danger-color;
   margin-top: 5px;
-  font-size: 14px;
+  font-size: $font-size-text;
   font-weight: normal;
 }
+
 .organization-create-form {
   width: 100%;
 
   h3 {
-    color: #792ec9;
+    color: $primary-color;
+    font-size: $font-size-title;
     margin-bottom: 20px;
   }
 }
 
 .form-group {
+  width: 770px;
   margin-bottom: 15px;
-  color: #792ec9;
+  color: $primary-color;
   font-weight: bold;
-  font-size: 18px;
+  font-size: 20px;
 
   label {
     display: block;
@@ -87,18 +89,14 @@ export default {
   }
 }
 
-.form-input {
-  width: 765px;
-}
-
 .form-textarea {
   width: 780px;
   padding: 8px 5px;
   height: 100px;
-  border: 1px solid #792ec9;
-  border-radius: 4px;
+  border: 1px solid $primary-color;
+  border-radius: $border-radius;
   font-size: 18px;
-  font-family: Calibri;
+  font-family: $font-family;
 }
 
 .form-actions {

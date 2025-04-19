@@ -139,37 +139,13 @@ MyB
       </section>
     </div>
     <div class="employee-card__actions">
-      <MyButton
-        style="background-color: #28a745; color: white; border: #28a745"
-        v-if="!hrInfo || hrInfo.status !== 'hired'"
-        @click="showHireDialog"
-        >Принять на работу</MyButton
-      >
-      <MyButton
-        modifier="edit"
-        v-if="hrInfo && hrInfo.status === 'hired'"
-        @click="showChangeSalaryDialog"
-        >Изменить зарплату</MyButton
-      >
-      <MyButton
-        modifier="edit"
-        v-if="hrInfo && hrInfo.status === 'hired'"
-        @click="showChangeDepartmentDialog"
-        >Изменить отдел</MyButton
-      >
+      <MyButton style="background-color: #28a745; color: white; border: #28a745" v-if="!hrInfo || hrInfo.status !== 'hired'" @click="showHireDialog">Принять на работу</MyButton>
+      <MyButton modifier="edit" v-if="hrInfo && hrInfo.status === 'hired'" @click="showChangeSalaryDialog">Изменить зарплату</MyButton>
+      <MyButton modifier="edit" v-if="hrInfo && hrInfo.status === 'hired'" @click="showChangeDepartmentDialog">Изменить отдел</MyButton>
       <MyButton modifier="edit" @click="showEditDialog">Редактировать</MyButton>
-      <MyButton modifier="showHistory" @click="showFilesDialog"
-        >Просмотреть файлы</MyButton
-      >
-      <MyButton modifier="showHistory" @click="showHistoryDialog"
-        >История</MyButton
-      >
-      <MyButton
-        modifier="delete"
-        v-if="hrInfo && hrInfo.status === 'hired'"
-        @click="fire_Employee"
-        >Уволить</MyButton
-      >
+      <MyButton modifier="showHistory" @click="showFilesDialog">Просмотреть файлы</MyButton>
+      <MyButton modifier="showHistory" @click="showHistoryDialog">История</MyButton>
+      <MyButton modifier="delete" v-if="hrInfo && hrInfo.status === 'hired'" @click="fire_Employee">Уволить</MyButton>
     </div>
 
     <!--Модальное окно просмотра файлов сотрудника-->
@@ -378,20 +354,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-$primary-color: #792ec9;
-$primary-color-dark: #6525a7;
-$primary-color-light: rgba(121, 46, 201, 0.1);
-$border-color: #e0e0e0;
-$text-color-primary: #333;
-$text-color-secondary: #555;
-$background-color-light: #fff;
-$danger-color: #dc3545;
-$danger-color-dark: #c82333;
-$success-color: #28a745;
-$success-color-dark: #218838;
-$border-radius: 8px;
-$box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-$font-family: 'Arial', sans-serif;
+@import "@/styles/base";
 $section-gap: 20px;
 $item-gap: 12px;
 
@@ -443,7 +406,7 @@ $item-gap: 12px;
     background-color: $primary-color;
     color: white;
     padding: 12px 18px;
-    font-size: 1.1rem;
+    font-size: $font-size-title;
     margin: 0;
     font-weight: 600;
   }

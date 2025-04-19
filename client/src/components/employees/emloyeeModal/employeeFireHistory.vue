@@ -144,6 +144,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "@/styles/base";
+
 .fired-history-modal {
   padding: 20px;
   min-width: 500px; // Примерная ширина
@@ -156,7 +158,7 @@ export default {
   right: 10px;
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: $font-size-title;
   cursor: pointer;
   line-height: 1;
   padding: 0 5px;
@@ -177,7 +179,7 @@ h4 {
 }
 
 .error-message {
-  color: red;
+  color: $danger-color;
 }
 
 .history-list {
@@ -211,8 +213,8 @@ button {
   margin: 15px 5px 0;
   padding: 6px 12px;
   background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
   cursor: pointer;
   transition: all 0.2s;
 
@@ -236,10 +238,10 @@ button {
     gap: 16px;
 
     .pagination-btn {
-      padding: 8px 16px;
+      padding: $button-padding;
       background-color: #f0f0f0;
       border: none;
-      border-radius: 4px;
+      border-radius: $border-radius;
       cursor: pointer;
 
       &:hover:not(:disabled) {
@@ -253,8 +255,8 @@ button {
     }
 
     .page-info {
-      font-size: 0.9rem;
-      color: #666;
+      font-size: $font-size-text;
+      color: $text-color-secondary;
     }
   }
 }

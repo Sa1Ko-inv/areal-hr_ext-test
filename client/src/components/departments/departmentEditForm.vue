@@ -4,16 +4,18 @@
     <div v-if="updateError" class="error-message">
       {{ updateError.message }}
     </div>
-    <input
-      v-model.number="editDepartment.name"
-      placeholder="Название отдела"
-      type="text"
-    />
-    <input
-      v-model.number="editDepartment.comment"
-      placeholder="Комментарий"
-      type="text"
-    />
+    <div class="input-form">
+      <MyInput
+        v-model.number="editDepartment.name"
+        placeholder="Название отдела"
+        type="text"
+      />
+      <MyInput
+        v-model.number="editDepartment.comment"
+        placeholder="Комментарий"
+        type="text"
+      />
+    </div>
     <select
       v-model="editDepartment.organization_id"
       @change="filterDepartments"
@@ -34,16 +36,19 @@
       </option>
     </select>
     <div class="">
-      <button type="submit">Редактировать отдел</button>
-      <button type="button" @click="cancel">Отмена</button>
+      <MyButton modifier="edit" type="submit">Редактировать отдел</MyButton>
+      <MyButton modifier="cancel" type="button" @click="cancel">Отмена</MyButton>
     </div>
   </form>
 </template>
 
 <script>
 import { fetchDepartments, updateDepartment } from '@/http/departmentAPI.js';
+import MyInput from '@/components/UI/MyInput.vue';
+import MyButton from '@/components/UI/MyButton.vue';
 
 export default {
+  components: { MyButton, MyInput },
   props: {
     cancel: {
       type: Function,
@@ -182,40 +187,47 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "@/styles/base";
 .error-message {
-  color: #d32f2f;
-  font-size: 14px;
+  color: $danger-color;
+  font-size: $font-size-text;
   margin-top: 8px;
 }
 form {
-  max-width: 500px;
+  max-width: 100%;
   margin: 0 auto;
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(121, 46, 201, 0.1);
-  background-color: #fff;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  background-color: $background-color-light;
 
   h4 {
-    color: #792ec9;
+    color: $primary-color;
     margin-bottom: 20px;
-    font-size: 1.5rem;
+    font-size: $font-size-title;
     text-align: center;
   }
 
-  input,
+  .input-form {
+    width: 735px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
   select {
     width: 100%;
     padding: 10px 12px;
     margin-bottom: 15px;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    font-size: 14px;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    font-size: $font-size-text;
     transition: border-color 0.3s;
 
     &:focus {
       outline: none;
-      border-color: #792ec9;
-      box-shadow: 0 0 0 2px rgba(121, 46, 201, 0.2);
+      border-color: $primary-color;
+      box-shadow: 0 0 0 2px $primary-color-dark;
     }
 
     &::placeholder {
@@ -224,46 +236,55 @@ form {
   }
 
   select {
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23792ec9' d='M6 8.825L1.175 4 2.05 3.125 6 7.075 9.95 3.125 10.825 4z'/%3E%3C/svg%3E");
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: $text-color-primary;
+    background-color: $background-color-light;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23333' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
-    background-position: right 10px center;
-    padding-right: 30px;
+    background-position: right 12px center;
+    background-size: 16px 12px;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    appearance: none;
+    transition:
+      border-color $transition-duration ease-in-out,
+      box-shadow $transition-duration ease-in-out;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+    }
+
+    &:disabled {
+      background-color: #f5f5f5;
+      color: $text-color-secondary;
+      cursor: not-allowed;
+    }
+
+    option {
+      padding: 8px;
+      color: $text-color-primary;
+
+      &[disabled] {
+        color: $text-color-secondary;
+      }
+    }
+
+    option:not([disabled]) {
+      &:hover {
+        background-color: rgba($primary-color, 0.1);
+      }
+    }
   }
 
   div {
     display: flex;
     gap: 10px;
     margin-top: 10px;
-
-    button {
-      flex: 1;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: all 0.2s;
-
-      &[type='submit'] {
-        background-color: #792ec9;
-        color: white;
-
-        &:hover {
-          background-color: #792ec9;
-        }
-      }
-
-      &[type='button'] {
-        background-color: #f5f5f5;
-        color: #333;
-        border: 1px solid #ddd;
-
-        &:hover {
-          background-color: #eaeaea;
-        }
-      }
-    }
   }
 }
 </style>

@@ -103,13 +103,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "@/styles/base";
 .organizationList {
   max-width: 1000px;
   margin: 0 auto;
   padding: 20px;
 
   &__title {
-    color: #792ec9;
+    color: $primary-color;
     margin-bottom: 20px;
   }
 

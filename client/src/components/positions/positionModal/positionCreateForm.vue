@@ -51,26 +51,26 @@ export default {
 
     <div class="form-actions">
       <MyButton modifier="create" type="submit">Добавить должность</MyButton>
-      <MyButton modifier="cancel" type="button" @click="cancel()"
-        >Отмена</MyButton
-      >
+      <MyButton modifier="cancel" type="button" @click="cancel()">Отмена</MyButton>
     </div>
   </form>
 </template>
 
 <style lang="scss" scoped>
+@import "@/styles/base";
+
 form {
-  max-width: 700px;
+  max-width: 100%;
   margin: 0 auto;
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(121, 46, 201, 0.1);
-  background-color: #fff;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  background-color: $background-color-light;
 
   h4 {
-    color: #792ec9;
+    color: $primary-color;
     margin-bottom: 20px;
-    font-size: 1.5rem;
+    font-size: $font-size-title;
     text-align: center;
   }
 
@@ -82,16 +82,19 @@ form {
 }
 
 .error-message {
-  color: #d32f2f;
-  font-size: 14px;
+  color: $danger-color;
+  font-size: $font-size-text;
   margin-top: 4px;
 }
 
 .general-error {
-  background-color: #ffebee;
+  background-color: $background-color-light;
   padding: 8px 12px;
-  border-radius: 4px;
+  border-radius: $border-radius;
   margin-bottom: 16px;
-  border-left: 3px solid #d32f2f;
+  border-left: 3px solid $danger-color;
+}
+.form-actions {
+  padding-top: 15px;
 }
 </style>

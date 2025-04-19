@@ -292,11 +292,12 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import "@/styles/base";
 .file-manager {
   padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
+  background-color: $background-color-light;
+  border-radius: $border-radius;
   max-width: 800px;
   margin: 0 auto;
   position: relative;
@@ -313,8 +314,8 @@ export default {
 
 .file-header h3 {
   margin: 0;
-  font-size: 1.5rem;
-  color: #333;
+  font-size: $font-size-title;
+  color: $text-color-primary;
 }
 
 .close-btn {
@@ -328,23 +329,23 @@ export default {
 }
 
 .close-btn:hover {
-  color: #333;
+  color: $text-color-primary;
 }
 
 h4 {
   margin-top: 0;
   margin-bottom: 15px;
-  color: #555;
-  font-size: 1.2rem;
+  color: $text-color-secondary;
+  font-size: $font-size-title;
 }
 
 .upload-section,
 .files-section {
-  background-color: white;
-  border-radius: 6px;
+  background-color: $background-color-light;
+  border-radius: $border-radius;
   padding: 15px;
   margin-bottom: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: $box-shadow;
 }
 
 .file-input-wrapper {
@@ -360,21 +361,21 @@ h4 {
 .file-upload-label {
   display: inline-block;
   padding: 8px 16px;
-  background-color: #792ec9;
-  color: white;
-  border-radius: 4px;
+  background-color: $primary-color;
+  color: $background-color-light;
+  border-radius: $border-radius;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
 .file-upload-label:hover {
-  background-color: #792ec9;
+  background-color: $primary-color;
 }
 
 .selected-files-count {
   margin-left: 15px;
   font-size: 14px;
-  color: #666;
+  color: $text-color-secondary;
 }
 
 .selected-files-list {
@@ -382,7 +383,7 @@ h4 {
   max-height: 150px;
   overflow-y: auto;
   border: 1px solid #eee;
-  border-radius: 4px;
+  border-radius: $border-radius;
   padding: 5px;
 }
 
@@ -401,23 +402,23 @@ h4 {
 .remove-file-btn {
   background: none;
   border: none;
-  color: #ff4d4d;
+  color: $danger-color;
   cursor: pointer;
-  font-size: 16px;
+  font-size: $font-size-text;
   padding: 0 5px;
 }
 
 .upload-error {
   margin-top: 10px;
-  color: #ff4d4d;
-  font-size: 14px;
+  color: $danger-color;
+  font-size: $font-size-text;
 }
 
 .loading-message,
 .no-files-message {
   padding: 20px;
   text-align: center;
-  color: #666;
+  color: $text-color-secondary;
   font-style: italic;
 }
 
@@ -429,9 +430,9 @@ h4 {
 
 .file-card {
   border: 1px solid #e0e0e0;
-  border-radius: 6px;
+  border-radius: $border-radius;
   overflow: hidden;
-  background-color: white;
+  background-color: $background-color-light;
   transition:
     transform 0.2s,
     box-shadow 0.2s;
@@ -439,7 +440,7 @@ h4 {
 
 .file-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: $box-shadow;
 }
 
 .file-preview {
@@ -447,7 +448,7 @@ h4 {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f5f5f5;
+  background-color: $background-color-light;
   overflow: hidden;
 }
 
@@ -464,15 +465,15 @@ h4 {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
+  border-radius: $border-radius;
   position: relative;
 }
 
 .file-extension {
-  font-size: 12px;
+  font-size: $font-size-text;
   text-transform: uppercase;
   font-weight: bold;
-  color: #555;
+  color: $text-color-secondary;
 }
 
 .file-info {
@@ -480,15 +481,15 @@ h4 {
 }
 
 .file-name {
-  font-size: 14px;
+  font-size: $font-size-text;
   font-weight: 500;
   margin-bottom: 5px;
   word-break: break-word;
 }
 
 .file-date {
-  font-size: 12px;
-  color: #777;
+  font-size: $font-size-text;
+  color: $text-color-secondary;
 }
 
 .file-actions {
@@ -500,20 +501,20 @@ h4 {
 .view-btn {
   flex: 1;
   padding: 6px 0;
-  font-size: 13px;
-  border-radius: 4px;
+  font-size: $font-size-text;
+  border-radius: $border-radius;
   cursor: pointer;
   text-align: center;
 }
 
 .view-btn {
-  background-color: #792ec9;
-  color: white;
+  background-color: $primary-color;
+  color: $background-color-light;
   text-decoration: none;
 }
 
 .view-btn:hover {
-  background-color: #792ec9;
+  background-color: $primary-color;
 }
 
 .delete-confirm-modal {
@@ -530,9 +531,9 @@ h4 {
 }
 
 .delete-confirm-content {
-  background-color: white;
+  background-color: $background-color-light;
   padding: 20px;
-  border-radius: 8px;
+  border-radius: $border-radius;
   width: 90%;
   max-width: 400px;
   text-align: center;
@@ -540,7 +541,7 @@ h4 {
 
 .delete-confirm-content h4 {
   margin-top: 0;
-  color: #333;
+  color: $text-color-primary;
 }
 
 .delete-confirm-actions {

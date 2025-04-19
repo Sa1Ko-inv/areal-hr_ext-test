@@ -27,7 +27,7 @@
     </div>
     <div class="position__btn" v-if="!isEditing">
       <MyButton @click="startEdit" modifier="edit">Редактировать</MyButton>
-      <MyButton @click="showHistoryDialog" modifier="edit">История</MyButton>
+      <MyButton @click="showHistoryDialog" modifier="showHistory">История</MyButton>
       <MyButton @click="deletePositions" modifier="delete">Удалить</MyButton>
     </div>
   </div>
@@ -100,9 +100,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "@/styles/base";
 .position {
-  border: 2px solid #792ec9;
-  border-radius: 8px;
+  border: 2px solid $primary-color;
+  border-radius: $border-radius;
   padding: 12px 16px;
   margin-top: 10px;
   display: flex;
@@ -114,7 +115,7 @@ export default {
   transition: all 0.2s ease;
 
   &:hover {
-    box-shadow: 0 2px 8px rgba(#792ec9, 0.2);
+    box-shadow: $box-shadow;
   }
 
   &__info {
@@ -124,7 +125,6 @@ export default {
   &__edit {
     display: flex;
     align-items: center;
-    //flex-direction: column;
     gap: 35px;
     flex: 1;
 
@@ -137,14 +137,12 @@ export default {
 
   &__actions {
     display: flex;
-    //gap: 10px;
     justify-content: flex-start;
-    //margin-top: 10px;
   }
 
   &__error {
-    color: #d32f2f;
-    font-size: 14px;
+    color: $danger-color;
+    font-size: $font-size-text;
     margin-top: 8px;
   }
 }

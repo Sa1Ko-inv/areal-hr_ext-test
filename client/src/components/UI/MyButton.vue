@@ -21,82 +21,87 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import "@/styles/base";
 .btn {
   padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 14px;
+  border-radius: $border-radius;
+  font-size: $font-size-text;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  border: 1px solid #792ec9;
+  border: 1px solid $primary-color;
   background-color: transparent;
-  color: #792ec9;
+  color: $primary-color;
   margin: 0 5px;
   flex: 1;
 }
 
 .btn:hover {
-  background-color: rgba(#792ec9, 0.1);
+  background-color: $primary-color-dark;
 }
 
 /* Для кнопки редактирования */
 .btn--edit {
-  background-color: #792ec9;
+  background-color: $primary-color;
   color: white;
+}
+
+.btn--edit:hover {
+  background-color: $primary-color-dark;
 }
 
 /* Для кнопки удаления */
 .btn--delete {
   background-color: transparent;
-  color: #d32f2f;
-  border-color: #d32f2f;
+  color: $danger-color;
+  border-color: $danger-color;
 }
 
 .btn--delete:hover {
-  background-color: rgba(#d32f2f, 0.1);
+  background-color: rgba($danger-color, 0.1);
 }
 
 /* Для кнопки сохранения */
 .btn--save {
   background-color: transparent;
-  color: #792ec9;
-  border-color: #792ec9;
+  color: $primary-color;
+  border-color: $primary-color;
 }
 
 .btn--save:hover {
-  background-color: rgba(#792ec9, 0.1);
+  background-color: rgba($primary-color-dark, 0.1);
 }
 
 /* Для кнопки отмены */
 .btn--cancel {
   background-color: transparent;
-  color: #d32f2f;
-  border-color: #d32f2f;
+  color: $danger-color;
+  border-color: $danger-color;
 }
 
 .btn--cancel:hover {
-  background-color: rgba(#d32f2f, 0.1);
+  background-color: rgba($danger-color, 0.1);
 }
 
 /* Для кнопки создания */
 .btn--create {
-  background-color: #792ec9;
+  background-color: $primary-color;
   color: white;
 }
 
 .btn--create:hover {
-  background-color: #6525a7;
+  background-color: $primary-color-dark;
 }
 
 /* Для кнопки просмотра истории */
 .btn--showHistory {
   background-color: white;
-  color: #792ec9;
-  border: 1px solid #792ec9;
+  color: $primary-color;
+  border: 1px solid $primary-color;
 }
 
 .btn--showHistory:hover {
-  background-color: rgba(121, 46, 201, 0.1);
+  background-color: rgba($primary-color-dark, 0.1);
 }
 </style>
