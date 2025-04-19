@@ -30,7 +30,7 @@
 
   <!-- Модальное окно просмотра удаленных должностей -->
   <MyModalWindow v-model:show="dialogDeletePosition">
-    <PositionDeleteHistrory :cancel="cancelDialog" />
+    <PositionDeleteHistory :cancel="cancelDialog" />
   </MyModalWindow>
 </template>
 
@@ -38,14 +38,14 @@
 import PositionItems from '@/components/positions/positionItems.vue';
 import PositionCreateForm from '@/components/positions/positionModal/positionCreateForm.vue';
 import MyModalWindow from '@/components/UI/MyModalWindow.vue';
-import PositionDeleteHistrory from '@/components/positions/positionModal/positionDeleteHistrory.vue';
+import PositionDeleteHistory from '@/components/positions/positionModal/PositionDeleteHistory.vue';
 import MyButton from '@/components/UI/MyButton.vue';
 import { UserStore } from '@/store/UserStore.js';
 
 export default {
   components: {
     MyButton,
-    PositionDeleteHistrory,
+    PositionDeleteHistory,
     MyModalWindow,
     PositionCreateForm,
     PositionItems,
