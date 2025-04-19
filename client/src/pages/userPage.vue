@@ -1,4 +1,4 @@
-<template v-if="userStore.isAdmin()">
+<template>
   <UserList
     :users="users"
     @create="createUsers"
@@ -36,7 +36,6 @@
 import { computed, onMounted, ref } from 'vue';
 import { createUser, deleteUser, fetchUsers } from '@/http/userAPI.js';
 import UserList from '@/components/user/userList.vue';
-import { UserStore } from '@/store/UserStore.js';
 
 // Задаем переменные
 const users = ref([]);
@@ -45,13 +44,11 @@ const pageSize = ref(3);
 const totalItems = ref(0);
 const createError = ref(null);
 const searchQuery = ref('');
-const userStore = UserStore()
 
 // Функция для получения пользователей
 const getUser = async () => {
   try {
     const response = await fetchUsers(currentPage.value, pageSize.value, searchQuery.value);
-    console.log(response);
     users.value = response.data.rows;
     totalItems.value = response.data.count;
   } catch (error) {

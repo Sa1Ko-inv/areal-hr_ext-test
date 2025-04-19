@@ -120,7 +120,6 @@ export default {
         );
         this.history = response.rows;
         this.totalItems = response.count;
-        console.log(response.rows);
       } catch (error) {
         console.error('Ошибка при получении истории должности:', error);
       }

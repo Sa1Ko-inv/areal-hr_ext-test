@@ -58,7 +58,6 @@ const props = defineProps({
     required: true,
   },
 });
-console.log(props.user);
 const emit = defineEmits(['user-update']);
 const editUser = ref({
   id: props.user ? props.user.id : null,

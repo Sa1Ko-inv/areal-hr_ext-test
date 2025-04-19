@@ -12,7 +12,6 @@ export const fetchOrganizations = async (page = 1, limit = 10) => {
 // Получение организации по ID с ее отделами
 export const fetchOrganizationWithDepartments = async (id) => {
   const response = await $host.get(`api/organization/${id}/departments`);
-  console.log(response.data);
   return response.data;
 };
 // Создание организации

@@ -57,12 +57,6 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const userStore = UserStore();
 
-  console.log('--- Навигационный guard ---');
-  console.log('Маршрут (to):', to.name, to.path);
-  console.log('Пользователь авторизован:', userStore.isAuth);
-  console.log('Роль пользователя:', userStore.role);
-  console.log('isHRManager():', userStore.isHRManager());
-
   if (to.meta.requiresAuth && !userStore.isAuth) {
     console.log('[1] Требуется авторизация, но пользователь не авторизован → на логин');
     next(LOGIN_ROUTE);
@@ -70,12 +64,10 @@ router.beforeEach((to, from, next) => {
   }
 
   if ((to.path === USER_ROUTER) && userStore.isHRManager()) {
-    console.log('[2] Пользователь hr_manager пытается зайти на /user → на главную');
     next(MAIN_ROUTE);
     return;
   }
 
-  console.log('[3] Разрешено');
   next();
 });
 

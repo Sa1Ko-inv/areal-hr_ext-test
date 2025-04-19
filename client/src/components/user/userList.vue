@@ -37,7 +37,6 @@ const closeModal = () => {
 // Создание пользователя
 const createUser = (user) => {
   emit('create', user);
-  console.log(user)
   dialogCreateUser.value = false;
 };
 // Обновление пользователя

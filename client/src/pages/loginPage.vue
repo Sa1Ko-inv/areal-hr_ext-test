@@ -50,7 +50,6 @@ const signIn = async () => {
     userStore.setIsAuth(true);
     userStore.setRole(response.role);
     await router.push('/');
-    console.log('Пользователь:', userStore.user, 'Роль:', userStore.role, 'Авторизован:', userStore.isAuth);
   } catch (error) {
     if (error.response && error.response.data && error.response.data.errors) {
       loginError.value = error.response.data.errors[0].message;

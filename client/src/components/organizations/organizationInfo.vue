@@ -87,7 +87,6 @@ export default {
         (department) => department.id !== departmentId
       );
       this.loadOrganization();
-      console.log(departmentId);
     },
   },
 };

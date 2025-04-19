@@ -93,7 +93,6 @@ export default {
       try {
         const response = await fetchDepartments();
         this.departments = response.data;
-        console.log(this.departments);
 
         if (this.currentDepartmentId) {
           const currentDept = response.data.find(
