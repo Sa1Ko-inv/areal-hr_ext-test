@@ -20,7 +20,7 @@
             required
           />
         </div>
-        <MyButton type="submit">Войти</MyButton>
+        <MyButton modifier="save" type="submit">Войти</MyButton>
       </form>
     </div>
 
