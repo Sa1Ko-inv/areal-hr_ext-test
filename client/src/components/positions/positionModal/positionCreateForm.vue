@@ -11,7 +11,7 @@ export default {
     },
     error: {
       // Добавляем пропс для ошибки
-      type: String,
+      type: {},
       default: null,
     },
   },
@@ -35,8 +35,12 @@ export default {
 <template>
   <form @submit.prevent="createPosition">
     <h4>Создание должности</h4>
+    <!-- Отображение общей ошибки -->
+    <div v-if="error.general" class="general-error">{{ error.general }}</div>
 
     <div class="form-group">
+      <!-- Отображение ошибки для поля name -->
+      <div v-if="error.name" class="error-message">{{ error.name }}</div>
       <MyInput
         size="medium"
         v-model.number="position.name"
@@ -44,10 +48,7 @@ export default {
         type="text"
       />
     </div>
-    <!-- Отображение ошибки для поля name -->
-    <div v-if="error" class="error-message">
-      {{ error }}
-    </div>
+
 
     <div class="form-actions">
       <MyButton modifier="create" type="submit">Добавить должность</MyButton>
@@ -88,7 +89,7 @@ form {
 }
 
 .general-error {
-  background-color: $background-color-light;
+  color: $danger-color;
   padding: 8px 12px;
   border-radius: $border-radius;
   margin-bottom: 16px;

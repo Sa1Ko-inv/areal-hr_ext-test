@@ -1,6 +1,7 @@
 <template>
   <UserList
     :users="users"
+    :createError="createError"
     @create="createUsers"
     @update="handleUserUpdate"
     @search="handleSearch"
@@ -42,7 +43,7 @@ const users = ref([]);
 const currentPage = ref(1);
 const pageSize = ref(7);
 const totalItems = ref(0);
-const createError = ref(null);
+const createError = ref({last_name: null, first_name: null, middle_name: null, login: null, password: null, role: null});
 const searchQuery = ref('');
 
 // Функция для получения пользователей
@@ -63,17 +64,30 @@ const handleSearch = (query) => {
 };
 
 // Функция для создания пользователя
-const createUsers = async (user) => {
+const createUsers = async (user, onSuccess) => {
   console.log(user);
   try {
-    createError.value = null;
+    createError.value = {
+      last_name: null,
+      first_name: null,
+      middle_name: null,
+      login: null,
+      password: null,
+      role: null,
+    };
     const response = await createUser(user.last_name, user.first_name, user.middle_name, user.login, user.password, user.role);
     console.log('Пользователь успешно создан:', response);
     users.value.push(response.data);
     getUser();
+
+    onSuccess()
   } catch (error) {
     if (error.response && error.response.data && error.response.data.errors) {
-      createError.value = error.response.data.errors[0].message;
+      error.response.data.errors.forEach(err => {
+        if (err.field && Object.prototype.hasOwnProperty.call(createError.value, err.field)) {
+          createError.value[err.field] = err.message;
+        }
+      })
     } else {
       createError.value = 'Произошла ошибка при создании пользователя';
     }

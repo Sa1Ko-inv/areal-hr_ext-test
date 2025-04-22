@@ -27,13 +27,23 @@ export default {
         organization_id: this.organizationId,
         parent_id: null,
       },
-      createError: null,
+      errors: {
+        name: null,
+        comment: null,
+        general: null // для общих ошибок
+      },
     };
   },
   methods: {
     async createDepartment() {
       try {
-        this.createError = null; // Сбрасываем ошибку перед запросом
+        // Сбрасываем все ошибки перед запросом
+        this.errors = {
+          name: null,
+          comment: null,
+          general: null
+        };
+
         await createDepartment(this.department);
         this.$emit('created');
         this.department = {
@@ -44,15 +54,17 @@ export default {
         };
         this.dialogVisible = false;
       } catch (error) {
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.errors
-        ) {
-          this.createError = error.response.data.errors[0].message; // Сохраняем сообщение об ошибке
-          console.error('Ошибка при создании организации:', error);
+        if (error.response && error.response.data && error.response.data.errors) {
+          // Обрабатываем ошибки валидации
+          error.response.data.errors.forEach(err => {
+            if (err.field && Object.prototype.hasOwnProperty.call(this.errors, err.field)) {
+              this.errors[err.field] = err.message;
+            } else {
+              this.errors.general = err.message;
+            }
+          });
         } else {
-          this.createError = 'Произошла ошибка при создании организации';
+          this.errors.general = 'Произошла ошибка при создании организации';
         }
         console.error('Ошибка при создании организации:', error);
       }
@@ -64,19 +76,22 @@ export default {
 <template>
   <form @submit.prevent="createDepartment">
     <h4>Создание Отдела</h4>
-    <div v-if="createError" class="error-message">{{ createError }}</div>
+    <div v-if="errors.general" class="error-message">{{ errors.general }}</div>
     <div class="input-form">
+      <div v-if="errors.name" class="error-message">{{ errors.name }}</div>
       <MyInput
         v-model.number="department.name"
         placeholder="Название отдела"
         type="text"
       />
+      <div v-if="errors.comment" class="error-message">{{ errors.comment }}</div>
       <MyInput
         v-model.number="department.comment"
         placeholder="Комментарий"
         type="text"
       />
     </div>
+
     <select v-model="department.parent_id">
       <option :value="null">Без родительского отдела</option>
       <option v-for="dept in departments" :key="dept.id" :value="dept.id">

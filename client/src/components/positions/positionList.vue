@@ -56,7 +56,7 @@ export default {
       required: true,
     },
     createError: {
-      type: String,
+      type: {},
       default: null,
     },
     updateError: {
@@ -81,8 +81,11 @@ export default {
     },
 
     createPosition(position) {
-      this.$emit('create', position);
-      this.dialogCreatePosition = false;
+      this.$emit('create', {
+        position, onSuccess: () => {
+          this.dialogCreatePosition = false;
+        },
+      });
     },
 
     updatePosition(position) {
@@ -103,6 +106,7 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/styles/base";
+
 .positionList {
   padding: 16px;
   border-radius: $border-radius;

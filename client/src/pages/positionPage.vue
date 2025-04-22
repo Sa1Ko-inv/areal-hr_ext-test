@@ -12,7 +12,7 @@ export default {
   data() {
     return {
       positions: [],
-      createError: null,
+      createError: { name: null, general: null },
       updateError: null, // Добавляем состояние для ошибки обновления
       updatingPositionId: null, // Для отслеживания какой должности показывать ошибку
       currentPage: 1,
@@ -32,20 +32,22 @@ export default {
       }
     },
 
-    async createPosition(position) {
+    async createPosition(position, onSuccess) {
       try {
-        this.createError = null; // Сбрасываем ошибку перед запросом
+        this.createError = { name: null, general: null }; // Сбрасываем ошибку перед запросом
         const response = await createPosition(position.name);
         this.positions.push(response.data);
         this.getPositions();
+        onSuccess();
       } catch (error) {
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.errors
-        ) {
-          this.createError = error.response.data.errors[0].message; // Сохраняем сообщение об ошибке
-          console.error('Ошибка при создании должностей:', error);
+        if (error.response && error.response.data && error.response.data.errors) {
+          error.response.data.errors.forEach(err => {
+            if (err.fields && Object.prototype.hasOwnProperty.call(this.createError, err.fields)) {
+              this.createError[err.fields] = err.message;
+            } else {
+              this.createError.general = err.message;
+            }
+          })
         } else {
           this.createError = 'Произошла ошибка при создании должностей';
         }

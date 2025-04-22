@@ -9,6 +9,10 @@ defineProps({
     type: Function,
     required: true,
   },
+  error: {
+    type: {},
+    default: null,
+  },
 });
 
 const emit = defineEmits(['create']);
@@ -46,41 +50,46 @@ const createUser = () => {
   <form @submit.prevent="createUser">
     <h4>Создание пользователя</h4>
     <div class="form-group">
+      <div v-if="error.last_name" class="error-message">{{ error.last_name }}</div>
       <MyInput
         size="medium"
         v-model="user.last_name"
         placeholder="Фамилия"
         type="text"
-        required
+
       />
+      <div v-if="error.first_name" class="error-message">{{ error.first_name }}</div>
       <MyInput
         size="medium"
         v-model="user.first_name"
         placeholder="Имя"
         type="text"
-        required
+
       />
+      <div v-if="error.middle_name" class="error-message">{{ error.middle_name }}</div>
       <MyInput
         size="medium"
         v-model="user.middle_name"
         placeholder="Отчество"
         type="text"
       />
+      <div v-if="error.login" class="error-message">{{ error.login }}</div>
       <MyInput
         size="medium"
         v-model="user.login"
         placeholder="Логин"
         type="text"
-        required
+
       />
+      <div v-if="error.password" class="error-message">{{ error.password }}</div>
       <MyInput
         size="medium"
         v-model="user.password"
         placeholder="Пароль"
         type="password"
-        required
-      />
 
+      />
+      <div v-if="error.role" class="error-message">{{ error.role }}</div>
       <MySelect
         v-model="user.role"
         :options="roleOptions"
@@ -96,16 +105,19 @@ const createUser = () => {
 </template>
 
 <style scoped lang="scss">
+@import "@/styles/base";
 form {
   padding: 20px;
   padding-right: 50px;
 }
+
 h4 {
-  color: #792ec9;
+  color: $primary-color;
   margin-bottom: 20px;
-  font-size: 1.5rem;
+  font-size: $font-size-title;
   text-align: center;
 }
+
 .form-group {
   display: flex;
   flex-direction: column;
@@ -117,5 +129,11 @@ h4 {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+}
+.error-message {
+  color: $danger-color;
+  margin-top: 5px;
+  font-size: $font-size-text;
+  font-weight: normal;
 }
 </style>

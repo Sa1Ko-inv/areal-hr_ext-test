@@ -60,7 +60,7 @@ export default {
       required: true,
     },
     createError: {
-      type: String,
+      type: {},
       default: null,
     },
     updateError: {
@@ -85,8 +85,11 @@ export default {
     },
     // Метод создания новой организации
     createOrganization(organization) {
-      this.$emit('create', organization);
-      this.dialogCreateOrganization = false;
+      this.$emit('create', {
+        organization, onSuccess: () => {
+          this.dialogCreateOrganization = false;
+        },
+      });
     },
     updateOrganization(updatedOrganization) {
       this.$emit('update', updatedOrganization);
@@ -104,6 +107,7 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/styles/base";
+
 .organizationList {
   max-width: 1000px;
   margin: 0 auto;

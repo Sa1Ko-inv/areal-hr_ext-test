@@ -3,11 +3,12 @@
     <form @submit.prevent="createEmployee" class="employee-form">
       <h2 class="form-title">Создание сотрудника</h2>
 
-      <div v-if="createError" class="error-message">{{ createError }}</div>
+      <div v-if="errors.general" class="error-message">{{ errors.general }}</div>
 
       <div class="form-section">
         <h3 class="section-title">Личная информация</h3>
         <div class="form-group">
+          <div v-if="errors.first_name" class="error-message">{{ errors.first_name }}</div>
           <label for="first_name">Имя</label>
           <MyInput
             id="first_name"
@@ -18,6 +19,7 @@
         </div>
 
         <div class="form-group">
+          <div v-if="errors.last_name" class="error-message">{{ errors.last_name }}</div>
           <label for="last_name">Фамилия</label>
           <MyInput
             id="last_name"
@@ -28,6 +30,7 @@
         </div>
 
         <div class="form-group">
+          <div v-if="errors.middle_name" class="error-message">{{ errors.middle_name }}</div>
           <label for="middle_name">Отчество</label>
           <MyInput
             id="middle_name"
@@ -38,6 +41,7 @@
         </div>
 
         <div class="form-group">
+          <div v-if="errors.birth_date" class="error-message">{{ errors.birth_date }}</div>
           <label for="birth_date">Дата рождения</label>
           <MyInput
             id="birth_date"
@@ -72,6 +76,7 @@
         <h3 class="section-title">Паспортные данные</h3>
         <div class="form-row">
           <div class="form-group half">
+            <div v-if="errors.passport_series" class="error-message">{{ errors.passport_series }}</div>
             <label for="passport_series">Серия паспорта</label>
             <MyInput
               id="passport_series"
@@ -82,6 +87,7 @@
           </div>
 
           <div class="form-group half">
+            <div v-if="errors.passport_number" class="error-message">{{ errors.passport_number }}</div>
             <label for="passport_number">Номер паспорта</label>
             <MyInput
               id="passport_number"
@@ -93,6 +99,7 @@
         </div>
 
         <div class="form-group">
+          <div v-if="errors.passport_issued_by" class="error-message">{{ errors.passport_issued_by }}</div>
           <label for="issued_by">Кем выдан</label>
           <MyInput
             id="issued_by"
@@ -104,6 +111,7 @@
 
         <div class="form-row">
           <div class="form-group half">
+            <div v-if="errors.passport_issued_date" class="error-message">{{ errors.passport_issued_date }}</div>
             <label for="issued_date">Дата выдачи</label>
             <MyInput
               id="issued_date"
@@ -114,6 +122,7 @@
           </div>
 
           <div class="form-group half">
+            <div v-if="errors.passport_division_code" class="error-message">{{ errors.passport_division_code }}</div>
             <label for="division_code">Код подразделения</label>
             <MyInput
               id="division_code"
@@ -129,6 +138,7 @@
         <h3 class="section-title">Адрес проживания</h3>
         <div class="form-row">
           <div class="form-group half">
+            <div v-if="errors.address_region" class="error-message">{{ errors.address_region }}</div>
             <label for="region">Регион</label>
             <MyInput
               id="region"
@@ -139,6 +149,7 @@
           </div>
 
           <div class="form-group half">
+            <div v-if="errors.address_locality" class="error-message">{{ errors.address_locality }}</div>
             <label for="locality">Населенный пункт</label>
             <MyInput
               id="locality"
@@ -150,6 +161,7 @@
         </div>
 
         <div class="form-group">
+          <div v-if="errors.address_street" class="error-message">{{ errors.address_street }}</div>
           <label for="street">Улица</label>
           <MyInput
             id="street"
@@ -161,6 +173,7 @@
 
         <div class="form-row">
           <div class="form-group third">
+            <div v-if="errors.address_house" class="error-message">{{ errors.address_house }}</div>
             <label for="house">Дом</label>
             <MyInput
               id="house"
@@ -182,6 +195,7 @@
 
           <div class="form-group third">
             <label for="apartment">Квартира</label>
+            <div v-if="errors.address_apartment" class="error-message">{{ errors.address_apartment }}</div>
             <MyInput
               id="apartment"
               type="text"
@@ -201,7 +215,7 @@
           modifier="cancel"
           @click="cancel"
           :disabled="isSubmitting"
-          >
+        >
           Отмена
         </MyButton
         >
@@ -249,7 +263,24 @@ export default {
     return {
       employeeData: { ...EMPLOYEE_INITIAL_DATA },
       selectedFiles: [],
-      createError: null,
+      errors: {
+        first_name: null,
+        last_name: null,
+        middle_name: null,
+        birth_date: null,
+        passport_series: '',
+        passport_number: '',
+        passport_issued_by: '',
+        passport_issued_date: '',
+        passport_division_code: '',
+        address_region: null,
+        address_locality: null,
+        address_street: null,
+        address_house: null,
+        address_apartment: null,
+        address_building: null,
+        general: null, // для общих ошибок
+      },
       isSubmitting: false,
     };
   },
@@ -261,7 +292,26 @@ export default {
     async createEmployee() {
       try {
         this.isSubmitting = true;
-        this.createError = null;
+        this.errors = {
+          first_name: null,
+          last_name: null,
+          middle_name: null,
+          birth_date: null,
+
+          passport_series: '',
+          passport_number: '',
+          passport_issued_by: '',
+          passport_issued_date: '',
+          passport_division_code: '',
+
+          address_region: null,
+          address_locality: null,
+          address_street: null,
+          address_house: null,
+          address_apartment: null,
+          address_building: null,
+          general: null, // для общих ошибок
+        };
 
         // Шаг 1: Создаем сотрудника, отправляя JSON данные
         const createdEmployee = await createEmployees(this.employeeData);
@@ -291,7 +341,13 @@ export default {
           error.response.data &&
           error.response.data.errors
         ) {
-          this.createError = error.response.data.errors[0].message;
+          error.response.data.errors.forEach(err => {
+            if (err.field && Object.prototype.hasOwnProperty.call(this.errors, err.field)) {
+              this.errors[err.field] = err.message;
+            } else {
+              this.errors.general = err.message;
+            }
+          });
         } else {
           this.createError = 'Произошла ошибка при создании сотрудника';
         }
@@ -306,6 +362,7 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/styles/base";
+
 .selected-files {
   margin-top: 10px;
   font-size: $font-size-text;
@@ -361,13 +418,13 @@ export default {
 }
 
 // Form groups
-.form-group {
-  margin-bottom: 1rem;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
+//.form-group {
+//  margin-bottom: 1rem;
+//
+//  &:last-child {
+//    margin-bottom: 0;
+//  }
+//}
 
 .form-row {
   display: flex;
@@ -389,12 +446,12 @@ export default {
 }
 
 // Form elements
-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: $text-color-primary;
-}
+//label {
+//  display: block;
+//  margin-bottom: 0.5rem;
+//  font-weight: 500;
+//  color: $text-color-primary;
+//}
 
 // Buttons
 .form-actions {
@@ -404,13 +461,50 @@ label {
   margin-top: 1rem;
 }
 
-// Error message
+
+// Error message styles
 .error-message {
-  background-color: rgba($danger-color, 0.1);
   color: $danger-color;
-  padding: 0.75rem;
-  border-radius: 4px;
-  margin-bottom: 1rem;
-  border-left: 3px solid $danger-color;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  background-color: rgba($danger-color, 0.05);
+  border-radius: 3px;
+  display: inline-block;
+}
+
+// Form group adjustments
+.form-group {
+  position: relative;
+  margin-bottom: 1.5rem;
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: $text-color-primary;
+  }
+
+  .error-message {
+    position: absolute;
+    top: -18px;
+    left: 0;
+    margin: 0;
+    background: none;
+    padding: 0;
+    color: $danger-color;
+    font-size: $font-size-text;
+  }
+}
+
+// For fields with errors
+.has-error {
+  .MyInput { // предполагая, что ваш компонент MyInput рендерит input элемент
+    border-color: $danger-color;
+    &:focus {
+      box-shadow: 0 0 0 2px rgba($danger-color, 0.2);
+    }
+  }
 }
 </style>

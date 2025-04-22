@@ -12,6 +12,10 @@ defineProps({
     type: Array,
     required: true,
   },
+  createError: {
+    type: {},
+    default: null,
+  },
 });
 const emit = defineEmits(['create', 'update', 'delete', 'search']);
 // Переменные
@@ -36,8 +40,9 @@ const closeModal = () => {
 
 // Создание пользователя
 const createUser = (user) => {
-  emit('create', user);
+  emit('create', {user, onSuccess: () => {
   dialogCreateUser.value = false;
+    }});
 };
 // Обновление пользователя
 const userUpdate = () => {
@@ -106,6 +111,7 @@ const deleteUser = async (id) => {
   <!-- Модальное окно создания пользователя -->
   <MyModalWindow v-model:show="dialogCreateUser">
     <UserCreateForm
+    :error="createError"
     @create="createUser"
     :cancel="closeModal"
     />

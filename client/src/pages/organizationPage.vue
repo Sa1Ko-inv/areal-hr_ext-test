@@ -1,7 +1,7 @@
 <template>
   <OrganizationList
     :organizations="sortedOrganizations"
-    :createError="createError"
+    :createError="errors"
     :updateError="updateError"
     @create="createOrganization"
     @update="updateOrganization"
@@ -46,7 +46,11 @@ export default {
   data() {
     return {
       organizations: [],
-      createError: null,
+      errors: {
+        name: null,
+        comment: null,
+        general: null
+      },
       updateError: null, // Добавляем состояние для ошибки обновления
       updatingOrganizationId: null, // Для отслеживания какой организации показывать ошибку
       currentPage: 1,
@@ -75,23 +79,31 @@ export default {
         console.error('Ошибка при получении организаций:', error);
       }
     },
-    async createOrganization(organization) {
+    async createOrganization(organization, onSuccess) {
       try {
-        this.createError = null; // Сбрасываем ошибку перед запросом
+        // Сбрасываем ошибку перед запросом
+        this.errors = {
+          name: null,
+          comment: null,
+          general: null,
+        };
         const response = await createOrganization(
           organization.name,
           organization.comment
         );
         this.organizations.push(response.data);
         this.getOrganizations();
+
+        onSuccess();
       } catch (error) {
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.errors
-        ) {
-          this.createError = error.response.data.errors[0].message; // Сохраняем сообщение об ошибке
-          console.error('Ошибка при создании организации:', error);
+        if (error.response && error.response.data && error.response.data.errors) {
+          error.response.data.errors.forEach(err => {
+            if (err.field && Object.prototype.hasOwnProperty.call(this.errors, err.field)) {
+              this.errors[err.field] = err.message;
+            } else {
+              this.errors.general = err.message;
+            }
+          });
         } else {
           this.createError = 'Произошла ошибка при создании организации';
         }

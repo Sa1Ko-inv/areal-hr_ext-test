@@ -2,13 +2,15 @@
   <form @submit.prevent="create" class="organization-create-form">
     <h3>Создание организации</h3>
 
+    <div v-if="error.general" class="error-message">{{error.general }}</div>
     <div class="form-group">
+      <div v-if="error.name" class="error-message">{{error.name}}</div>
       <label>Название организации</label>
       <MyInput v-model.number="name" type="text" class="form-input" />
-      <div v-if="error" class="error-message">{{ error }}</div>
     </div>
 
     <div class="form-group">
+      <div v-if="error.comment" class="error-message"></div>
       <label>Комментарий</label>
       <textarea v-model="comment" class="form-textarea"></textarea>
     </div>
@@ -33,7 +35,7 @@ export default {
     },
     error: {
       // Добавляем пропс для ошибки
-      type: String,
+      type: {},
       default: null,
     },
   },

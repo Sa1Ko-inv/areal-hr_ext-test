@@ -13,7 +13,7 @@ const validate = (schema) => async (req, res, next) => {
     // Обрабатываем Joi-ошибки
     if (error.isJoi) {
       const errors = error.details.map((detail) => ({
-        field: detail.path[0],
+        field: detail.path.join('_'), // Объединяем путь в строку через точки
         message: detail.message,
       }));
       return res.status(400).json({ errors });
