@@ -3,7 +3,8 @@
     <h1>{{ organization.name }}</h1>
     <p v-if="organization.comment">{{ organization.comment }}</p>
 
-    <MyButton modifier="create" @click="showDialog"> Создать отдел </MyButton>
+    <MyButton modifier="create" @click="showDialog"> Создать отдел</MyButton>
+    <MyButton modifier="showHistory" @click="showDeleteHistory"> Посмотреть удаленные отделы</MyButton>
 
     <div class="departments-section">
       <h2>Отделы</h2>
@@ -23,16 +24,23 @@
     />
 
     <router-link to="/organization">
-      <MyButton modifier="create"> Вернуться к списку организаций </MyButton>
+      <MyButton modifier="create"> Вернуться к списку организаций</MyButton>
     </router-link>
   </div>
-
+  <!--Модальное окно создания отдела-->
   <MyModalWindow v-model:show="dialogVisible">
     <DepartmentCreateForm
       :cancel="cancelCreate"
       :organizationId="organization.id"
       :departments="departments"
       @created="loadOrganization"
+    />
+  </MyModalWindow>
+  <!--Модальное окно просмотра удаленных отделов-->
+  <MyModalWindow v-model:show="dialogVisibleDeleteHistory">
+    <DepartmentDeleteHistory
+      :cancel="cancelCreate"
+      :organizationName="organization.name"
     />
   </MyModalWindow>
 </template>
@@ -44,9 +52,11 @@ import MyModalWindow from '@/components/UI/MyModalWindow.vue';
 import DepartmentCreateForm from '@/components/departments/departmentCreateForm.vue';
 import MyButton from '@/components/UI/MyButton.vue';
 import MyPagination from '@/components/UI/MyPagination.vue';
+import DepartmentDeleteHistory from '@/components/departments/departmentModal/departmentDeleteHistory.vue';
 
 export default {
   components: {
+    DepartmentDeleteHistory,
     MyPagination,
     MyButton,
     DepartmentCreateForm,
@@ -58,6 +68,7 @@ export default {
       organization: {},
       departments: [],
       dialogVisible: false,
+      dialogVisibleDeleteHistory: false,
       currentPage: 1,
       pageSize: 10,
       totalItems: 0,
@@ -70,8 +81,12 @@ export default {
     showDialog() {
       this.dialogVisible = true;
     },
+    showDeleteHistory() {
+      this.dialogVisibleDeleteHistory = true;
+    },
     cancelCreate() {
       this.dialogVisible = false;
+      this.dialogVisibleDeleteHistory = false;
     },
 
     async loadOrganization() {
@@ -98,7 +113,7 @@ export default {
 
     departmentDeleted(departmentId) {
       this.departments = this.departments.filter(
-        (department) => department.id !== departmentId
+        (department) => department.id !== departmentId,
       );
       this.loadOrganization();
     },
@@ -108,7 +123,6 @@ export default {
     },
   },
   mounted() {
-
     this.loadOrganization();
   },
   computed: {
@@ -121,6 +135,7 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/styles/base";
+
 .organization-info {
   max-width: 900px;
   margin: 0 auto;

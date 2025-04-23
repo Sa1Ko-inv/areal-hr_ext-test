@@ -32,3 +32,13 @@ export const fetchDepartmentHistory = async (id, page = 1, limit = 10) => {
   });
   return response.data;
 };
+// Получение истории удаленных отделов
+export const fetchDeletedDepartments = async (page = 1, limit = 10) => {
+  const response = await $host.get('api/department/delete', {
+    params: {
+      page: page,
+      limit: limit,
+    },
+  });
+  return response.data;
+}

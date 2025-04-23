@@ -1,7 +1,8 @@
 const Department = require('../models/department');
 const historyService = require('./historyService');
 const sequelize = require('../db');
-const Organization = require('../models/organization'); // Импортируем historyService
+const Organization = require('../models/organization');
+const History = require('../models/history'); // Импортируем historyService
 
 class DepartmentController {
   async createDepartment(req, res) {
@@ -311,6 +312,31 @@ class DepartmentController {
       return res.json({ count, rows });
     } catch (error) {
       console.error('Ошибка при получении истории отдела', error);
+      return next(error);
+    }
+  }
+
+  // Получение удаленных отделов
+  async getDeletedDepartments(req, res, next) {
+    try {
+      let { page, limit } = req.query;
+      page = page || 1;
+      limit = limit || 10;
+      const offset = (page - 1) * limit;
+
+      const {count, rows} = await History.findAndCountAll({
+        limit,
+        offset,
+        distinct: true,
+        order: [['operation_date', 'DESC']],
+        where: {
+          object_type: 'Отдел',
+          operation_type: 'delete',
+        }
+      });
+      return res.json({count, rows});
+    } catch (error) {
+      console.error('Ошибка при получении удаленных отделов', error);
       return next(error);
     }
   }
