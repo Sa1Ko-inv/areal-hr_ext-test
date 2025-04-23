@@ -109,10 +109,39 @@ class EmployeeController {
         { transaction }
       );
 
+      // Создаем паспортные данные, если они переданы
+      if (passport) {
+        await Passport.create({
+          employee_id: employee.id,
+          series: passport.series,
+          number: passport.number,
+          issued_by: passport.issued_by,
+          issued_date: passport.issued_date,
+          division_code: passport.division_code,
+        }, { transaction });
+      }
+
+      // Создаем адрес, если он передан
+      if (address) {
+        await Address.create({
+          employee_id: employee.id,
+          region: address.region,
+          locality: address.locality,
+          street: address.street,
+          house: address.house,
+          building: address.building,
+          apartment: address.apartment,
+        }, { transaction });
+      }
+
       // Получаем созданного сотрудника со всеми связанными данными
       const createdEmployee = await Employees.findOne({
         where: { id: employee.id },
-        include: [{ model: Passport }, { model: Address }, { model: Files }],
+        include: [
+          { model: Passport },
+          { model: Address },
+          { model: Files }
+        ],
         transaction,
       });
 

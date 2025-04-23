@@ -66,7 +66,7 @@ const employeeSchema = Joi.object({
     issued_date: Joi.string().pattern(dateRegex).required().messages({
       'string.empty': 'Дата выдачи не может быть пустым',
       'string.base': 'Дата выдачи должна быть строкой',
-      'string.pattern.base': 'Дата выдачи должна быть в формате DD-MM-YYYY',
+      'string.pattern.base': 'Дата должна быть DD/MM/YYYY',
       'any.required': 'Дата выдачи является обязательным полем',
     }),
     division_code: Joi.string()

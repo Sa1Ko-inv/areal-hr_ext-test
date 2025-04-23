@@ -20,18 +20,26 @@
       </div>
       <div class="form-group">
         <label>Дата рождения:</label>
-        <MyInput v-model="editedEmployee.birth_date" type="text" />
+        <el-date-picker
+          v-model="editedEmployee.birth_date"
+          type="date"
+          placeholder="Выберите дату"
+          format="DD/MM/YYYY"
+          value-format="DD/MM/YYYY"
+          style="width: 100%; height: 42px"
+          size="large"
+        />
       </div>
     </div>
     <div class="form-section" v-if="editedEmployee.passport">
       <h3>Данные паспорта</h3>
       <div class="form-group">
         <label>Серия:</label>
-        <MyInput v-model="editedEmployee.passport.series" type="text" />
+        <MyInput v-mask="'####'" v-model="editedEmployee.passport.series" type="text" />
       </div>
       <div class="form-group">
         <label>Номер:</label>
-        <MyInput v-model="editedEmployee.passport.number" type="text" />
+        <MyInput v-mask="'######'" v-model="editedEmployee.passport.number" type="text" />
       </div>
       <div class="form-group">
         <label>Кем выдан:</label>
@@ -39,11 +47,19 @@
       </div>
       <div class="form-group">
         <label>Дата выдачи:</label>
-        <MyInput v-model="editedEmployee.passport.issued_date" type="text" />
+        <el-date-picker
+          v-model="editedEmployee.passport.issued_date"
+          type="date"
+          placeholder="Выберите дату"
+          format="DD/MM/YYYY"
+          value-format="DD/MM/YYYY"
+          style="width: 100%; height: 42px"
+          size="large"
+        />
       </div>
       <div class="form-group">
         <label>Код подразделения:</label>
-        <MyInput v-model="editedEmployee.passport.division_code" type="text" />
+        <MyInput v-mask="'###-###'" v-model="editedEmployee.passport.division_code" type="text" />
       </div>
     </div>
     <div class="form-section" v-if="editedEmployee.address">

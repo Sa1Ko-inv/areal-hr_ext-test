@@ -388,7 +388,7 @@ export default {
         }
       }
       .operation-create {
-        background-color: $success-color-dark;
+        background-color: $background-color-light;
         color: $success-color;
       }
       .operation-update {

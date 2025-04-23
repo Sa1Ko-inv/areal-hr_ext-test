@@ -43,11 +43,15 @@
         <div class="form-group">
           <div v-if="errors.birth_date" class="error-message">{{ errors.birth_date }}</div>
           <label for="birth_date">Дата рождения</label>
-          <MyInput
-            id="birth_date"
-            type="text"
+          <el-date-picker
             v-model="employeeData.birth_date"
-            placeholder="дд/мм/гггг"
+            type="date"
+            placeholder="Выберите дату"
+            format="DD/MM/YYYY"
+            value-format="DD/MM/YYYY"
+            :disabled="isSubmitting"
+            style="width: 100%; height: 42px"
+            size="large"
           />
         </div>
 
@@ -83,6 +87,7 @@
               type="text"
               v-model="employeeData.passport.series"
               placeholder="0000"
+              v-mask="'####'"
             />
           </div>
 
@@ -94,6 +99,7 @@
               type="text"
               v-model="employeeData.passport.number"
               placeholder="000000"
+              v-mask="'######'"
             />
           </div>
         </div>
@@ -113,11 +119,15 @@
           <div class="form-group half">
             <div v-if="errors.passport_issued_date" class="error-message">{{ errors.passport_issued_date }}</div>
             <label for="issued_date">Дата выдачи</label>
-            <MyInput
-              id="issued_date"
-              type="text"
+            <el-date-picker
               v-model="employeeData.passport.issued_date"
-              placeholder="дд/мм/гггг"
+              type="date"
+              placeholder="Выберите дату"
+              format="DD/MM/YYYY"
+              value-format="DD/MM/YYYY"
+              :disabled="isSubmitting"
+              style="width: 100%; height: 42px"
+              size="large"
             />
           </div>
 
@@ -129,6 +139,7 @@
               type="text"
               v-model="employeeData.passport.division_code"
               placeholder="000-000"
+              v-mask="'###-###'"
             />
           </div>
         </div>
@@ -261,18 +272,18 @@ export default {
   },
   data() {
     return {
-      employeeData: { ...EMPLOYEE_INITIAL_DATA },
+      employeeData: JSON.parse(JSON.stringify(EMPLOYEE_INITIAL_DATA)),
       selectedFiles: [],
       errors: {
         first_name: null,
         last_name: null,
         middle_name: null,
         birth_date: null,
-        passport_series: '',
-        passport_number: '',
-        passport_issued_by: '',
-        passport_issued_date: '',
-        passport_division_code: '',
+        passport_series: null,
+        passport_number: null,
+        passport_issued_by: null,
+        passport_issued_date: null,
+        passport_division_code: null,
         address_region: null,
         address_locality: null,
         address_street: null,
@@ -298,11 +309,11 @@ export default {
           middle_name: null,
           birth_date: null,
 
-          passport_series: '',
-          passport_number: '',
-          passport_issued_by: '',
-          passport_issued_date: '',
-          passport_division_code: '',
+          passport_series: null,
+          passport_number: null,
+          passport_issued_by: null,
+          passport_issued_date: null,
+          passport_division_code: null,
 
           address_region: null,
           address_locality: null,
@@ -314,6 +325,7 @@ export default {
         };
 
         // Шаг 1: Создаем сотрудника, отправляя JSON данные
+        console.log('Создание сотрудника с данными:', this.employeeData);
         const createdEmployee = await createEmployees(this.employeeData);
 
         // Шаг 2: Если есть файлы, загружаем их для созданного сотрудника
