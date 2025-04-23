@@ -67,7 +67,7 @@ class HROperationsController {
       await historyService.createHistoryEntry(
         'Сотрудник',
         employee_id,
-        'Принятие на работу',
+        'hire',
         {
           department: { old: null, new: departmentNameString },
           position: { old: null, new: positionNameString },
@@ -122,7 +122,7 @@ class HROperationsController {
       await historyService.createHistoryEntry(
         'Сотрудник',
         employee_id,
-        'Изменение зарплаты',
+        'salary_change',
         {
           salary: { old: lastOperation.salary, new: salary },
         },
@@ -219,7 +219,7 @@ class HROperationsController {
       await historyService.createHistoryEntry(
         'Сотрудник',
         employee_id,
-        'Перевод в другой отдел',
+        'department_change',
         {
           department: {
             // Используем ключ 'department' для ясности
@@ -317,7 +317,7 @@ class HROperationsController {
       await historyService.createHistoryEntry(
         'Сотрудник',
         employee_id,
-        'Увольнение',
+        'fire',
         {
           first_name: { old: employee.first_name, new: null },
           last_name: { old: employee.last_name, new: null },

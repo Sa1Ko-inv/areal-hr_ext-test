@@ -13,7 +13,7 @@
         <div v-for="(item, index) in history" :key="index" class="history-item">
           <div class="history-item-header">
             <div class="operation-info">
-              <span class="operation-type">
+              <span class="operation-type" :class="getOperationClass(item.operation_type)">
                 {{ getOperationName(item.operation_type) }}
               </span>
               <span class="changed-by">{{ item.changed_by }}</span>
@@ -118,6 +118,9 @@ const getOperationName = (type) => {
   };
   return operation[type] || type;
 }
+const getOperationClass = (type) => {
+  return `operation-${type}`;
+}
 // Функция для получения названия изменений
 const getFieldName = (field) => {
   const fieldNames = {
@@ -143,163 +146,7 @@ const changePage = (page) => {
 onMounted(getHistory);
 </script>
 
-<style lang="scss" scoped>
-.history-modal {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  max-height: 80vh;
-  width: 100%;
-  max-width: 800px;
-  overflow: hidden;
-}
-
-.history-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 20px;
-  border-bottom: 1px solid #eee;
-  h3 {
-    margin: 0;
-    font-size: 1.2rem;
-    font-weight: 600;
-  }
-  .close-btn {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: #666;
-    &:hover {
-      color: #333;
-    }
-  }
-}
-
-.history-content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 20px;
-  .no-history {
-    text-align: center;
-    padding: 40px 0;
-    color: #666;
-  }
-  .history-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-  .history-item {
-    border: 1px solid #eee;
-    border-radius: 6px;
-    overflow: hidden;
-    .history-item-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 16px;
-      background-color: #f9f9f9;
-      .operation-info {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        .operation-type {
-          font-weight: 600;
-          padding: 4px 8px;
-          border-radius: 4px;
-          font-size: 0.9rem;
-        }
-        .changed-by {
-          font-size: 0.85rem;
-          color: #555;
-          background-color: #f0f0f0;
-          padding: 3px 8px;
-          border-radius: 12px;
-        }
-      }
-      .operation-create {
-        background-color: #e3f7e3;
-        color: #2e7d32;
-      }
-      .operation-update {
-        background-color: #f2e8ff;
-        color: #792ec9;
-      }
-      .operation-delete {
-        background-color: #ffebee;
-        color: #c62828;
-      }
-      .operation-hire {
-        background-color: #e3f7e3;
-        color: #2e7d32;
-      }
-      .operation-fire {
-        background-color: #fbe9e7;
-        color: #d84315;
-      }
-      .operation-department_change,
-      .operation-salary_change {
-        background-color: #fff8e1;
-        color: #f57f17;
-      }
-      .history-date {
-        font-size: 0.85rem;
-        color: #666;
-      }
-    }
-    .history-item-content {
-      padding: 16px;
-      p {
-        margin: 5px 0;
-      }
-      .changes {
-        margin-top: 10px;
-        strong {
-          display: block;
-          margin-bottom: 8px;
-        }
-      }
-      .changed-fields-list {
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
-      }
-      .change-field {
-        margin-bottom: 12px;
-        padding-bottom: 8px;
-        border-bottom: 1px dashed #eee;
-        &:last-child {
-          border-bottom: none;
-        }
-        .field-name {
-          font-weight: 600;
-          margin-bottom: 4px;
-        }
-        .field-values {
-          display: flex;
-          flex-direction: column;
-          gap: 4px;
-          padding-left: 12px;
-          .old-value {
-            color: #d32f2f;
-            span {
-              font-weight: 500;
-            }
-          }
-          .new-value {
-            color: #388e3c;
-            span {
-              font-weight: 500;
-            }
-          }
-        }
-      }
-    }
-  }
-}
+<style lang="scss">
+@import "@/styles/base";
 
 </style>
