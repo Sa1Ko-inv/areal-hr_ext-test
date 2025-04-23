@@ -9,7 +9,7 @@ router.post('/', authMiddleware, validate(organizationSchema), organizationContr
 router.get('/', organizationController.getAllOrganization); // Получить всех отдел
 router.get('/:id/departments', organizationController.getOrganizationWithDepartments); // Получить отдел с его подразделениями по ID
 
-router.get('/:id/history', organizationController.getOrganizationHistory); // Получение истории для конкретной должности
+router.get('/:id/history', organizationController.getOrganizationHistory); // Получение истории для конкретной организации
 router.get('/delete', organizationController.getDeletedOrganizations); // Получить удаленных организаций
 
 router.put('/:id', authMiddleware, validate(organizationUpdateSchema), organizationController.updateOrganization); // Редактировать отдел по ID

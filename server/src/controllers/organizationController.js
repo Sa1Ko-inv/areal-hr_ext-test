@@ -67,38 +67,44 @@ class OrganizationController {
   // Получение организации по ID с ее отделами
   async getOrganizationWithDepartments(req, res) {
     try {
+      let { page, limit } = req.query;
+      page = parseInt(page) || 1;
+      limit = parseInt(limit) || 10;
+      let offset = (page - 1) * limit;
       const { id } = req.params;
-      const organization = await Organization.findOne({
-        where: { id: id },
-        // paranoid: false,
+
+      // Отдельный подсчёт количества родительских отделов
+      const parentCount = await Department.count({
+        where: {
+          organization_id: id,
+          parent_id: null,
+        },
+      });
+
+      // Получение родительских отделов с детьми
+      const departments = await Department.findAll({
+        where: {
+          organization_id: id,
+          parent_id: null,
+        },
+        limit,
+        offset,
+        order: [['name', 'ASC']],
         include: [
           {
             model: Department,
-            as: 'departments',
-            // paranoid: false,
-            where: { parent_id: null },
-            required: false,
+            as: 'children',
             order: [['name', 'ASC']],
-            include: [
-              {
-                model: Department,
-                as: 'children',
-                // paranoid: false,
-                hierarchy: true,
-                order: [['name', 'ASC']],
-              },
-            ],
           },
         ],
       });
 
-      if (organization) {
-        return res.json(organization);
-      } else {
-        return res.status(404).json({ error: 'Организация не найдена' });
-      }
+      const organization = await Organization.findByPk(id);
+
+      return res.json({ organization, departments, count: parentCount });
     } catch (error) {
       console.log('Ошибка при получении Организации', error);
+      return res.status(500).json({ error: 'Ошибка сервера' });
     }
   }
 

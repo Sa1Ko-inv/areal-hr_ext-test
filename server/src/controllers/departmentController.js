@@ -303,7 +303,7 @@ class DepartmentController {
     }
   }
 
-  async getEmployeeHistory(req, res, next) {
+  async getDepartmentHistory(req, res, next) {
     const { id } = req.params;
     const { page, limit } = req.query;
     try {

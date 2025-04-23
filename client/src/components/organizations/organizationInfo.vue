@@ -15,6 +15,13 @@
       />
     </div>
 
+    <!-- Пагинация -->
+    <MyPagination
+      :currentPage="currentPage"
+      :totalPages="totalPages"
+      @page-change="changePage"
+    />
+
     <router-link to="/organization">
       <MyButton modifier="create"> Вернуться к списку организаций </MyButton>
     </router-link>
@@ -36,9 +43,11 @@ import { fetchOrganizationWithDepartments } from '@/http/organizationAPI.js';
 import MyModalWindow from '@/components/UI/MyModalWindow.vue';
 import DepartmentCreateForm from '@/components/departments/departmentCreateForm.vue';
 import MyButton from '@/components/UI/MyButton.vue';
+import MyPagination from '@/components/UI/MyPagination.vue';
 
 export default {
   components: {
+    MyPagination,
     MyButton,
     DepartmentCreateForm,
     MyModalWindow,
@@ -49,6 +58,9 @@ export default {
       organization: {},
       departments: [],
       dialogVisible: false,
+      currentPage: 1,
+      pageSize: 10,
+      totalItems: 0,
     };
   },
   async created() {
@@ -65,9 +77,11 @@ export default {
     async loadOrganization() {
       try {
         const organizationId = this.$route.params.id;
-        const data = await fetchOrganizationWithDepartments(organizationId);
-        this.organization = data;
+        const data = await fetchOrganizationWithDepartments(organizationId, this.currentPage, this.pageSize);
+        this.organization = data.organization;
         this.departments = data.departments || [];
+        this.totalItems = data.count; // количество родительских отделов
+
         this.dialogVisible = false;
       } catch (error) {
         console.error('Ошибка при загрузке организации:', error);
@@ -87,6 +101,19 @@ export default {
         (department) => department.id !== departmentId
       );
       this.loadOrganization();
+    },
+    changePage(page) {
+      this.currentPage = page;
+      this.loadOrganization();
+    },
+  },
+  mounted() {
+
+    this.loadOrganization();
+  },
+  computed: {
+    totalPages() {
+      return Math.ceil(this.totalItems / this.pageSize);
     },
   },
 };
