@@ -7,7 +7,8 @@ const Department = require('../models/department');
 const Position = require('../models/position');
 const Organization = require('../models/organization');
 const sequelize = require('../db');
-const historyService = require('./historyService'); // Импортируем historyService
+const historyService = require('./historyService');
+const History = require('../models/history'); // Импортируем historyService
 
 class HROperationsController {
   // Приём сотрудника на работу
@@ -434,13 +435,21 @@ class HROperationsController {
   // Получение истории увольнений сотрудников
   async getFiredHistory(req, res, next) {
     try {
-      // Получаем параметры пагинации из запроса (с значениями по умолчанию)
-      const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 10; // Или другое значение по умолчанию
+      let { page, limit } = req.query;
+      page = page || 1;
+      limit = limit || 10;
+      const offset = (page - 1) * limit;
 
-      const historyData = await historyService.getFiredEmployeesHistory(page, limit);
+      const {count, rows} = await History.findAndCountAll({
+        limit,
+        offset,
+        where: {
+          object_type: 'Сотрудник',
+          operation_type: 'fire',
+        },
+      });
 
-      return res.json(historyData); // Отправляем данные клиенту { count, rows }
+      return res.json({count, rows}); // Отправляем данные клиенту { count, rows }
     } catch (error) {
       // Передаем ошибку в централизованный обработчик ошибок
       next(error);

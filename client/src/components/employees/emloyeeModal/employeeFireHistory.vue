@@ -96,6 +96,7 @@ export default {
           this.currentPage,
           this.pageSize
         );
+        console.log(response);
         this.firedHistory = response.rows;
         this.totalItems = response.count;
       } catch (err) {
