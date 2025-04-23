@@ -27,35 +27,21 @@
     </div>
   </div>
 
-  <div class="history-footer">
-    <div class="pagination">
-      <MyButton
-        class="pagination-btn"
-        :disabled="currentPage === 1"
-        @click="changePage(currentPage - 1)"
-      >
-        Предыдущая
-      </MyButton>
-      <span class="page-info"
-        >Страница {{ currentPage }} из {{ totalPages || 1 }}</span
-      >
-      <MyButton
-        class="pagination-btn"
-        :disabled="currentPage === totalPages || totalPages === 0"
-        @click="changePage(currentPage + 1)"
-      >
-        Следующая
-      </MyButton>
-    </div>
-  </div>
+  <!-- Пагинация -->
+  <MyPagination
+    :currentPage="currentPage"
+    :totalPages="totalPages"
+    @page-change="changePage"
+  />
 </template>
 
 <script>
 import { fethcDeletedPositions } from '@/http/positionAPI.js';
 import MyButton from '@/components/UI/MyButton.vue';
+import MyPagination from '@/components/UI/MyPagination.vue';
 
 export default {
-  components: { MyButton },
+  components: { MyPagination, MyButton },
   props: {
     cancel: {
       type: Function,
@@ -207,38 +193,5 @@ span {
   margin: 0 10px;
   font-size: $font-size-text;
   color: $text-color-secondary;
-}
-.history-footer {
-  padding: 16px 20px;
-  border-top: 1px solid #eee;
-
-  .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 16px;
-
-    .pagination-btn {
-      padding: 8px 16px;
-      background-color: $background-color-light;
-      border: none;
-      border-radius: $border-radius;
-      cursor: pointer;
-
-      &:hover:not(:disabled) {
-        background-color: $background-color-light;
-      }
-
-      &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-    }
-
-    .page-info {
-      font-size: $font-size-text;
-      color: $text-color-secondary;
-    }
-  }
 }
 </style>

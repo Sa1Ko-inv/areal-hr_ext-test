@@ -22,3 +22,40 @@ $font-family: 'Arial', sans-serif;
 $font-size-title: 23px;
 $font-size-text: 15px;
 
+// Базовые сбросы
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+// Универсальные утилиты
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.error-message {
+  color: $danger-color;
+  font-size: $font-size-text;
+  margin-top: 8px;
+}
+
+// Пагинация
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+  gap: 12px;
+  .pagination-button {
+    padding: 6px 16px;
+    border-radius: $border-radius;
+    background: $primary-color;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    &:disabled { background: #ccc; cursor: not-allowed; }
+  }
+  .pagination-info {
+    margin: 0 8px;
+    color: $text-color-secondary;
+  }
+}
+

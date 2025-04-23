@@ -50,7 +50,8 @@ export default defineComponent({
   </div>
 </template>
 
-<style scoped>
+<style lang="scss">
+@import "styles/base.scss";
 .spinner {
   display: flex;
   justify-content: center;

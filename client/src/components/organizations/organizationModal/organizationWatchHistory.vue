@@ -57,34 +57,21 @@
         </div>
       </div>
     </div>
-    <div class="history-footer">
-      <div class="pagination">
-        <button
-          class="pagination-btn"
-          :disabled="currentPage === 1"
-          @click="changePage(currentPage - 1)"
-        >
-          Предыдущая
-        </button>
-        <span class="page-info"
-          >Страница {{ currentPage }} из {{ totalPages || 1 }}</span
-        >
-        <button
-          class="pagination-btn"
-          :disabled="currentPage === totalPages || totalPages === 0"
-          @click="changePage(currentPage + 1)"
-        >
-          Следующая
-        </button>
-      </div>
-    </div>
+    <!-- Пагинация -->
+    <MyPagination
+      :currentPage="currentPage"
+      :totalPages="totalPages"
+      @page-change="changePage"
+    />
   </div>
 </template>
 
 <script>
 import { fetchOrganizationHistory } from '@/http/organizationAPI.js';
+import MyPagination from '@/components/UI/MyPagination.vue';
 
 export default {
+  components: { MyPagination },
   props: {
     organization: {
       type: Object,
@@ -291,53 +278,6 @@ export default {
           }
         }
       }
-    }
-  }
-}
-
-.history-footer {
-  padding: 16px 20px;
-  border-top: 1px solid #eee;
-  .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 16px;
-    .pagination-btn {
-      padding: 8px 16px;
-      background-color: $background-color-light;
-      border: none;
-      border-radius: $border-radius;
-      cursor: pointer;
-      &:hover:not(:disabled) {
-        background-color: $background-color-light;
-      }
-      &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-    }
-    .page-info {
-      font-size: $font-size-text;
-      color: $text-color-secondary;
-    }
-  }
-}
-
-@media (max-width: 600px) {
-  .history-modal {
-    max-height: 90vh;
-  }
-  .history-item-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-  .pagination {
-    flex-direction: column;
-    gap: 8px;
-    .pagination-btn {
-      width: 100%;
     }
   }
 }

@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue';
 import MyButton from '@/components/UI/MyButton.vue';
 import { fetchDeletedUsers } from '@/http/userAPI.js';
+import MyPagination from '@/components/UI/MyPagination.vue';
 
 const props = defineProps({
   cancel: {
@@ -86,28 +87,12 @@ const totalPages = computed(() => {
       </table>
     </div>
   </div>
-<!--Пагинация-->
-  <div class="history-footer">
-    <div class="pagination">
-      <MyButton
-        class="pagination-btn"
-        :disabled="currentPage === 1"
-        @click="changePage(currentPage - 1)"
-      >
-        Предыдущая
-      </MyButton>
-      <span class="page-info"
-      >Страница {{ currentPage }} из {{ totalPages || 1 }}</span
-      >
-      <MyButton
-        class="pagination-btn"
-        :disabled="currentPage === totalPages || totalPages === 0"
-        @click="changePage(currentPage + 1)"
-      >
-        Следующая
-      </MyButton>
-    </div>
-  </div>
+  <!-- Пагинация -->
+  <MyPagination
+    :currentPage="currentPage"
+    :totalPages="totalPages"
+    @page-change="changePage"
+  />
 </template>
 
 <style scoped lang="scss">
@@ -205,38 +190,5 @@ span {
   margin: 0 10px;
   font-size: 14px;
   color: #666;
-}
-.history-footer {
-  padding: 16px 20px;
-  border-top: 1px solid #eee;
-
-  .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 16px;
-
-    .pagination-btn {
-      padding: 8px 16px;
-      background-color: #f0f0f0;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-
-      &:hover:not(:disabled) {
-        background-color: #e0e0e0;
-      }
-
-      &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-    }
-
-    .page-info {
-      font-size: 0.9rem;
-      color: #666;
-    }
-  }
 }
 </style>

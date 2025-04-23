@@ -56,34 +56,21 @@
         </div>
       </div>
     </div>
-    <div class="history-footer">
-      <div class="pagination">
-        <button
-          class="pagination-btn"
-          :disabled="currentPage === 1"
-          @click="changePage(currentPage - 1)"
-        >
-          Предыдущая
-        </button>
-        <span class="page-info"
-          >Страница {{ currentPage }} из {{ totalPages || 1 }}</span
-        >
-        <button
-          class="pagination-btn"
-          :disabled="currentPage === totalPages || totalPages === 0"
-          @click="changePage(currentPage + 1)"
-        >
-          Следующая
-        </button>
-      </div>
-    </div>
+    <!-- Пагинация -->
+    <MyPagination
+      :currentPage="currentPage"
+      :totalPages="totalPages"
+      @page-change="changePage"
+    />
   </div>
 </template>
 
 <script>
 import { fetchDepartmentHistory } from '@/http/departmentAPI.js';
+import MyPagination from '@/components/UI/MyPagination.vue';
 
 export default {
+  components: { MyPagination },
   props: {
     department: {
       type: Object,
@@ -308,32 +295,4 @@ export default {
   }
 }
 
-.history-footer {
-  padding: 16px 20px;
-  border-top: 1px solid #eee;
-  .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 16px;
-    .pagination-btn {
-      padding: 8px 16px;
-      background-color: #f0f0f0;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      &:hover:not(:disabled) {
-        background-color: #e0e0e0;
-      }
-      &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-    }
-    .page-info {
-      font-size: $font-size-text;
-      color: $text-color-secondary;
-    }
-  }
-}
 </style>
