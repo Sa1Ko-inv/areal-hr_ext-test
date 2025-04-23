@@ -146,7 +146,5 @@ const changePage = (page) => {
 onMounted(getHistory);
 </script>
 
-<style lang="scss">
-@import "@/styles/base";
-
+<style lang="scss" scoped>
 </style>

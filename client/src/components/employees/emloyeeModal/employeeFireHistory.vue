@@ -1,7 +1,7 @@
 <template>
-  <div class="fired-history-modal">
+  <div class="delete-history-modal">
     <h4>История увольнений</h4>
-    <button class="close-btn" @click="cancel" title="Закрыть">×</button>
+    <MyButton class="close-btn" @click="cancel" title="Закрыть">×</MyButton>
 
     <div v-if="firedHistory.length === 0" class="no-data">
       Нет записей об уволенных сотрудниках.
@@ -70,11 +70,11 @@
 
 <script>
 import { fetchFiredHistory } from '@/http/employeeAPI.js';
-import MyButton from '@/components/UI/MyButton.vue';
-import MyPagination from '@/components/UI/MyPagination.vue'; // Или используйте fetch
+import MyPagination from '@/components/UI/MyPagination.vue';
+import MyButton from '@/components/UI/MyButton.vue'; // Или используйте fetch
 
 export default {
-  components: { MyPagination },
+  components: { MyButton, MyPagination },
   props: {
     cancel: {
       type: Function,
@@ -131,87 +131,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "@/styles/base";
-
-.fired-history-modal {
-  padding: 20px;
-  min-width: 500px; // Примерная ширина
-  position: relative;
-}
-
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  font-size: $font-size-title;
-  cursor: pointer;
-  line-height: 1;
-  padding: 0 5px;
-}
-
-h4 {
-  margin-top: 0;
-  margin-bottom: 15px;
-  text-align: center;
-}
-
-.loading-indicator,
-.error-message,
-.no-data {
-  text-align: center;
-  padding: 20px;
-  color: grey;
-}
-
-.error-message {
-  color: $danger-color;
-}
-
-.history-list {
-  margin-top: 15px;
-  max-height: 400px; // Ограничение высоты для прокрутки
-  overflow-y: auto; // Добавить прокрутку, если список длинный
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-
-  th,
-  td {
-    border: 1px solid #ccc;
-    padding: 8px;
-    text-align: left;
-  }
-
-  th {
-    background-color: #f2f2f2;
-  }
-}
-
-.modal-actions {
-  margin-top: 20px;
-  text-align: right;
-}
-
-button {
-  margin: 15px 5px 0;
-  padding: 6px 12px;
-  background-color: #f0f0f0;
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover:not(:disabled) {
-    background-color: #e0e0e0;
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-}
 </style>

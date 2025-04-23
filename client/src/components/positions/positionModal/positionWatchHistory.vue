@@ -149,7 +149,5 @@ export default {
 };
 </script>
 
-<style lang="scss">
-@import "@/styles/base";
-
+<style lang="scss" scoped >
 </style>
