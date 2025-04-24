@@ -1,18 +1,14 @@
-const jwt = require('jsonwebtoken');
+const passport = require('../config/passport-config');
 
 module.exports = function (req, res, next) {
-  if (req.method === 'OPTIONS') {
-    next();
-  }
-  try {
-    const token = req.headers.authorization.split(' ')[1]; //Bearer afeeafsadwad
-    if (!token) {
+  passport.authenticate('jwt', { session: false }, (err, user) => {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
       return res.status(401).json({ message: 'Не авторизован' });
     }
-    const decoded = jwt.verify(token, process.env.SECRET_KEY);
-    req.user = decoded;
+    req.user = user;
     next();
-  } catch (e) {
-    res.status(401).json({ message: 'Не авторизован', error: e });
-  }
+  })(req, res, next);
 };

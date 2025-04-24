@@ -23,40 +23,90 @@ const generateJWT = (id, login, role, last_name, first_name, middle_name) => {
 };
 
 class UserController {
-  async registration(req, res) {
-    const { first_name, last_name, middle_name, login, password, role } = req.body;
+  async registration(req, res, next) {
+    try {
+      const { first_name, last_name, middle_name, login, password, role } = req.body;
 
-    const hashedPassword = await argon2.hash(password, {
-      type: argon2.argon2id,
-      memoryCost: 2 ** 16,
-      timeCost: 4,
-      parallelism: 1,
-    });
+      const hashedPassword = await argon2.hash(password, {
+        type: argon2.argon2id,
+        memoryCost: 2 ** 16,
+        timeCost: 4,
+        parallelism: 1,
+      });
 
-    const user = await User.create({
-      first_name,
-      last_name,
-      middle_name,
-      login,
-      password: hashedPassword,
-      role,
-    });
-    const token = generateJWT(user.id, user.login, user.role);
-    return res.json({ token }); //Передавать токен
+      const user = await User.create({
+        first_name,
+        last_name,
+        middle_name,
+        login,
+        password: hashedPassword,
+        role,
+      });
+
+      const token = generateJWT(user.id, user.login, user.role);
+
+      // Устанавливаем токен в куки
+      res.cookie('jwt', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 24 * 60 * 60 * 1000 // 24 часа
+      });
+
+      return res.json({
+        message: 'Регистрация успешна',
+        user: {
+          id: user.id,
+          login: user.login,
+          role: user.role,
+          last_name: user.last_name,
+          first_name: user.first_name,
+          middle_name: user.middle_name
+        }
+      });
+    } catch (error) {
+      next(ApiError.internal(error.message));
+    }
   }
 
   async login(req, res, next) {
     const { login, password } = req.body;
-    const user = await User.findOne({ where: { login } });
-    if (!user) {
-      return next(ApiError.badRequest('Пользователь не найден'));
+
+    try {
+      const user = await User.findOne({ where: { login } });
+      if (!user) {
+        return next(ApiError.badRequest('Пользователь не найден'));
+      }
+      const isValidPassword = await argon2.verify(user.password, password);
+      if (!isValidPassword) {
+        return next(ApiError.internal('Указан неверный пароль'));
+      }
+      const token = generateJWT(user.id, user.login, user.role, user.last_name, user.first_name, user.middle_name);
+
+      // Устанавливаем токен в куки
+      res.cookie('jwt', token, {
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000, // 24 часа
+      });
+
+      return res.json({
+        message: 'Авторизация успешна',
+        user: {
+          id: user.id,
+          login: user.login,
+          role: user.role,
+          last_name: user.last_name,
+          first_name: user.first_name,
+          middle_name: user.middle_name,
+        },
+      });
+    } catch (error) {
+      return next(ApiError.internal('Ошибка при авторизации', error.message));
     }
-    const isValidPassword = await argon2.verify(user.password, password);
-    if (!isValidPassword) {
-      return next(ApiError.internal('Указан неверный пароль'));
-    }
-    const token = generateJWT(user.id, user.login, user.role, user.last_name, user.first_name, user.middle_name);
-    return res.json({ token }); //Передавать токен
+  }
+
+  async logout(req, res) {
+    res.clearCookie('jwt');
+    return res.json({ message: 'Выход выполнен успешно' });
   }
 
   //Проверка токена
@@ -69,14 +119,22 @@ class UserController {
       req.user.first_name,
       req.user.middle_name
     );
+
+    // Обновляем токен в куках
+    res.cookie('jwt', token, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 24 часа
+    });
+
     return res.json({
-      token,
-      id: req.user.id,
-      login: req.user.login,
-      role: req.user.role,
-      last_name: req.user.last_name,
-      first_name: req.user.first_name,
-      middle_name: req.user.middle_name,
+      user: {
+        id: req.user.id,
+        login: req.user.login,
+        role: req.user.role,
+        last_name: req.user.last_name,
+        first_name: req.user.first_name,
+        middle_name: req.user.middle_name,
+      },
     });
   }
 

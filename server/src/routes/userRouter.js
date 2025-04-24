@@ -8,6 +8,7 @@ const checkRole = require('../middleware/checkRoleMiddleware');
 
 router.post('/registration', validate(userCreateSchema), userController.registration); // Регистрация пользователя
 router.post('/login', validate(userLoginSchema), userController.login); // Авторизация пользователя
+router.post('/logout', authMiddleware, userController.logout);
 router.get('/auth', authMiddleware, userController.check); // Проверка авторизации пользователя
 
 router.post('/create', authMiddleware, checkRole('admin'), validate(userCreateSchema), userController.createUser); // Создание нового пользователя

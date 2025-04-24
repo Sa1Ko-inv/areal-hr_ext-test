@@ -9,6 +9,8 @@ const fs = require('fs');
 const errorHandler = require('./middleware/ErrorHandlingMiddleware');
 const PORT = process.env.PORT || 7000;
 const app = express();
+const cookieParser = require('cookie-parser');
+const passport = require('passport');
 
 // Проверка папки статики и если ее нет, то создаем
 const staticDir = path.resolve(__dirname, 'static');
@@ -18,9 +20,14 @@ if (!fs.existsSync(staticDir)) {
 }
 
 // cors нужен чтобы наше приложение могло отправлять запросы на другой домен
-app.use(cors());
+app.use(cors({
+  origin: true, // Указываем домен, с которого будут приходить запросы
+  credentials: true
+}));
 // Чтобы наше приложение могло парсить json
 app.use(express.json());
+app.use(cookieParser());
+app.use(passport.initialize());
 app.use(
   fileUpload({
     limits: { fileSize: 10 * 1024 * 1024 }, // Ограничение размера файла (10MB)

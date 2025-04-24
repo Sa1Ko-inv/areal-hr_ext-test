@@ -45,17 +45,22 @@ const loginError = ref(null);
 const signIn = async () => {
   try {
     loginError.value = null;
-    const response = await login(logined.value, password.value);
-    userStore.setUser(`${response.last_name} ${response.first_name} ${response.middle_name}`);
+    const user = await login(logined.value, password.value);
+    userStore.setUser({
+      id: user.id,
+      login: user.login,
+      last_name: user.last_name,
+      first_name: user.first_name,
+      middle_name: user.middle_name
+    });
     userStore.setIsAuth(true);
-    userStore.setRole(response.role);
+    userStore.setRole(user.role);
     await router.push('/');
   } catch (error) {
-    if (error.response && error.response.data && error.response.data.errors) {
-      loginError.value = error.response.data.errors[0].message;
-      console.error('Ошибка при авторизации', error);
-    } else if (error.response.data.message) {
+    if (error.response?.data?.message) {
       loginError.value = error.response.data.message;
+    } else {
+      loginError.value = 'Произошла ошибка при авторизации';
     }
 
     console.error('Ошибка входа:', error);

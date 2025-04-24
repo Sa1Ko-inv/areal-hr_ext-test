@@ -54,8 +54,13 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach( async (to, from, next) => {
   const userStore = UserStore();
+
+  // Инициализируем хранилище перед проверкой маршрута
+  if (!userStore.initialized) {
+    await userStore.initialize();
+  }
 
   if (to.meta.requiresAuth && !userStore.isAuth) {
     console.log('[1] Требуется авторизация, но пользователь не авторизован → на логин');

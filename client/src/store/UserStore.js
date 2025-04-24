@@ -1,27 +1,26 @@
 import { defineStore } from "pinia";
+import { check, logout } from '@/http/userAPI.js';
 
 export const UserStore = defineStore("user", {
   state: () => ({
-    isAuth: localStorage.getItem('isAuth') || false, // Состояние авторизации
-    user:localStorage.getItem('user') || {}, // Данные пользователя
-    role: localStorage.getItem('role') || null, // Роль пользователя
+    isAuth: false,
+    user: {},
+    role: null,
     isLoading: false,
+    initialized: false // Добавляем флаг инициализации
   }),
   actions: {
     // Установка состояния авторизации
     setIsAuth(bool) {
       this.isAuth = bool;
-      localStorage.setItem("isAuth", bool);
     },
     // Установка данных пользователя
     setUser(user) {
       this.user = user;
-      localStorage.setItem("user", JSON.stringify(user));
     },
     // Установка роли пользователя
     setRole(role) {
       this.role = role;
-      localStorage.setItem("role", role);
     },
     // Проверка роли: администратор
     isAdmin() {
@@ -31,15 +30,33 @@ export const UserStore = defineStore("user", {
     isHRManager() {
       return this.role === "hr_manager";
     },
+    async initialize() {
+      if (this.initialized) return;
+
+      try {
+        this.setIsLoading(true);
+        const user = await check();
+        this.setUser(user);
+        this.setIsAuth(true);
+        this.setRole(user.role);
+      } catch (error) {
+        this.setIsAuth(false);
+        console.error('Ошибка при проверке авторизации:', error);
+      } finally {
+        this.setIsLoading(false);
+        this.initialized = true;
+      }
+    },
     // Выход из системы
-    logout() {
-      this.isAuth = false;
-      this.user = null;
-      this.role = null;
-      localStorage.removeItem("token");
-      localStorage.removeItem('isAuth');
-      localStorage.removeItem('user');
-      localStorage.removeItem('role');
+    async logout() {
+      try {
+        await logout();
+        this.isAuth = false;
+        this.user = {};
+        this.role = null;
+      } catch (error) {
+        console.error('Ошибка при выходе:', error);
+      }
     },
     setIsLoading(loading) {
       this.isLoading = loading;
