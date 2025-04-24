@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue';
 import MyButton from '@/components/UI/MyButton.vue';
 import { fetchDeletedUsers } from '@/http/userAPI.js';
 import MyPagination from '@/components/UI/MyPagination.vue';
+import { formatDate } from '@/utils/formatDate.js';
 
 const props = defineProps({
   cancel: {
@@ -20,21 +21,12 @@ const totalItems = ref(0);
 // Функция получение истории удаленных пользователей
 const getDeleteUser = async () => {
   try {
-    const response = await fetchDeletedUsers(currentPage.value, pageSize.value)
+    const response = await fetchDeletedUsers(currentPage.value, pageSize.value);
     deleteHistory.value = response.rows;
     totalItems.value = response.count;
   } catch (error) {
     console.error('Ошибка при получении истории удаленных пользователей:', error);
   }
-}
-
-// Функция форматирования даты
-const formatDate = (dateString) => {
-  if(!dateString) {
-    return 'N/A';
-  }
-  const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-  return new Date(dateString).toLocaleDateString('ru-RU', options);
 };
 // Функция для изменения страницы
 const changePage = (page) => {

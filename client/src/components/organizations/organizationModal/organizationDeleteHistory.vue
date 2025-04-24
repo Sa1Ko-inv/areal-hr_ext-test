@@ -39,6 +39,7 @@
 import { fetchDeletedOrganizations } from '@/http/organizationAPI.js';
 import MyPagination from '@/components/UI/MyPagination.vue';
 import MyButton from '@/components/UI/MyButton.vue';
+import { formatDate } from '@/utils/formatDate.js';
 
 export default {
   components: { MyButton, MyPagination },
@@ -57,6 +58,7 @@ export default {
     };
   },
   methods: {
+    formatDate,
     async getDeleteOrganization() {
       try {
         const response = await fetchDeletedOrganizations(
@@ -71,17 +73,6 @@ export default {
           error
         );
       }
-    },
-    formatDate(dateString) {
-      if (!dateString) return 'N/A';
-      const options = {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      };
-      return new Date(dateString).toLocaleDateString('ru-RU', options);
     },
     changePage(page) {
       this.currentPage = page;

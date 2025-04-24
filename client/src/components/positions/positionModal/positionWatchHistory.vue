@@ -71,8 +71,9 @@
 
 <script>
 import { fetchPositionHistory } from '@/http/positionAPI.js';
-import MyButton from '@/components/UI/MyButton.vue';
 import MyPagination from '@/components/UI/MyPagination.vue';
+import { formatDate } from '@/utils/formatDate.js';
+import { getOperationClass, getOperationName } from '@/utils/operationNameAndClass.js';
 
 export default {
   components: { MyPagination },
@@ -97,6 +98,9 @@ export default {
   },
 
   methods: {
+    formatDate,
+    getOperationName,
+    getOperationClass,
     async getHistoryPosition() {
       try {
         const response = await fetchPositionHistory(
@@ -113,27 +117,6 @@ export default {
     changePage(page) {
       this.currentPage = page;
       this.getHistoryPosition();
-    },
-    formatDate(dateString) {
-      if (!dateString) return '';
-      const date = new Date(dateString);
-      return date.toLocaleString('ru-RU', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-    },
-    getOperationName(type) {
-      const operations = {
-        create: 'Создание',
-        update: 'Обновление',
-      };
-      return operations[type] || type;
-    },
-    getOperationClass(type) {
-      return `operation-${type}`;
     },
   },
 

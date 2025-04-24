@@ -69,6 +69,8 @@
 import { fetchUserHistory } from '@/http/userAPI.js';
 import { computed, onMounted, ref } from 'vue';
 import MyPagination from '@/components/UI/MyPagination.vue';
+import { formatDate } from '@/utils/formatDate.js';
+import { getOperationClass, getOperationName } from '@/utils/operationNameAndClass.js';
 
 const props = defineProps({
   userId: {
@@ -95,31 +97,6 @@ const getHistory = async () => {
   } catch (error) {
     console.error('Ошибка при получении истории:', error)
   }
-}
-
-// Формат даты для отображения
-const formatDate = (dateString) => {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  return date.toLocaleDateString('ru-RU', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-}
-// Функция для получения названия операции
-const getOperationName = (type) => {
-  const operation = {
-    create: 'Создание',
-    update: 'Обновление',
-    delete: 'Удаление',
-  };
-  return operation[type] || type;
-}
-const getOperationClass = (type) => {
-  return `operation-${type}`;
 }
 // Функция для получения названия изменений
 const getFieldName = (field) => {

@@ -38,7 +38,7 @@
 import PositionItems from '@/components/positions/positionItems.vue';
 import PositionCreateForm from '@/components/positions/positionModal/positionCreateForm.vue';
 import MyModalWindow from '@/components/UI/MyModalWindow.vue';
-import PositionDeleteHistory from '@/components/positions/positionModal/PositionDeleteHistory.vue';
+import PositionDeleteHistory from '@/components/positions/positionModal/positionDeleteHistory.vue';
 import MyButton from '@/components/UI/MyButton.vue';
 import { UserStore } from '@/store/UserStore.js';
 

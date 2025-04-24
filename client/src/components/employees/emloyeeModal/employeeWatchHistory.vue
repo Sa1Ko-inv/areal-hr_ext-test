@@ -71,6 +71,8 @@
 <script>
 import { fetchEmployeeHistory } from '@/http/employeeAPI.js';
 import MyPagination from '@/components/UI/MyPagination.vue';
+import { formatDate } from '@/utils/formatDate.js';
+import { getOperationClass, getOperationName } from '@/utils/operationNameAndClass.js';
 
 export default {
   components: { MyPagination },
@@ -93,6 +95,9 @@ export default {
     };
   },
   methods: {
+    formatDate,
+    getOperationName,
+    getOperationClass,
     async getHistory() {
       try {
         const response = await fetchEmployeeHistory(
@@ -109,32 +114,6 @@ export default {
     changePage(page) {
       this.currentPage = page;
       this.getHistory();
-    },
-    formatDate(dateString) {
-      if (!dateString) return '';
-      const date = new Date(dateString);
-      return date.toLocaleString('ru-RU', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-    },
-    getOperationName(type) {
-      const operations = {
-        create: 'Создание',
-        update: 'Обновление',
-        delete: 'Удаление',
-        hire: 'Прием на работу',
-        fire: 'Увольнение',
-        department_change: 'Смена отдела',
-        salary_change: 'Изменение зарплаты',
-      };
-      return operations[type] || type;
-    },
-    getOperationClass(type) {
-      return `operation-${type}`;
     },
     getFieldName(field) {
       const fieldNames = {

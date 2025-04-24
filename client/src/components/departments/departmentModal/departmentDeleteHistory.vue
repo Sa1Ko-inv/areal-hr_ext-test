@@ -22,7 +22,7 @@
           <td>{{ entry.object_id }}</td>
           <td>{{ entry.changed_fields?.name?.old || '' }}</td>
           <td>{{ entry.changed_fields?.organization?.old || '' }}</td>
-          <td>{{ formatDate(entry.operation_date) }}</td>
+          <td>{{ formatDate(entry.operation_date) }}</td>  <!-- Изменено здесь -->
         </tr>
         </tbody>
       </table>
@@ -41,6 +41,7 @@
 import MyPagination from '@/components/UI/MyPagination.vue';
 import MyButton from '@/components/UI/MyButton.vue';
 import { fetchDeletedDepartments } from '@/http/departmentAPI.js';
+import { formatDate } from '@/utils/formatDate.js';
 
 export default {
   components: { MyButton, MyPagination },
@@ -64,6 +65,7 @@ export default {
     };
   },
   methods: {
+    formatDate,
     async getDeletedDepartments() {
       try {
         const response = await fetchDeletedDepartments(
@@ -84,17 +86,6 @@ export default {
       } catch (error) {
         console.error('Ошибка при получении истории удаления отделов:', error);
       }
-    },
-    formatDate(dateString) {
-      if (!dateString) return 'N/A';
-      const options = {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      };
-      return new Date(dateString).toLocaleDateString('ru-RU', options);
     },
     changePage(page) {
       this.currentPage = page;

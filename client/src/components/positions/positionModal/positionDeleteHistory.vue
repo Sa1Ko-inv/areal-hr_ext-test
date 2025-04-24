@@ -39,6 +39,7 @@
 import { fethcDeletedPositions } from '@/http/positionAPI.js';
 import MyButton from '@/components/UI/MyButton.vue';
 import MyPagination from '@/components/UI/MyPagination.vue';
+import { formatDate } from '@/utils/formatDate.js';
 
 export default {
   components: { MyPagination, MyButton },
@@ -58,6 +59,7 @@ export default {
   },
 
   methods: {
+    formatDate,
     async getDeletePosition() {
       try {
         const response = await fethcDeletedPositions(
@@ -69,17 +71,6 @@ export default {
       } catch (error) {
         console.error('Ошибка при получении истории увольнений:', error);
       }
-    },
-    formatDate(dateString) {
-      if (!dateString) return 'N/A';
-      const options = {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      };
-      return new Date(dateString).toLocaleDateString('ru-RU', options);
     },
     changePage(page) {
       this.currentPage = page;

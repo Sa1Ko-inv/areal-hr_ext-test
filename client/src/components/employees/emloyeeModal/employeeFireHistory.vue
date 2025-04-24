@@ -71,7 +71,8 @@
 <script>
 import { fetchFiredHistory } from '@/http/employeeAPI.js';
 import MyPagination from '@/components/UI/MyPagination.vue';
-import MyButton from '@/components/UI/MyButton.vue'; // Или используйте fetch
+import MyButton from '@/components/UI/MyButton.vue';
+import { formatDate } from '@/utils/formatDate.js';
 
 export default {
   components: { MyButton, MyPagination },
@@ -90,6 +91,7 @@ export default {
     };
   },
   methods: {
+    formatDate,
     async getFiredHistory() {
       try {
         const response = await fetchFiredHistory(
@@ -102,17 +104,6 @@ export default {
       } catch (err) {
         console.error('Ошибка при загрузке истории уволенных:', err);
       }
-    },
-    formatDate(dateString) {
-      if (!dateString) return 'N/A';
-      const options = {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      };
-      return new Date(dateString).toLocaleDateString('ru-RU', options);
     },
     changePage(page) {
       this.currentPage = page;
