@@ -133,8 +133,6 @@ export default {
 <style scoped lang="scss">
 @import "@/styles/base";
 .error-message {
-  color: $danger-color;
-  font-size: $font-size-text;
   margin-bottom: 16px;
   padding: 8px;
   background-color: rgba(211, 47, 47, 0.1);

@@ -135,10 +135,6 @@ form {
 .error-message {
   padding: 12px;
   margin-bottom: 16px;
-  background-color: #fee2e2;
-  color: #dc2626;
-  border-radius: 4px;
-  font-size: 14px;
 }
 
 .form-group {

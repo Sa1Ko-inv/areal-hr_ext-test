@@ -232,8 +232,6 @@ export default {
   }
 
   .error-message {
-    color: $danger-color;
-    font-size: $font-size-text;
     margin-bottom: 15px;
     padding: 10px;
     background-color: rgba($danger-color-dark, 0.1);

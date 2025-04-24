@@ -130,10 +130,4 @@ h4 {
   justify-content: flex-end;
   gap: 10px;
 }
-.error-message {
-  color: $danger-color;
-  margin-top: 5px;
-  font-size: $font-size-text;
-  font-weight: normal;
-}
 </style>

@@ -108,11 +108,6 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/styles/base";
-.error-message {
-  color: $danger-color;
-  font-size: $font-size-text;
-  margin-top: 8px;
-}
 form {
   max-width: 100%;
   margin: 0 auto;
@@ -129,7 +124,7 @@ form {
   }
 
   .input-form {
-    width: 740px;
+    width: 720px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -137,7 +132,7 @@ form {
   }
 
   select {
-    width: 765px;
+    width: 720px;
     padding: 8px 12px;
     font-size: $font-size-text;
     line-height: 1.5;

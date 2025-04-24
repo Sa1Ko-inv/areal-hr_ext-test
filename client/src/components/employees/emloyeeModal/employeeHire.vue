@@ -1,7 +1,7 @@
 <template>
   <form @submit.prevent="employeeHireOnWork">
     <h4>Принятие сотрудника на работу</h4>
-    <div v-if="error" class="error-message">{{ error }}</div>
+    <div v-if="hireError.general" class="error-message">{{ hireError.general }}</div>
 
     <div class="form-group">
       <label>Организация</label>
@@ -15,6 +15,7 @@
 
     <div class="form-group">
       <label>Отдел</label>
+      <div v-if="hireError.department_id" class="error-message">{{ hireError.department_id }}</div>
       <select v-model="this.hireEmployeeData.department_id">
         <option :value="null">Выберите отдел</option>
         <template v-for="dept in filteredDepartments" :key="dept.id">
@@ -34,6 +35,7 @@
 
     <div class="form-group">
       <label>Должность</label>
+      <div v-if="hireError.position_id" class="error-message">{{ hireError.position_id }}</div>
       <select v-model="this.hireEmployeeData.position_id">
         <option :value="null">Выберите должность</option>
         <option v-for="pos in positions" :key="pos.id" :value="pos.id">
@@ -44,6 +46,7 @@
 
     <div class="salary">
       <label>Зарплата</label>
+      <div v-if="hireError.salary" class="error-message">{{ hireError.salary }}</div>
       <input
         v-model.number="hireEmployeeData.salary"
         placeholder="Зарплата"
@@ -73,6 +76,10 @@ export default {
       type: Function,
       default: () => {},
     },
+    hireError: {
+      type: {},
+      default: null,
+    }
   },
   data() {
     return {
@@ -86,7 +93,6 @@ export default {
         position_id: '',
         salary: '',
       },
-      error: null,
     };
   },
   computed: {
@@ -128,7 +134,6 @@ export default {
 
     employeeHireOnWork() {
       try {
-        this.cancel();
         this.$emit('hireEmployee', this.hireEmployeeData);
         this.hireEmployeeData = {
           employee_id: this.employeeId,
@@ -152,18 +157,6 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/styles/base";
-$primary-color: #792ec9;
-$primary-color-dark: #6525a7;
-$border-color: #e0e0e0;
-$text-color-primary: #333;
-$text-color-secondary: #666;
-$background-color-light: #fff;
-$error-color: #dc3545;
-$success-color: #28a745;
-$border-radius: 8px;
-$box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-$transition-duration: 0.2s;
-$input-padding: 10px 15px;
 
 form {
   max-width: 650px;
@@ -179,14 +172,6 @@ form {
   }
 }
 
-.error-message {
-  color: $error-color;
-  background-color: rgba($error-color, 0.1);
-  padding: 10px 15px;
-  border-radius: $border-radius;
-  margin-bottom: 20px;
-  text-align: center;
-}
 
 .form-group,
 .salary {

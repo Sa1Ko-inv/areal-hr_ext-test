@@ -105,10 +105,8 @@ const signIn = async () => {
 }
 
 .error-message {
-  color: $danger-color;
   text-align: center;
   margin-bottom: 15px;
-  font-size: $font-size-text;
 }
 
 </style>

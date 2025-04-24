@@ -87,13 +87,11 @@ form {
 }
 
 .error-message {
-  color: $danger-color;
   background-color: rgba($danger-color, 0.1);
   padding: 10px 15px;
   border-radius: $border-radius;
   margin-bottom: 20px;
   text-align: center;
-  font-size: $font-size-text;
 }
 
 .input-form {

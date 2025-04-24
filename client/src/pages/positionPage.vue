@@ -43,8 +43,8 @@ export default {
       } catch (error) {
         if (error.response && error.response.data && error.response.data.errors) {
           error.response.data.errors.forEach(err => {
-            if (err.fields && Object.prototype.hasOwnProperty.call(this.createError, err.fields)) {
-              this.createError[err.fields] = err.message;
+            if (err.field && Object.prototype.hasOwnProperty.call(this.createError, err.field)) {
+              this.createError[err.field] = err.message;
             } else {
               this.createError.general = err.message;
             }

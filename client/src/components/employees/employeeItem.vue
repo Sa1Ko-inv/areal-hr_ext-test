@@ -24,14 +24,14 @@ MyB
               <div class="info-item">
                 <strong class="info-item__key">Должность:</strong>
                 <span class="info-item__value">{{
-                  hrInfo.position || 'Не указана'
-                }}</span>
+                    hrInfo.position || 'Не указана'
+                  }}</span>
               </div>
               <div class="info-item">
                 <strong class="info-item__key">Отдел:</strong>
                 <span class="info-item__value">{{
-                  hrInfo.department || 'Не указан'
-                }}</span>
+                    hrInfo.department || 'Не указан'
+                  }}</span>
               </div>
               <div class="info-item">
                 <strong class="info-item__key">Зарплата:</strong>
@@ -40,7 +40,7 @@ MyB
             </template>
             <div v-else class="info-item info-item--status">
               <span class="info-item__value"
-                >Сотрудник не принят на работу</span
+              >Сотрудник не принят на работу</span
               >
             </div>
           </div>
@@ -57,32 +57,32 @@ MyB
             <div class="info-item">
               <strong class="info-item__key">Серия:</strong>
               <span class="info-item__value">{{
-                employee.passport.series
-              }}</span>
+                  employee.passport.series
+                }}</span>
             </div>
             <div class="info-item">
               <strong class="info-item__key">Номер:</strong>
               <span class="info-item__value">{{
-                employee.passport.number
-              }}</span>
+                  employee.passport.number
+                }}</span>
             </div>
             <div class="info-item">
               <strong class="info-item__key">Кем выдан:</strong>
               <span class="info-item__value">{{
-                employee.passport.issued_by
-              }}</span>
+                  employee.passport.issued_by
+                }}</span>
             </div>
             <div class="info-item">
               <strong class="info-item__key">Дата выдачи:</strong>
               <span class="info-item__value">{{
-                employee.passport.issued_date
-              }}</span>
+                  employee.passport.issued_date
+                }}</span>
             </div>
             <div class="info-item">
               <strong class="info-item__key">Код подразделения:</strong>
               <span class="info-item__value">{{
-                employee.passport.division_code
-              }}</span>
+                  employee.passport.division_code
+                }}</span>
             </div>
           </div>
           <div v-else class="info-item info-item--status">
@@ -98,20 +98,20 @@ MyB
             <div class="info-item">
               <strong class="info-item__key">Регион:</strong>
               <span class="info-item__value">{{
-                employee.address.region
-              }}</span>
+                  employee.address.region
+                }}</span>
             </div>
             <div class="info-item">
               <strong class="info-item__key">Населенный пункт:</strong>
               <span class="info-item__value">{{
-                employee.address.locality
-              }}</span>
+                  employee.address.locality
+                }}</span>
             </div>
             <div class="info-item">
               <strong class="info-item__key">Улица:</strong>
               <span class="info-item__value">{{
-                employee.address.street
-              }}</span>
+                  employee.address.street
+                }}</span>
             </div>
             <div class="info-item">
               <strong class="info-item__key">Дом:</strong>
@@ -120,14 +120,14 @@ MyB
             <div class="info-item">
               <strong class="info-item__key">Корпус:</strong>
               <span class="info-item__value">{{
-                employee.address.building || '-'
-              }}</span>
+                  employee.address.building || '-'
+                }}</span>
             </div>
             <div class="info-item">
               <strong class="info-item__key">Квартира:</strong>
               <span class="info-item__value">{{
-                employee.address.apartment || '-'
-              }}</span>
+                  employee.address.apartment || '-'
+                }}</span>
             </div>
           </div>
           <div v-else class="info-item info-item--status">
@@ -137,9 +137,15 @@ MyB
       </section>
     </div>
     <div class="employee-card__actions">
-      <MyButton style="background-color: #28a745; color: white; border: #28a745" v-if="!hrInfo || hrInfo.status !== 'hired'" @click="showHireDialog">Принять на работу</MyButton>
-      <MyButton modifier="edit" v-if="hrInfo && hrInfo.status === 'hired'" @click="showChangeSalaryDialog">Изменить зарплату</MyButton>
-      <MyButton modifier="edit" v-if="hrInfo && hrInfo.status === 'hired'" @click="showChangeDepartmentDialog">Изменить отдел</MyButton>
+      <MyButton style="background-color: #28a745; color: white; border: #28a745"
+                v-if="!hrInfo || hrInfo.status !== 'hired'" @click="showHireDialog">Принять на работу
+      </MyButton>
+      <MyButton modifier="edit" v-if="hrInfo && hrInfo.status === 'hired'" @click="showChangeSalaryDialog">Изменить
+        зарплату
+      </MyButton>
+      <MyButton modifier="edit" v-if="hrInfo && hrInfo.status === 'hired'" @click="showChangeDepartmentDialog">Изменить
+        отдел
+      </MyButton>
       <MyButton modifier="edit" @click="showEditDialog">Редактировать</MyButton>
       <MyButton modifier="showHistory" @click="showFilesDialog">Просмотреть файлы</MyButton>
       <MyButton modifier="showHistory" @click="showHistoryDialog">История</MyButton>
@@ -180,6 +186,7 @@ MyB
     <MyModalWindow v-model:show="dialogVisibleHire">
       <EmployeeHire
         :employeeId="employee.id"
+        :hireError="hireError"
         :cancel="cancelModal"
         @hireEmployee="handleHireEmployee"
       />
@@ -244,7 +251,13 @@ export default {
       dialogVisibleHistory: false,
       dialogVisibleEdit: false,
       hrInfo: null, // Инициализировано как null для лучшей обработки состояния загрузки
-      localEmployee: {...this.employee},
+      localEmployee: { ...this.employee },
+      hireError: {
+        department_id: null,
+        position_id: null,
+        salary: null,
+        general: null,
+      },
     };
   },
   methods: {
@@ -256,6 +269,7 @@ export default {
       this.dialogVisibleDepartment = true;
     },
     showHireDialog() {
+      this.hireError = { department_id: null, position_id: null, salary: null, general: null, };
       this.dialogVisibleHire = true;
     },
     showChangeSalaryDialog() {
@@ -291,11 +305,20 @@ export default {
     // Принятие на работу
     async handleHireEmployee(hireEmployeeData) {
       try {
+        this.hireError = { department_id: null, position_id: null, salary: null, general: null, };
         await hireEmployee(hireEmployeeData);
         await this.loadHRInfo();
         this.dialogVisibleHire = false;
       } catch (error) {
-        console.error('Ошибка при принятии на работу:', error);
+        if (error.response && error.response.data && error.response.data.errors) {
+          error.response.data.errors.forEach(err => {
+            if (err.field && Object.prototype.hasOwnProperty.call(this.hireError, err.field)) {
+              this.hireError[err.field] = err.message;
+            } else {
+              this.hireError.general = err.message;
+            }
+          });
+        }
       }
     },
     // Загрузка HR информации
@@ -332,7 +355,7 @@ export default {
     // Обработка события удаления файла
     async handleFileDeleted(fileId) {
       this.localEmployee.files = this.localEmployee.files.filter(
-        (file) => file.id !== fileId
+        (file) => file.id !== fileId,
       );
       // Уведомляем родительский компонент об обновлении
       this.$emit('update', { ...this.localEmployee });
@@ -353,6 +376,7 @@ export default {
 
 <style scoped lang="scss">
 @import "@/styles/base";
+
 $section-gap: 20px;
 $item-gap: 12px;
 
@@ -375,7 +399,7 @@ $item-gap: 12px;
     @media (min-width: 768px) {
       grid-template-columns: repeat(
         2,
-        1fr
+          1fr
       ); // Две колонки на экранах шире 768px
     }
   }

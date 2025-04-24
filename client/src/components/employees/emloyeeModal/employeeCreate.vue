@@ -415,7 +415,7 @@ export default {
 .section-title {
   color: $primary-color-dark;
   font-size: $font-size-title;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   font-weight: 500;
   padding-left: 0.5rem;
   border-left: 3px solid $primary-color;
@@ -429,14 +429,6 @@ export default {
   border: 1px solid $border-color;
 }
 
-// Form groups
-//.form-group {
-//  margin-bottom: 1rem;
-//
-//  &:last-child {
-//    margin-bottom: 0;
-//  }
-//}
 
 .form-row {
   display: flex;
@@ -457,13 +449,6 @@ export default {
   flex: 1;
 }
 
-// Form elements
-//label {
-//  display: block;
-//  margin-bottom: 0.5rem;
-//  font-weight: 500;
-//  color: $text-color-primary;
-//}
 
 // Buttons
 .form-actions {
@@ -471,19 +456,6 @@ export default {
   justify-content: center;
   gap: 1rem;
   margin-top: 1rem;
-}
-
-
-// Error message styles
-.error-message {
-  color: $danger-color;
-  font-size: 0.8rem;
-  margin-top: 0.25rem;
-  margin-bottom: 0.5rem;
-  padding: 0.25rem 0.5rem;
-  background-color: rgba($danger-color, 0.05);
-  border-radius: 3px;
-  display: inline-block;
 }
 
 // Form group adjustments
@@ -505,8 +477,6 @@ export default {
     margin: 0;
     background: none;
     padding: 0;
-    color: $danger-color;
-    font-size: $font-size-text;
   }
 }
 

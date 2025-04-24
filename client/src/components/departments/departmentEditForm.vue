@@ -188,11 +188,6 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/styles/base";
-.error-message {
-  color: $danger-color;
-  font-size: $font-size-text;
-  margin-top: 8px;
-}
 form {
   max-width: 100%;
   margin: 0 auto;

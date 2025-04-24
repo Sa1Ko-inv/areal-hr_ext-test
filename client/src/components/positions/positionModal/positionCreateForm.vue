@@ -36,11 +36,9 @@ export default {
   <form @submit.prevent="createPosition">
     <h4>Создание должности</h4>
     <!-- Отображение общей ошибки -->
-    <div v-if="error.general" class="general-error">{{ error.general }}</div>
+    <div v-if="error.name" class="error-message">{{ error.name }}</div>
 
     <div class="form-group">
-      <!-- Отображение ошибки для поля name -->
-      <div v-if="error.name" class="error-message">{{ error.name }}</div>
       <MyInput
         size="medium"
         v-model.number="position.name"
@@ -80,20 +78,6 @@ form {
     gap: 10px;
     margin-top: 10px;
   }
-}
-
-.error-message {
-  color: $danger-color;
-  font-size: $font-size-text;
-  margin-top: 4px;
-}
-
-.general-error {
-  color: $danger-color;
-  padding: 8px 12px;
-  border-radius: $border-radius;
-  margin-bottom: 16px;
-  border-left: 3px solid $danger-color;
 }
 .form-actions {
   padding-top: 15px;
