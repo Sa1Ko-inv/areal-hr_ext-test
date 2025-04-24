@@ -27,7 +27,7 @@ module.exports = {
 
   async down(queryInterface) {
     await queryInterface.bulkDelete('users', {
-      login: 'ADMIN',
+      login: process.env.LOGIN,
     });
   },
 };
