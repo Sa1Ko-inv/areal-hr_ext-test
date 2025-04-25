@@ -156,9 +156,5 @@ form {
   margin-top: 32px;
   padding-top: 24px;
   border-top: 1px solid #eee;
-
-  button {
-    min-width: 120px;
-  }
 }
 </style>

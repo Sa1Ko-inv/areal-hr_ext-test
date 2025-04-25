@@ -2,7 +2,9 @@
   <div class="history-modal">
     <div class="history-header">
       <h3>История отдела</h3>
-      <button class="close-btn" @click="close">×</button>
+      <div>
+        <MyButton style="background-color: white" modifier="cancel" class="close-btn" @click="cancel">×</MyButton>
+      </div>
     </div>
     <div class="history-content">
       <div v-if="history.length === 0" class="no-history">
@@ -70,9 +72,10 @@ import { fetchDepartmentHistory } from '@/http/departmentAPI.js';
 import MyPagination from '@/components/UI/MyPagination.vue';
 import { formatDate } from '@/utils/formatDate.js';
 import { getOperationClass, getOperationName } from '@/utils/operationNameAndClass.js';
+import MyButton from '@/components/UI/MyButton.vue';
 
 export default {
-  components: { MyPagination },
+  components: { MyButton, MyPagination },
   props: {
     department: {
       type: Object,

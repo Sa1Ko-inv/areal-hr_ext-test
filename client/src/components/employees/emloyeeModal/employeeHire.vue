@@ -5,49 +5,42 @@
 
     <div class="form-group">
       <label>Организация</label>
-      <select v-model="selectedOrganizationId">
-        <option :value="null">Выберите организацию</option>
-        <option v-for="org in organizations" :key="org.id" :value="org.id">
-          {{ org.name }}
-        </option>
-      </select>
+      <MySelect
+        style="width: 720px"
+      placeholder="Выберите организацию для сортировки"
+      v-model="selectedOrganizationId"
+      :options="organizationOptions"
+      />
     </div>
 
     <div class="form-group">
       <label>Отдел</label>
       <div v-if="hireError.department_id" class="error-message">{{ hireError.department_id }}</div>
-      <select v-model="this.hireEmployeeData.department_id">
-        <option :value="null">Выберите отдел</option>
-        <template v-for="dept in filteredDepartments" :key="dept.id">
-          <option :value="dept.id">
-            {{ dept.name }}
-          </option>
-          <option
-            v-for="child in dept.children"
-            :key="child.id"
-            :value="child.id"
-          >
-            — {{ child.name }}
-          </option>
-        </template>
-      </select>
+      <MySelect
+        style="width: 720px"
+        v-model="hireEmployeeData.department_id"
+        placeholder="Выберите отдел"
+        :options="departmentOptions"
+      />
     </div>
 
     <div class="form-group">
       <label>Должность</label>
       <div v-if="hireError.position_id" class="error-message">{{ hireError.position_id }}</div>
-      <select v-model="this.hireEmployeeData.position_id">
-        <option :value="null">Выберите должность</option>
-        <option v-for="pos in positions" :key="pos.id" :value="pos.id">
-          {{ pos.name }}
-        </option>
-      </select>
+      <MySelect
+        style="width: 720px"
+        v-model="hireEmployeeData.position_id"
+        placeholder="Выберите должность"
+        :options="positionOptions"
+      />
     </div>
 
     <div class="salary">
       <label>Зарплата</label>
       <div v-if="hireError.salary" class="error-message">{{ hireError.salary }}</div>
-      <input
+      <MyInput
+        size="medium"
+        style="font-size: 15px;"
         v-model.number="hireEmployeeData.salary"
         placeholder="Зарплата"
         type="text"
@@ -55,8 +48,8 @@
     </div>
 
     <div class="form-actions">
-      <button type="submit">Сохранить</button>
-      <button type="button" @click="cancel">Отмена</button>
+      <MyButton type="submit">Сохранить</MyButton>
+      <MyButton modifier="cancel" type="button" @click="cancel">Отмена</MyButton>
     </div>
   </form>
 </template>
@@ -65,8 +58,12 @@
 import { fetchOrganizations } from '@/http/organizationAPI.js';
 import { fetchDepartments } from '@/http/departmentAPI.js';
 import { fetchPositions } from '@/http/positionAPI.js';
+import MySelect from '@/components/UI/MySelect.vue';
+import MyButton from '@/components/UI/MyButton.vue';
+import MyInput from '@/components/UI/MyInput.vue';
 
 export default {
+  components: { MyInput, MyButton, MySelect },
   props: {
     employeeId: {
       type: [Number, String],
@@ -101,9 +98,43 @@ export default {
         return this.departments;
       }
       return this.departments.filter(
-        (dept) => dept.organization_id === this.selectedOrganizationId
+        (dept) => dept.organization_id === Number(this.selectedOrganizationId)
       );
     },
+    organizationOptions() {
+      return [
+        ...this.organizations.map(org => ({
+          value: org.id,
+          name: org.name
+        }))
+      ];
+    },
+    departmentOptions() {
+      const options = [];
+
+      // Добавим проверку на наличие filteredDepartments
+      if (this.filteredDepartments && this.filteredDepartments.length) {
+        this.filteredDepartments.forEach(dept => {
+          options.push({ value: dept.id, name: dept.name, disabled: true});
+
+          if (dept.children && dept.children.length) {
+            dept.children.forEach(child => {
+              options.push({ value: child.id, name: `— ${child.name}` , disabled: false });
+            });
+          }
+        });
+      }
+
+      return options;
+    },
+    positionOptions() {
+      return [
+        ...this.positions.map(pos => ({
+          value: pos.id,
+          name: pos.name
+        }))
+      ];
+    }
   },
   methods: {
     async loadOrganizations() {
@@ -159,7 +190,7 @@ export default {
 @import "@/styles/base";
 
 form {
-  max-width: 650px;
+  max-width: 100%;
   margin: 0 auto;
   padding: 20px;
   font-family: 'Arial', sans-serif;
@@ -183,102 +214,12 @@ form {
     font-weight: 600;
     color: $text-color-primary;
   }
-
-  select {
-    width: 650px;
-    padding: $input-padding;
-    font-size: 1rem;
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
-    background-color: $background-color-light;
-    transition:
-      border-color $transition-duration,
-      box-shadow $transition-duration;
-
-    &:focus {
-      outline: none;
-      border-color: $primary-color;
-      box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
-    }
-  }
-  input {
-    width: 620px;
-    padding: $input-padding;
-    font-size: 1rem;
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
-    background-color: $background-color-light;
-    transition:
-      border-color $transition-duration,
-      box-shadow $transition-duration;
-
-    &:focus {
-      outline: none;
-      border-color: $primary-color;
-      box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
-    }
-  }
-  select {
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23333' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    background-size: 16px 12px;
-  }
 }
 
 .form-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 15px;
   margin-top: 30px;
-
-  button {
-    padding: $button-padding;
-    border: none;
-    border-radius: $border-radius;
-    font-weight: 500;
-    cursor: pointer;
-    transition:
-      background-color $transition-duration,
-      transform 0.1s;
-
-    &:first-child {
-      background-color: $primary-color;
-      color: white;
-
-      &:hover {
-        background-color: $primary-color-dark;
-      }
-    }
-
-    &:last-child {
-      background-color: transparent;
-      color: $text-color-secondary;
-      border: 1px solid $border-color;
-
-      &:hover {
-        background-color: #f5f5f5;
-      }
-    }
-
-    &:active {
-      transform: translateY(1px);
-    }
-  }
-}
-
-option {
-  padding: 8px;
-
-  &[disabled] {
-    color: $text-color-secondary;
-  }
-}
-
-option:not([disabled]) {
-  &:hover {
-    background-color: rgba($primary-color, 0.1) !important;
-  }
 }
 </style>

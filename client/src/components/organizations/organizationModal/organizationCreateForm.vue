@@ -72,7 +72,7 @@ export default {
 }
 
 .form-group {
-  width: 770px;
+  width: 760px;
   margin-bottom: 15px;
   color: $primary-color;
   font-weight: bold;
@@ -86,7 +86,7 @@ export default {
 }
 
 .form-textarea {
-  width: 780px;
+  width: 760px;
   padding: 8px 5px;
   height: 100px;
   border: 1px solid $primary-color;

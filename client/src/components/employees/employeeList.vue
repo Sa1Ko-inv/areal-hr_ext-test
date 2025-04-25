@@ -189,10 +189,7 @@ $section-gap: 20px;
     font-size: $font-size-title;
   }
 
-  button {
-    padding: $button-padding;
-    margin-bottom: 15px;
-  }
+
 }
 
 .search-container {

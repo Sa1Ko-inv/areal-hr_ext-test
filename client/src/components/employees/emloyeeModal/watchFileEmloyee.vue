@@ -2,7 +2,9 @@
   <div class="file-manager">
     <div class="file-header">
       <h3>Файлы сотрудника</h3>
-      <button class="close-btn" @click="cancel">×</button>
+      <div>
+        <MyButton style="background-color: white" modifier="cancel" class="close-btn" @click="cancel">×</MyButton>
+      </div>
     </div>
 
     <!-- Секция загрузки файлов -->
@@ -34,7 +36,8 @@
         >
           <span class="file-name">{{ file.name }}</span>
           <MyButton @click="removeSelectedFile(index)" class="remove-file-btn"
-            >×</MyButton
+          >×
+          </MyButton
           >
         </div>
       </div>
@@ -80,8 +83,8 @@
             <!-- Для других типов файлов показываем иконку -->
             <div v-else class="file-icon">
               <span class="file-extension">{{
-                getFileExtension(file.name)
-              }}</span>
+                  getFileExtension(file.name)
+                }}</span>
             </div>
           </div>
 
@@ -275,7 +278,7 @@ export default {
 
         // Удаляем файл из локальной копии
         this.localFiles = this.localFiles.filter(
-          (file) => file.id !== this.fileToDelete.id
+          (file) => file.id !== this.fileToDelete.id,
         );
 
         // Уведомляем родительский компонент об удалении файла
@@ -294,6 +297,7 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/styles/base";
+
 .file-manager {
   padding: 20px;
   background-color: $background-color-light;
@@ -433,9 +437,8 @@ h4 {
   border-radius: $border-radius;
   overflow: hidden;
   background-color: $background-color-light;
-  transition:
-    transform 0.2s,
-    box-shadow 0.2s;
+  transition: transform 0.2s,
+  box-shadow 0.2s;
 }
 
 .file-card:hover {

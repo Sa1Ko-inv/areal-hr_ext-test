@@ -190,7 +190,7 @@ export default {
     }
 
     &-textarea {
-      width: 960px;
+      width: 920px;
       padding: 8px 5px;
       border: 1px solid $primary-color;
       border-radius: $border-radius;

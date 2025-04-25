@@ -1,7 +1,11 @@
 <template>
   <select :value="modelValue" class="form-select" @change="changeOption">
     <option disabled value="" v-if="placeholder">{{placeholder}}</option>
-    <option v-for="option in options" :key="option.value" :value="option.value">
+    <option
+      v-for="option in options"
+      :key="option.value"
+      :value="option.value === null ? 'null' : option.value"
+      :disabled="option.disabled">
       {{ option.name }}
     </option>
   </select>
@@ -29,8 +33,20 @@ export default {
   },
   methods: {
     changeOption(event) {
-      this.$emit('update:modelValue', event.target.value);
-    },
+      const selectedValue = event.target.value;
+      let parsedValue;
+
+      if (selectedValue === 'null') {
+        parsedValue = null;
+      } else if (!isNaN(selectedValue)) {
+        parsedValue = Number(selectedValue);
+      } else {
+        parsedValue = selectedValue;
+      }
+
+      this.$emit('update:modelValue', parsedValue);
+    }
+
   },
 };
 </script>
@@ -38,7 +54,7 @@ export default {
 <style lang="scss" scoped>
 @import "@/styles/base";
 .form-select {
-  width: calc(100% + 25px);
+  width: 100%;
   padding: 10px 15px;
   font-size: $font-size-text;
   line-height: 1.5;

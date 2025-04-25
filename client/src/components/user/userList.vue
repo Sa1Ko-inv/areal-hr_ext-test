@@ -88,13 +88,13 @@ const deleteUser = async (id) => {
         class="search-input"
         @input="debounceSearch"
       />
-      <button
+      <MyButton
         v-if="searchQuery"
         @click="clearSearch"
         class="search-button clear-button"
       >
         ✕
-      </button>
+      </MyButton>
     </div>
 
     <div class="userList__items">
@@ -140,12 +140,12 @@ h3 {
 }
 .search-container {
   position: relative;
-  max-width: 100%;
+  width: 1500px;
   margin-bottom: 20px;
 
   .search-button {
     position: absolute;
-    right: -15px;
+    right: 5px;
     top: 50%;
     transform: translateY(-50%);
     background: none;

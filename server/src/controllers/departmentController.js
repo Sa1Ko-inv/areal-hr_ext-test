@@ -137,7 +137,7 @@ class DepartmentController {
           if (!newOrganizationId) {
             await transaction.rollback();
             return res.status(400).json({
-              error: 'При удалении родительского отдела необходимо указать organization_id',
+              error: 'При изменении дочернего отдела на родительский необходимо указать organization_id',
             });
           }
 

@@ -179,10 +179,5 @@ export default {
       text-decoration: underline;
     }
   }
-
-  button {
-    display: inline-block;
-    padding: 10px 20px;
-  }
 }
 </style>

@@ -85,6 +85,9 @@ module.exports = {
       await queryInterface.bulkDelete('passports', {
         employee_id: empId
       });
+      await queryInterface.bulkDelete('employees', [{
+        id: empId
+      }])
     }
 
     // await queryInterface.bulkDelete('addresses', [

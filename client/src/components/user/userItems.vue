@@ -152,10 +152,6 @@ const userUpdated = () => {
     flex-direction: column;
     gap: 8px;
     min-width: 140px;
-
-    button {
-      width: 100%;
-    }
   }
 }
 </style>

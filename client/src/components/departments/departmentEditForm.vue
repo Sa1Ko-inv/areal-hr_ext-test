@@ -16,25 +16,23 @@
         type="text"
       />
     </div>
-    <select
-      v-model="editDepartment.organization_id"
-      @change="filterDepartments"
-    >
-      <option :value="null">Выберите организацию</option>
-      <option v-for="org in organizations" :key="org.id" :value="org.id">
-        {{ org.name }}
-      </option>
-    </select>
-    <select v-model="editDepartment.parent_id">
-      <option :value="null">Без родительского отдела</option>
-      <option
-        v-for="dept in filteredDepartments"
-        :key="dept.id"
-        :value="dept.id"
-      >
-        {{ dept.name }} ({{ getOrganizationName(dept.organization_id) }})
-      </option>
-    </select>
+
+    <div class="input-form">
+      <MySelect
+        v-model="editDepartment.organization_id"
+        placeholder="Выберите организацию"
+        :options="organizationOptions"
+        @change="filterDepartments"
+      />
+
+      <MySelect
+        placeholder="Выберите родительский отдел"
+        v-model="editDepartment.parent_id"
+        :options="parentDepartmentOptions"
+      />
+    </div>
+
+
     <div class="">
       <MyButton modifier="edit" type="submit">Редактировать отдел</MyButton>
       <MyButton modifier="cancel" type="button" @click="cancel">Отмена</MyButton>
@@ -46,9 +44,10 @@
 import { fetchDepartments, updateDepartment } from '@/http/departmentAPI.js';
 import MyInput from '@/components/UI/MyInput.vue';
 import MyButton from '@/components/UI/MyButton.vue';
+import MySelect from '@/components/UI/MySelect.vue';
 
 export default {
-  components: { MyButton, MyInput },
+  components: { MyButton, MyInput, MySelect },
   props: {
     cancel: {
       type: Function,
@@ -80,6 +79,25 @@ export default {
       updateError: null, // Добавляем состояние для ошибки обновления
       updatingDepartmentId: null, // Для отслеживания какой отдела показывать ошибку
     };
+  },
+  computed: {
+    organizationOptions() {
+      return [
+        ...this.organizations.map(org => ({
+          value: org.id,
+          name: org.name
+        }))
+      ];
+    },
+    parentDepartmentOptions() {
+      return [
+        { value: null, name: 'Без родительского отдела' },
+        ...this.filteredDepartments.map(dept => ({
+          value: dept.id,
+          name: `${dept.name} (${this.getOrganizationName(dept.organization_id)})`
+        }))
+      ];
+    }
   },
   methods: {
     async getDepartments() {
@@ -204,76 +222,11 @@ form {
   }
 
   .input-form {
-    width: 735px;
+    width: 715px;
     display: flex;
     flex-direction: column;
     gap: 10px;
     margin-bottom: 20px;
-  }
-  select {
-    width: 100%;
-    padding: 10px 12px;
-    margin-bottom: 15px;
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
-    font-size: $font-size-text;
-    transition: border-color 0.3s;
-
-    &:focus {
-      outline: none;
-      border-color: $primary-color;
-      box-shadow: 0 0 0 2px $primary-color-dark;
-    }
-
-    &::placeholder {
-      color: #aaa;
-    }
-  }
-
-  select {
-    width: 100%;
-    padding: 10px 15px;
-    font-size: 1rem;
-    line-height: 1.5;
-    color: $text-color-primary;
-    background-color: $background-color-light;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23333' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    background-size: 16px 12px;
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
-    appearance: none;
-    transition:
-      border-color $transition-duration ease-in-out,
-      box-shadow $transition-duration ease-in-out;
-
-    &:focus {
-      outline: none;
-      border-color: $primary-color;
-      box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
-    }
-
-    &:disabled {
-      background-color: #f5f5f5;
-      color: $text-color-secondary;
-      cursor: not-allowed;
-    }
-
-    option {
-      padding: 8px;
-      color: $text-color-primary;
-
-      &[disabled] {
-        color: $text-color-secondary;
-      }
-    }
-
-    option:not([disabled]) {
-      &:hover {
-        background-color: rgba($primary-color, 0.1);
-      }
-    }
   }
 
   div {
