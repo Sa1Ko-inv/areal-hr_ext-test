@@ -132,6 +132,7 @@ export default {
         salary: 'Зарплата',
         hire_date: 'Дата приема',
         fire_date: 'Дата увольнения',
+        status: 'Статус',
       };
       return fieldNames[field] || field;
     },

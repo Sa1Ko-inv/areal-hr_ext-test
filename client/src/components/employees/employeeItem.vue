@@ -1,4 +1,3 @@
-MyB
 <template>
   <div class="employee-card">
     <div class="employee-card__sections">
@@ -8,7 +7,7 @@ MyB
           <div class="info-item">
             <strong class="info-item__key">ФИО:</strong>
             <span class="info-item__value">
-              {{ employee.last_name }} {{ employee.first_name }} {{ employee.middle_name }}</span>
+              {{employee.id}}{{ employee.last_name }} {{ employee.first_name }} {{ employee.middle_name }}</span>
           </div>
           <div class="info-item">
             <strong class="info-item__key">Дата рождения:</strong>
@@ -35,6 +34,23 @@ MyB
               </div>
               <div class="info-item">
                 <strong class="info-item__key">Зарплата:</strong>
+                <span class="info-item__value">{{ hrInfo.salary }} руб.</span>
+              </div>
+            </template>
+            <template v-else-if="hrInfo.status === 'fired'">
+              <div class="info-item info-item--status">
+                <span class="info-item__value" style="color: red">Сотрудник уволен</span>
+              </div>
+              <div class="info-item">
+                <strong class="info-item__key">Последняя должность:</strong>
+                <span class="info-item__value">{{ hrInfo.position || 'Не указана' }}</span>
+              </div>
+              <div class="info-item">
+                <strong class="info-item__key">Последний отдел:</strong>
+                <span class="info-item__value">{{ hrInfo.department || 'Не указан' }}</span>
+              </div>
+              <div class="info-item">
+                <strong class="info-item__key">Последняя зарплата:</strong>
                 <span class="info-item__value">{{ hrInfo.salary }} руб.</span>
               </div>
             </template>
@@ -137,19 +153,44 @@ MyB
       </section>
     </div>
     <div class="employee-card__actions">
-      <MyButton style="background-color: #28a745; color: white; border: #28a745"
-                v-if="!hrInfo || hrInfo.status !== 'hired'" @click="showHireDialog">Принять на работу
+      <MyButton
+        style="background-color: #28a745; color: white; border: #28a745"
+        v-if="hrInfo && hrInfo.status === 'fired'"
+        @click="showHireDialog"
+      >
+        Принять на работу
       </MyButton>
-      <MyButton modifier="edit" v-if="hrInfo && hrInfo.status === 'hired'" @click="showChangeSalaryDialog">Изменить
-        зарплату
+      <MyButton
+        style="background-color: #28a745; color: white; border: #28a745"
+        v-if="!hrInfo || hrInfo.status === 'not_hired'"
+        @click="showHireDialog"
+      >
+        Принять на работу
       </MyButton>
-      <MyButton modifier="edit" v-if="hrInfo && hrInfo.status === 'hired'" @click="showChangeDepartmentDialog">Изменить
-        отдел
+      <MyButton
+        modifier="edit"
+        v-if="hrInfo && hrInfo.status === 'hired'"
+        @click="showChangeSalaryDialog"
+      >
+        Изменить зарплату
+      </MyButton>
+      <MyButton
+        modifier="edit"
+        v-if="hrInfo && hrInfo.status === 'hired'"
+        @click="showChangeDepartmentDialog"
+      >
+        Изменить отдел
       </MyButton>
       <MyButton modifier="edit" @click="showEditDialog">Редактировать</MyButton>
       <MyButton modifier="showHistory" @click="showFilesDialog">Просмотреть файлы</MyButton>
       <MyButton modifier="showHistory" @click="showHistoryDialog">История</MyButton>
-      <MyButton modifier="delete" v-if="hrInfo && hrInfo.status === 'hired'" @click="fire_Employee">Уволить</MyButton>
+      <MyButton
+        modifier="delete"
+        v-if="hrInfo && hrInfo.status === 'hired'"
+        @click="fire_Employee"
+      >
+        Уволить
+      </MyButton>
     </div>
 
     <!--Модальное окно просмотра файлов сотрудника-->

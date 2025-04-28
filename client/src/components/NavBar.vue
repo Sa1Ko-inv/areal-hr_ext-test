@@ -4,11 +4,10 @@ import {
   MAIN_ROUTE,
   ORGANIZATION_ROUTE, LOGIN_ROUTE, USER_ROUTER,
 } from '@/utils/consts.js';
-import {UserStore} from "@/store/UserStore.js";
+import { UserStore } from '@/store/UserStore.js';
 
 export default {
-  methods: {
-  },
+  methods: {},
   data() {
     return {
       userStore: UserStore(),
@@ -22,20 +21,14 @@ export default {
 
 <template>
   <nav class="navbar">
-    <div class="navbar__brand">
-      <router-link :to="MAIN_ROUTE" class="navbar__home-link"
-        >На главную</router-link
-      >
-    </div>
     <div class="navbar__menu">
-      <router-link :to="ORGANIZATION_ROUTE" class="navbar__link"
-        >Организации</router-link
-      >
-      <router-link :to="POSITION_ROUTE" class="navbar__link"
-        >Должности</router-link
-      >
-      <router-link v-if="this.userStore.role === 'admin'" :to="USER_ROUTER" class="navbar__link"
-        >Пользователи</router-link>
+      <div class="navbar__link">
+        <router-link :to="MAIN_ROUTE" class="navbar__home-link">Сотрудники</router-link>
+      </div>
+      <router-link :to="ORGANIZATION_ROUTE" class="navbar__link">Организации</router-link>
+      <router-link :to="POSITION_ROUTE" class="navbar__link">Должности</router-link>
+      <router-link v-if="this.userStore.role === 'admin'" :to="USER_ROUTER" class="navbar__link">Пользователи
+      </router-link>
     </div>
     <router-link @click="this.userStore.logout" :to="LOGIN_ROUTE" class="navbar__link">Выход</router-link>
 

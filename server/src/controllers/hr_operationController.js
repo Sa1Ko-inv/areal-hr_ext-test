@@ -22,32 +22,37 @@ class HROperationsController {
         return res.status(400).json({ error: 'Не все обязательные поля предоставлены' });
       }
 
-      let departmentNameString = 'N/A';
-      let positionNameString = 'N/A';
+      // Проверяем, существует ли сотрудник
+      const employee = await Employees.findOne({
+        where: { id: employee_id },
+        transaction,
+      });
 
-      // Получаем отдел и организацию с транзакцией
+      if (!employee) {
+        await transaction.rollback();
+        return res.status(404).json({ error: 'Сотрудник не найден' });
+      }
+
+      // Получаем информацию об отделе и должности
       const dept = await Department.findOne({
         where: { id: department_id },
         include: [{ model: Organization, attributes: ['name'] }],
         transaction,
       });
 
-      if (dept) {
-        departmentNameString = `${dept.name}${dept.organization ? ` (${dept.organization.name})` : ''}`;
-      } else {
+      if (!dept) {
         await transaction.rollback();
         return res.status(404).json({ error: `Отдел с ID ${department_id} не найден` });
       }
 
-      // Получаем должность с транзакцией
+      const departmentNameString = `${dept.name}${dept.organization ? ` (${dept.organization.name})` : ''}`;
+
       const pos = await Position.findOne({
         where: { id: position_id },
         transaction,
       });
 
-      if (pos) {
-        positionNameString = pos.name;
-      } else {
+      if (!pos) {
         await transaction.rollback();
         return res.status(404).json({ error: `Должность с ID ${position_id} не найдена` });
       }
@@ -64,14 +69,15 @@ class HROperationsController {
         { transaction }
       );
 
-      // Запись в историю с транзакцией
+      // Запись в историю
       await historyService.createHistoryEntry(
         'Сотрудник',
         employee_id,
         'hire',
         {
+          status: { old: 'Уволен', new: 'Работает' },
           department: { old: null, new: departmentNameString },
-          position: { old: null, new: positionNameString },
+          position: { old: null, new: pos.name },
           salary: { old: null, new: salary },
         },
         `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`,
@@ -251,7 +257,7 @@ class HROperationsController {
     }
   }
 
-  // Увольнение сотрудника (с мягким удалением и всех связанных данных)
+  // Увольнение сотрудника (без удаления данных)
   async fireEmployee(req, res) {
     const { employee_id } = req.params;
     const transaction = await sequelize.transaction();
@@ -261,16 +267,20 @@ class HROperationsController {
       const lastOperation = await HR_Operation.findOne({
         where: { employee_id },
         order: [['createdAt', 'DESC']],
+        transaction,
       });
 
-      // Находим сотрудника и связанные данные (ДО создания операции!)
+      if (!lastOperation) {
+        await transaction.rollback();
+        return res.status(404).json({ error: 'Информация о сотруднике не найдена' });
+      }
+
+      // Получаем информацию о сотруднике для истории
       const employee = await Employees.findOne({
         where: { id: employee_id },
         include: [
           { model: Passport },
           { model: Address },
-          { model: Files },
-          // Добавьте другие связанные модели при необходимости
         ],
         transaction,
       });
@@ -293,75 +303,26 @@ class HROperationsController {
         { transaction }
       );
 
-      // Мягкое удаление связанных данных
-      // Паспорт
-      if (employee.passport) {
-        await employee.passport.destroy({ transaction });
-      }
-
-      // Адрес
-      if (employee.address) {
-        await employee.address.destroy({ transaction });
-      }
-
-      // Файлы
-      if (employee.files && employee.files.length > 0) {
-        for (const file of employee.files) {
-          await file.destroy({ transaction });
-        }
-      }
-
-      // Мягкое удаление самого сотрудника
-      await employee.destroy({ transaction });
-
       // Записываем в историю
       await historyService.createHistoryEntry(
         'Сотрудник',
         employee_id,
         'fire',
         {
-          first_name: { old: employee.first_name, new: null },
-          last_name: { old: employee.last_name, new: null },
-          middle_name: { old: employee.middle_name, new: null },
-          passportSeries: {
-            old: employee.passport ? employee.passport.series : null,
-            new: null,
-          },
-          passportNumber: {
-            old: employee.passport ? employee.passport.number : null,
-            new: null,
-          },
-          region: {
-            old: employee.address ? employee.address.region : null,
-            new: null,
-          },
-          street: {
-            old: employee.address ? employee.address.street : null,
-            new: null,
-          },
-          house: {
-            old: employee.address ? employee.address.house : null,
-            new: null,
-          },
-          apartment: {
-            old: employee.address ? employee.address.apartment : null,
-            new: null,
-          },
-          operation_type: { old: null, new: 'fire' }, // Правильный формат для operation_type
+          status: { old: 'Работает', new: 'Уволен' },
         },
-        `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`
+        `${req.user.id} ${req.user.last_name} ${req.user.first_name} ${req.user.middle_name}`,
+        transaction
       );
 
-      // Фиксируем транзакцию
       await transaction.commit();
-
       return res.json({
-        message: 'Сотрудник уволен. Все данные помечены как удаленные.',
+        message: 'Сотрудник уволен',
         operation: operation.toJSON(),
       });
     } catch (error) {
       await transaction.rollback();
-      console.log('Ошибка при увольнении сотрудника', error);
+      console.error('Ошибка при увольнении сотрудника:', error.stack);
       return res.status(500).json({
         error: 'Ошибка при увольнении сотрудника',
         details: error.message,
@@ -395,11 +356,11 @@ class HROperationsController {
         order: [['createdAt', 'DESC']],
         include: [
           {
-            model: require('../models/department'),
+            model: Department,
             as: 'department',
             include: [Organization],
           },
-          { model: require('../models/position'), as: 'position' },
+          { model: Position, as: 'position' },
         ],
       });
 
@@ -407,16 +368,10 @@ class HROperationsController {
         return res.json({ status: 'not_hired', message: 'Не принят' });
       }
 
-      // Если сотрудник был уволен (последняя операция - увольнение)
-      if (latestOperation.type === 'fire') {
-        return res.json({ status: 'fired', message: 'Уволен' });
-      }
-
       // Формируем информацию о сотруднике
       const hrInfo = {
-        status: 'hired',
+        status: latestOperation.type === 'fire' ? 'fired' : 'hired',
         salary: latestOperation.salary,
-        // Формируем название отдела с организацией
         department: latestOperation.department
           ? `${latestOperation.department.name}${latestOperation.department.organization ? ` (${latestOperation.department.organization.name})` : ''}`
           : null,
@@ -427,7 +382,7 @@ class HROperationsController {
 
       return res.json(hrInfo);
     } catch (error) {
-      console.log('Ошибка при получении HR информации о сотруднике', error);
+      console.error('Ошибка при получении HR информации о сотруднике:', error.stack);
       return res.status(500).json({ error: 'Ошибка сервера' });
     }
   }
