@@ -102,6 +102,15 @@
             >
               Открыть
             </a>
+            <a
+              :href="getImageUrl(file.file_url)"
+              :download="file.name"
+              class="download-btn"
+              title="Скачать файл"
+              @click.prevent="forceDownload(file)"
+            >
+              Скачать
+            </a>
             <MyButton
               modifier="delete"
               @click="confirmDeleteFile(file)"
@@ -131,6 +140,7 @@
 <script>
 import { uploadEmployeeFiles, deleteEmployeeFile } from '@/http/employeeAPI.js';
 import MyButton from '@/components/UI/MyButton.vue';
+import { formatDate } from '@/utils/formatDate.js';
 
 export default {
   components: { MyButton },
@@ -164,6 +174,27 @@ export default {
     getImageUrl(fileName) {
       return `http://localhost:5000/${fileName}`;
     },
+    async forceDownload(file) {
+      try {
+        const response = await fetch(this.getImageUrl(file.file_url));
+        if (!response.ok) throw new Error('Ошибка при загрузке файла');
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', file.name);
+        document.body.appendChild(link);
+        link.click();
+
+        // Очистка
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error('Ошибка при скачивании файла:', error);
+        alert('Не удалось скачать файл');
+      }
+    },
 
     // Проверка, является ли файл изображением
     isImageFile(fileName) {
@@ -177,16 +208,7 @@ export default {
     },
 
     // Форматирование даты
-    formatDate(dateString) {
-      if (!dateString) return '';
-
-      const date = new Date(dateString);
-      return date.toLocaleDateString('ru-RU', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-      });
-    },
+    formatDate,
 
     // Обработка выбора файлов
     handleFileSelect(event) {
@@ -297,6 +319,21 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/styles/base";
+
+.download-btn {
+  background: #4caf50;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 14px;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.download-btn:hover {
+  background: #45a049;
+}
 
 .file-manager {
   padding: 20px;
@@ -433,6 +470,7 @@ h4 {
 }
 
 .file-card {
+  width: 300px;
   border: 1px solid #e0e0e0;
   border-radius: $border-radius;
   overflow: hidden;

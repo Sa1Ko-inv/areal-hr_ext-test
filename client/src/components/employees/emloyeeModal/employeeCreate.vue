@@ -8,7 +8,6 @@
       <div class="form-section">
         <h3 class="section-title">Личная информация</h3>
         <div class="form-group">
-          <div v-if="errors.first_name" class="error-message">{{ errors.first_name }}</div>
           <label for="first_name">Имя</label>
           <MyInput
             id="first_name"
@@ -16,10 +15,10 @@
             v-model="employeeData.first_name"
             placeholder="Введите имя"
           />
+          <div v-if="errors.first_name" class="error-message">{{ errors.first_name }}</div>
         </div>
 
         <div class="form-group">
-          <div v-if="errors.last_name" class="error-message">{{ errors.last_name }}</div>
           <label for="last_name">Фамилия</label>
           <MyInput
             id="last_name"
@@ -27,10 +26,10 @@
             v-model="employeeData.last_name"
             placeholder="Введите фамилию"
           />
+          <div v-if="errors.last_name" class="error-message">{{ errors.last_name }}</div>
         </div>
 
         <div class="form-group">
-          <div v-if="errors.middle_name" class="error-message">{{ errors.middle_name }}</div>
           <label for="middle_name">Отчество</label>
           <MyInput
             id="middle_name"
@@ -38,10 +37,10 @@
             v-model="employeeData.middle_name"
             placeholder="Введите отчество"
           />
+          <div v-if="errors.middle_name" class="error-message">{{ errors.middle_name }}</div>
         </div>
 
         <div class="form-group">
-          <div v-if="errors.birth_date" class="error-message">{{ errors.birth_date }}</div>
           <label for="birth_date">Дата рождения</label>
           <el-date-picker
             v-model="employeeData.birth_date"
@@ -53,6 +52,7 @@
             style="width: 100%; height: 42px"
             size="large"
           />
+          <div v-if="errors.birth_date" class="error-message">{{ errors.birth_date }}</div>
         </div>
 
         <div class="form-group">
@@ -80,7 +80,6 @@
         <h3 class="section-title">Паспортные данные</h3>
         <div class="form-row">
           <div class="form-group half">
-            <div v-if="errors.passport_series" class="error-message">{{ errors.passport_series }}</div>
             <label for="passport_series">Серия паспорта</label>
             <MyInput
               id="passport_series"
@@ -89,10 +88,10 @@
               placeholder="0000"
               v-mask="'####'"
             />
+            <div v-if="errors.passport_series" class="error-message">{{ errors.passport_series }}</div>
           </div>
 
           <div class="form-group half">
-            <div v-if="errors.passport_number" class="error-message">{{ errors.passport_number }}</div>
             <label for="passport_number">Номер паспорта</label>
             <MyInput
               id="passport_number"
@@ -101,11 +100,11 @@
               placeholder="000000"
               v-mask="'######'"
             />
+            <div v-if="errors.passport_number" class="error-message">{{ errors.passport_number }}</div>
           </div>
         </div>
 
         <div class="form-group">
-          <div v-if="errors.passport_issued_by" class="error-message">{{ errors.passport_issued_by }}</div>
           <label for="issued_by">Кем выдан</label>
           <MyInput
             id="issued_by"
@@ -113,11 +112,11 @@
             v-model="employeeData.passport.issued_by"
             placeholder="Кем выдан"
           />
+          <div v-if="errors.passport_issued_by" class="error-message">{{ errors.passport_issued_by }}</div>
         </div>
 
         <div class="form-row">
           <div class="form-group half">
-            <div v-if="errors.passport_issued_date" class="error-message">{{ errors.passport_issued_date }}</div>
             <label for="issued_date">Дата выдачи</label>
             <el-date-picker
               v-model="employeeData.passport.issued_date"
@@ -129,10 +128,10 @@
               style="width: 100%; height: 42px"
               size="large"
             />
+            <div v-if="errors.passport_issued_date" class="error-message">{{ errors.passport_issued_date }}</div>
           </div>
 
           <div class="form-group half">
-            <div v-if="errors.passport_division_code" class="error-message">{{ errors.passport_division_code }}</div>
             <label for="division_code">Код подразделения</label>
             <MyInput
               id="division_code"
@@ -141,6 +140,7 @@
               placeholder="000-000"
               v-mask="'###-###'"
             />
+            <div v-if="errors.passport_division_code" class="error-message">{{ errors.passport_division_code }}</div>
           </div>
         </div>
       </div>
@@ -149,7 +149,6 @@
         <h3 class="section-title">Адрес проживания</h3>
         <div class="form-row">
           <div class="form-group half">
-            <div v-if="errors.address_region" class="error-message">{{ errors.address_region }}</div>
             <label for="region">Регион</label>
             <MyInput
               id="region"
@@ -157,10 +156,10 @@
               v-model="employeeData.address.region"
               placeholder="Введите регион"
             />
+            <div v-if="errors.address_region" class="error-message">{{ errors.address_region }}</div>
           </div>
 
           <div class="form-group half">
-            <div v-if="errors.address_locality" class="error-message">{{ errors.address_locality }}</div>
             <label for="locality">Населенный пункт</label>
             <MyInput
               id="locality"
@@ -168,11 +167,11 @@
               v-model="employeeData.address.locality"
               placeholder="Введите населенный пункт"
             />
+            <div v-if="errors.address_locality" class="error-message">{{ errors.address_locality }}</div>
           </div>
         </div>
 
         <div class="form-group">
-          <div v-if="errors.address_street" class="error-message">{{ errors.address_street }}</div>
           <label for="street">Улица</label>
           <MyInput
             id="street"
@@ -180,11 +179,11 @@
             v-model="employeeData.address.street"
             placeholder="Введите улицу"
           />
+          <div v-if="errors.address_street" class="error-message">{{ errors.address_street }}</div>
         </div>
 
         <div class="form-row">
           <div class="form-group third">
-            <div v-if="errors.address_house" class="error-message">{{ errors.address_house }}</div>
             <label for="house">Дом</label>
             <MyInput
               id="house"
@@ -192,6 +191,7 @@
               v-model="employeeData.address.house"
               placeholder="Дом"
             />
+            <div v-if="errors.address_house" class="error-message">{{ errors.address_house }}</div>
           </div>
 
           <div class="form-group third">
@@ -206,13 +206,13 @@
 
           <div class="form-group third">
             <label for="apartment">Квартира</label>
-            <div v-if="errors.address_apartment" class="error-message">{{ errors.address_apartment }}</div>
             <MyInput
               id="apartment"
               type="text"
               v-model="employeeData.address.apartment"
               placeholder="Квартира"
             />
+            <div v-if="errors.address_apartment" class="error-message">{{ errors.address_apartment }}</div>
           </div>
         </div>
       </div>
@@ -470,20 +470,19 @@ export default {
     color: $text-color-primary;
   }
 
-  .error-message {
-    position: absolute;
-    top: -18px;
-    left: 0;
-    margin: 0;
-    background: none;
-    padding: 0;
-  }
+  //.error-message {
+  //  position: absolute;
+  //  top: -18px;
+  //  left: 0;
+  //  margin: 0;
+  //}
 }
 
 // For fields with errors
 .has-error {
   .MyInput { // предполагая, что ваш компонент MyInput рендерит input элемент
     border-color: $danger-color;
+
     &:focus {
       box-shadow: 0 0 0 2px rgba($danger-color, 0.2);
     }

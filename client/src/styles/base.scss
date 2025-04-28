@@ -2,7 +2,7 @@
 $primary-color: #792ec9;
 $primary-color-dark: #6525a7;
 $danger-color: #d32f2f;
-$danger-color-dark: #c82333;
+$danger-color-dark: #f3ddde;
 $success-color: #28a745;
 $success-color-dark: #218838;
 $text-color-primary: #333;
@@ -33,6 +33,9 @@ $font-size-text: 15px;
 }
 .error-message {
   color: $danger-color;
+  background-color: $danger-color-dark;
+  border-radius: $border-radius;
+    padding: 10px;
   font-size: $font-size-text;
   margin-top: 8px;
   font-weight: normal;

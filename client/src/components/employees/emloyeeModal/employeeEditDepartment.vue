@@ -1,26 +1,26 @@
 <template>
   <form @submit.prevent="saveDepartmentChange">
     <h4>Изменение отдела сотрудника</h4>
-    <div v-if="error" class="error-message">{{ error }}</div>
 
     <div class="form-group">
       <label>Организация</label>
       <MySelect
-      placeholder="Выберите организацию для сортировки"
-      v-model="selectedOrganizationId"
-      :options="organizationOptions"
-      @change="filterDepartments"
+        placeholder="Выберите организацию для сортировки"
+        v-model="selectedOrganizationId"
+        :options="organizationOptions"
+        @change="filterDepartments"
       />
     </div>
 
     <div class="form-group">
       <label>Отдел</label>
       <MySelect
-      v-model="formData.department_id"
-      placeholder="Выберите отдел"
-      :options="departmentOptions"
+        v-model="formData.department_id"
+        placeholder="Выберите отдел"
+        :options="departmentOptions"
       />
     </div>
+    <div v-if="error" class="error-message">{{ error }}</div>
 
     <div class="form-actions">
       <MyButton modifier="save" type="submit">Сохранить</MyButton>
@@ -49,7 +49,8 @@ export default {
     },
     cancel: {
       type: Function,
-      default: () => {},
+      default: () => {
+      },
     },
   },
   data() {
@@ -69,15 +70,15 @@ export default {
         return this.departments;
       }
       return this.departments.filter(
-        (dept) => dept.organization_id === this.selectedOrganizationId
+        (dept) => dept.organization_id === this.selectedOrganizationId,
       );
     },
     organizationOptions() {
       return [
         ...this.organizations.map(org => ({
           value: org.id,
-          name: org.name
-        }))
+          name: org.name,
+        })),
       ];
     },
     departmentOptions() {
@@ -86,11 +87,11 @@ export default {
       // Добавим проверку на наличие filteredDepartments
       if (this.filteredDepartments && this.filteredDepartments.length) {
         this.filteredDepartments.forEach(dept => {
-          options.push({ value: dept.id, name: dept.name, disabled: true});
+          options.push({ value: dept.id, name: dept.name, disabled: true });
 
           if (dept.children && dept.children.length) {
             dept.children.forEach(child => {
-              options.push({ value: child.id, name: `— ${child.name}` , disabled: false });
+              options.push({ value: child.id, name: `— ${child.name}`, disabled: false });
             });
           }
         });
@@ -115,7 +116,7 @@ export default {
 
         if (this.currentDepartmentId) {
           const currentDept = response.data.find(
-            (d) => d.id === this.currentDepartmentId
+            (d) => d.id === this.currentDepartmentId,
           );
           if (currentDept) {
             this.selectedOrganizationId = currentDept.organization_id;
@@ -149,6 +150,7 @@ export default {
 
 <style scoped lang="scss">
 @import "@/styles/base";
+
 .error-message {
   margin-bottom: 16px;
   padding: 8px;
