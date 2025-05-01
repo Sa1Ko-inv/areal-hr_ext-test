@@ -16,12 +16,16 @@ export const registration = async (login, password, first_name, last_name, middl
 };
 
 export const login = async (login, password) => {
-  const { data } = await $host.post('api/user/login', { login, password },);
-  return data.user;
+  const { data } = await $host.post('api/user/login', { login, password }, {
+    withCredentials: true
+  });
+  return data.user; // Сервер теперь возвращает данные пользователя напрямую
 };
 
 export const check = async () => {
-  const { data } = await $authHost.get('api/user/auth');
+  const { data } = await $authHost.get('api/user/auth', {
+    withCredentials: true
+  });
   return data.user;
 };
 

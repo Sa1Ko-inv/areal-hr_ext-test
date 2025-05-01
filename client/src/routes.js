@@ -1,4 +1,11 @@
-import { LOGIN_ROUTE, MAIN_ROUTE, ORGANIZATION_ROUTE, POSITION_ROUTE, USER_ROUTER } from '@/utils/consts';
+import {
+  EMPLOYEE_ROUTE,
+  LOGIN_ROUTE,
+  MAIN_ROUTE,
+  ORGANIZATION_ROUTE,
+  POSITION_ROUTE,
+  USER_ROUTER,
+} from '@/utils/consts';
 import { createRouter, createWebHistory } from 'vue-router';
 import positionPage from '@/pages/positionPage.vue';
 import employeePage from '@/pages/employeePage.vue';
@@ -7,6 +14,7 @@ import organizationInfo from '@/components/organizations/organizationInfo.vue';
 import loginPage from "@/pages/loginPage.vue";
 import userPage from '@/pages/userPage.vue';
 import { UserStore } from '@/store/UserStore.js';
+import mainPage from '@/pages/mainPage.vue';
 
 const routes = [
   {
@@ -18,6 +26,13 @@ const routes = [
   {
     path: MAIN_ROUTE,
     name: 'Main',
+    component: mainPage,
+    meta: { requiresAuth: true }
+  },
+
+  {
+    path: EMPLOYEE_ROUTE,
+    name: 'Employee',
     component: employeePage,
     meta: { requiresAuth: true }
   },

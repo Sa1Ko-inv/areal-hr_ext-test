@@ -55,7 +55,7 @@ const signIn = async () => {
     });
     userStore.setIsAuth(true);
     userStore.setRole(user.role);
-    await router.push('/');
+    await router.push('/employee');
   } catch (error) {
     if (error.response?.data?.message) {
       loginError.value = error.response.data.message;

@@ -64,7 +64,7 @@ export default {
         console.error('Ошибка при получении организаций:', error);
       }
     },
-    async createOrganization(organization, onSuccess) {
+    async createOrganization({ organization , onSuccess}) {
       try {
         // Сбрасываем ошибку перед запросом
         this.errors = {

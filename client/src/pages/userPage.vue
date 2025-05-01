@@ -49,8 +49,7 @@ const handleSearch = (query) => {
 };
 
 // Функция для создания пользователя
-const createUsers = async (user, onSuccess) => {
-  console.log(user);
+const createUsers = async ({ user, onSuccess }) => {
   try {
     createError.value = {
       last_name: null,

@@ -33,7 +33,7 @@ export default {
       }
     },
 
-    async createPosition(position, onSuccess) {
+    async createPosition({ position, onSuccess }) {
       try {
         this.createError = { name: null, general: null }; // Сбрасываем ошибку перед запросом
         const response = await createPosition(position.name);

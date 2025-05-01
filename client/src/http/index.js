@@ -11,10 +11,10 @@ const $authHost = axios.create({
 });
 
 // Автоматическая подстановка токена
-// const authInterception = (config) => {
-//   config.headers.authorization = `Bearer ${localStorage.getItem('token')}`;
-//   return config;
-// };
+const authInterception = (config) => {
+  config.withCredentials = true;
+  return config;
+};
 
 // Обработчик ошибки 401, она не высвечивает ошибку на сайте, а перенаправляет на страницу авторизации
 $host.interceptors.response.use(
@@ -27,7 +27,7 @@ $host.interceptors.response.use(
   }
 );
 
-// $authHost.interceptors.request.use(authInterception);
+$authHost.interceptors.request.use(authInterception);
 
 // $authHost.interceptors.response.use(
 //   (response) => response,

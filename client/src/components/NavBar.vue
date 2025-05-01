@@ -2,7 +2,7 @@
 import {
   POSITION_ROUTE,
   MAIN_ROUTE,
-  ORGANIZATION_ROUTE, LOGIN_ROUTE, USER_ROUTER,
+  ORGANIZATION_ROUTE, LOGIN_ROUTE, USER_ROUTER, EMPLOYEE_ROUTE,
 } from '@/utils/consts.js';
 import { UserStore } from '@/store/UserStore.js';
 
@@ -14,17 +14,18 @@ export default {
     };
   },
   setup() {
-    return { POSITION_ROUTE, MAIN_ROUTE, ORGANIZATION_ROUTE, LOGIN_ROUTE, USER_ROUTER };
+    return { POSITION_ROUTE, MAIN_ROUTE, ORGANIZATION_ROUTE, LOGIN_ROUTE, USER_ROUTER, EMPLOYEE_ROUTE };
   },
 };
 </script>
 
 <template>
   <nav class="navbar">
+    <div class="navbar__link">
+      <router-link :to="MAIN_ROUTE" class="navbar__home-link">На главную</router-link>
+    </div>
     <div class="navbar__menu">
-      <div class="navbar__link">
-        <router-link :to="MAIN_ROUTE" class="navbar__home-link">Сотрудники</router-link>
-      </div>
+      <router-link to="/employee" class="navbar__link">Сотрудники</router-link>
       <router-link :to="ORGANIZATION_ROUTE" class="navbar__link">Организации</router-link>
       <router-link :to="POSITION_ROUTE" class="navbar__link">Должности</router-link>
       <router-link v-if="this.userStore.role === 'admin'" :to="USER_ROUTER" class="navbar__link">Пользователи
@@ -36,12 +37,13 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+@use "@/styles/base" as *;
 .navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 12px 24px;
-  background-color: white;
+  //background-color: #1a1a1a;
   border-bottom: 2px solid #792ec9;
 
   &__brand {
