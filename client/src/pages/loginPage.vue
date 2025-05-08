@@ -69,7 +69,7 @@ const signIn = async () => {
 </script>
 
 <style lang="scss" scoped>
-@import "@/styles/base";
+@use "@/styles/base" as *;
 .auth-container {
   display: flex;
   justify-content: center;

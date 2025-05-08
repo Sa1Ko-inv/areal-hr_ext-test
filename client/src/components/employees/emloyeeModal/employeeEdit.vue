@@ -181,7 +181,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "@/styles/base";
+@use "@/styles/base" as *;
 .employee-edit-form {
   max-width: 800px;
   margin: 0 auto;

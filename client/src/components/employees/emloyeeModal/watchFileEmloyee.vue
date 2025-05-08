@@ -318,7 +318,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "@/styles/base";
+@use "@/styles/base" as *;
 
 .download-btn {
   background: #4caf50;

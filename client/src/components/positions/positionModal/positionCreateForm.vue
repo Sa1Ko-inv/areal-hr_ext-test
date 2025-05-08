@@ -56,7 +56,7 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-@import "@/styles/base";
+@use "@/styles/base" as *;
 
 form {
   max-width: 100%;

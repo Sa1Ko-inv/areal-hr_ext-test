@@ -135,7 +135,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "@/styles/base";
+@use "@/styles/base" as *;
 
 .organization-info {
   max-width: 900px;

@@ -205,7 +205,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "@/styles/base";
+@use "@/styles/base" as *;
 form {
   max-width: 100%;
   margin: 0 auto;

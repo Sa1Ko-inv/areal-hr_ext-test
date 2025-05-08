@@ -22,7 +22,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "@/styles/base";
+@use "@/styles/base" as *;
 .btn {
   padding: 8px 12px;
   border-radius: $border-radius;

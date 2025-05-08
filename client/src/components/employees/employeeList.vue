@@ -177,7 +177,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "@/styles/base";
+@use "@/styles/base" as *;
 $section-gap: 20px;
 
 .employeeList {

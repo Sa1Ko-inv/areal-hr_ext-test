@@ -100,7 +100,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "@/styles/base";
+@use "@/styles/base" as *;
 .position {
   border: 2px solid $primary-color;
   border-radius: $border-radius;

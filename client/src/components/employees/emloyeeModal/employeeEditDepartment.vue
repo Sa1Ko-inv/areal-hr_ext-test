@@ -149,7 +149,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "@/styles/base";
+@use "@/styles/base" as *;
 
 .error-message {
   margin-bottom: 16px;

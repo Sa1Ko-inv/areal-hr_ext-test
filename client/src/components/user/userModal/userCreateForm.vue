@@ -109,7 +109,7 @@ const createUser = () => {
 </template>
 
 <style scoped lang="scss">
-@import "@/styles/base";
+@use "@/styles/base" as *;
 form {
   padding: 20px;
   padding-right: 50px;
