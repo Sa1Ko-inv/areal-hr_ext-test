@@ -36,7 +36,7 @@ app.use(cookieParser());
 app.use(passport.initialize());
 app.use(
   fileUpload({
-    limits: { fileSize: 10 * 1024 * 1024 }, // Ограничение размера файла (10MB)
+    limits: { fileSize: 20 * 1024 * 1024 }, // Ограничение размера файла (10MB)
     useTempFiles: true,
     tempFileDir: '/tmp/',
   })

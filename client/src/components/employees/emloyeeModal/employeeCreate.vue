@@ -337,8 +337,17 @@ export default {
             formData.append('files', file);
           });
 
-          // Загружаем файлы для созданного сотрудника
-          await uploadEmployeeFiles(createdEmployee.id, formData);
+          try {
+            // Загружаем файлы для созданного сотрудника
+            await uploadEmployeeFiles(createdEmployee.id, formData);
+          } catch (uploadError) {
+            if (uploadError.response?.status === 413) {
+              this.errors.general = 'размер файла слишком большой. Максимальный размер файла 20 МБ';
+            } else {
+              this.errors.general = 'Ошибка при загрузке файлов';
+            }
+            return;
+          }
         }
 
         // Уведомляем родительский компонент об успешном создании
@@ -348,11 +357,9 @@ export default {
         this.employeeData = { ...EMPLOYEE_INITIAL_DATA };
         this.selectedFiles = [];
       } catch (error) {
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.errors
-        ) {
+        if (error.response?.status === 413) {
+          this.errors.general = 'Размер файлов слишком большой. Максимальный размер: 20MB';
+        } else if (error.response?.data?.errors) {
           error.response.data.errors.forEach(err => {
             if (err.field && Object.prototype.hasOwnProperty.call(this.errors, err.field)) {
               this.errors[err.field] = err.message;
