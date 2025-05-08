@@ -92,10 +92,11 @@ export default {
     async loadOrganization() {
       try {
         const organizationId = this.$route.params.id;
-        const data = await fetchOrganizationWithDepartments(organizationId, this.currentPage, this.pageSize);
-        this.organization = data.organization;
-        this.departments = data.departments || [];
-        this.totalItems = data.count; // количество родительских отделов
+        const response = await fetchOrganizationWithDepartments(organizationId, this.currentPage, this.pageSize);
+        console.log('Данные организации:', response.data);
+        this.organization = response.data.organization;
+        this.departments = response.data.departments || [];
+        this.totalItems = response.data.count; // количество родительских отделов
 
         this.dialogVisible = false;
       } catch (error) {

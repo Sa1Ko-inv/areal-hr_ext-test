@@ -465,8 +465,7 @@ h4 {
 
 .files-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 15px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 320px));
 }
 
 .file-card {

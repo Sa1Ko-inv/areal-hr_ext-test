@@ -50,7 +50,7 @@ export const fetchUsers = async (page = 1, limit = 10, searchQuery = '') => {
 
 //Создание пользователя
 export const createUser = async (last_name, first_name, middle_name, login, password, role) => {
-  const { data } = await $authHost.post('api/user/create', {
+  const { data } = await $authHost.post('/api/user/create', {
     last_name,
     first_name,
     middle_name,
@@ -63,19 +63,19 @@ export const createUser = async (last_name, first_name, middle_name, login, pass
 
 // Редактирование пользователя
 export const updateUser = async (userId, userData) => {
-  const response = await $authHost.put(`api/user/${userId}`, userData);
+  const response = await $authHost.put(`/api/user/${userId}`, userData);
   console.log('Пользователь обновлен с данными:', userData);
   return response.data;
 };
 
 export const deleteUser = async (userId) => {
-  const response = await $authHost.delete(`api/user/${userId}`);
+  const response = await $authHost.delete(`/api/user/${userId}`);
   return response.data;
 };
 
 // Получение истории пользователя
 export const fetchUserHistory = async (userId, page = 1, limit = 10) => {
-  const response = await $host.get(`api/user/${userId}/history`, {
+  const response = await $host.get(`/api/user/${userId}/history`, {
     params: {
       page: page,
       limit: limit,
@@ -86,7 +86,7 @@ export const fetchUserHistory = async (userId, page = 1, limit = 10) => {
 
 // Получение удаленных пользователей
 export const fetchDeletedUsers = async (page = 1, limit = 10) => {
-  const response = await $host.get('api/user/delete', {
+  const response = await $host.get('/api/user/delete', {
     params: {
       page: page,
       limit: limit,

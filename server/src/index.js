@@ -7,7 +7,7 @@ const router = require('./routes');
 const path = require('path');
 const fs = require('fs');
 const errorHandler = require('./middleware/ErrorHandlingMiddleware');
-const PORT = process.env.PORT || 7000;
+const PORT = process.env.PORT;
 const app = express();
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
@@ -19,9 +19,15 @@ if (!fs.existsSync(staticDir)) {
   console.log(`Создана папка статики: ${staticDir}`);
 }
 
+const allowedOrigin = [
+  'http://localhost',
+  'http://localhost:3000',
+  'http://client:3000'
+]
+
 // cors нужен чтобы наше приложение могло отправлять запросы на другой домен
 app.use(cors({
-  origin: true, // Указываем домен, с которого будут приходить запросы
+  origin: allowedOrigin, // Указываем домен, с которого будут приходить запросы
   credentials: true
 }));
 // Чтобы наше приложение могло парсить json

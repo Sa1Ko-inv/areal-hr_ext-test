@@ -1,7 +1,7 @@
 import { $authHost, $host } from '@/http/index.js';
 // Получение всех организаций
 export const fetchOrganizations = async (page = 1, limit = 10) => {
-  const response = await $host.get('api/organization', {
+  const response = await $host.get('/api/organization', {
     params: {
       page: page,
       limit: limit,
@@ -11,13 +11,16 @@ export const fetchOrganizations = async (page = 1, limit = 10) => {
 };
 // Получение организации по ID с ее отделами
 export const fetchOrganizationWithDepartments = async (id, page = 1, limit = 10) => {
-  const response = await $host.get(`api/organization/${id}/departments`, {
+  const response = await $host.get(`/api/organization/${id}/departments`, {
     params: {
       page,
       limit,
     },
   });
-  return response.data;
+  console.log('Response',response);
+  console.log('Response.data',response.data);
+  console.log('Response.data.rows',response.data.rows);
+  return response;
 };
 // Создание организации
 export const createOrganization = async (name, comment) => {

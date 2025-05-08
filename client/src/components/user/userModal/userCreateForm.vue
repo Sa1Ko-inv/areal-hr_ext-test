@@ -2,7 +2,8 @@
 import { ref } from 'vue';
 import MyInput from '@/components/UI/MyInput.vue';
 import MySelect from '@/components/UI/MySelect.vue';
-import MyButton from '@/components/UI/MyButton.vue'; // Предполагается, что у вас есть такой компонент
+import MyButton from '@/components/UI/MyButton.vue';
+import { UserStore } from '@/store/UserStore.js'; // Предполагается, что у вас есть такой компонент
 
 defineProps({
   cancel: {
@@ -14,6 +15,9 @@ defineProps({
     default: null,
   },
 });
+
+const userStore = UserStore();
+console.log('Пользователь', userStore.user, 'Роль', userStore.role, 'Авторизация', userStore.isAuth);
 
 const emit = defineEmits(['create']);
 

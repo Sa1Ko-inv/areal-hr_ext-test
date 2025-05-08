@@ -1,12 +1,15 @@
 <template>
   <div class="employeeList">
     <h3>Список сотрудников</h3>
-    <MyButton modifier="create" @click="showEmployeeCreate"
+    <div class="btn-active" style="margin-bottom: 20px">
+      <MyButton modifier="create" @click="showEmployeeCreate"
       >Создать сотрудника</MyButton
-    >
-    <MyButton modifier="showHistory" @click="showFireHistory"
+      >
+      <MyButton modifier="showHistory" @click="showFireHistory"
       >Просмотр уволенных сотрудников</MyButton
-    >
+      >
+    </div>
+
 
     <!-- Добавляем поле для поиска с кнопкой -->
     <div class="search-container">

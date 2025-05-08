@@ -3,10 +3,14 @@ const jwt = require('jsonwebtoken');
 module.exports = function (role) {
   return function (req, res, next) {
     if (req.method === 'OPTIONS') {
-      next();
+      return next();
     }
     try {
-      const token = req.headers.authorization.split(' ')[1]; //Bearer afeeafsadwad
+      let token;
+      // 2. Если нет - ищем в куке
+      if (!token && req.cookies && req.cookies.jwt) {
+        token = req.cookies.jwt;
+      }
       if (!token) {
         return res.status(401).json({ message: 'Не авторизован' });
       }

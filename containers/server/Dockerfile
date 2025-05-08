@@ -1,5 +1,11 @@
-FROM node:20.18.0
+FROM node:22.15.0-alpine
 WORKDIR /app
+
+# Копируем package.json и package-lock.json из /server
+COPY server/package*.json ./
+
+# Устанавливаем зависимости
+RUN npm install
 
 # Копируем файлы приложения
 COPY ./server .
@@ -8,7 +14,7 @@ COPY ./server .
 COPY ./containers/server/entrypoint.sh /entrypoint.sh
 
 # Устанавливаем зависимости
-RUN npm install
+#RUN npm install
 
 # Делаем entrypoint скрипт исполняемым
 RUN chmod +x /entrypoint.sh
@@ -16,7 +22,7 @@ RUN chmod +x /entrypoint.sh
 EXPOSE 5000
 
 # Устанавливаем entrypoint
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["sh", "/entrypoint.sh"]
 
 # Команда по умолчанию
 CMD ["node", "src/index.js"]
