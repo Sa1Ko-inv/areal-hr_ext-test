@@ -1,7 +1,7 @@
 <template>
   <div class="delete-history-modal">
     <h4>История увольнений</h4>
-    <MyButton class="close-btn" @click="cancel" title="Закрыть">×</MyButton>
+    <MyButton style="background-color: white" modifier="cancel" class="close-btn" @click="cancel" title="Закрыть">×</MyButton>
 
     <div v-if="firedHistory.length === 0" class="no-data">
       Нет записей об уволенных сотрудниках.

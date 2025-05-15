@@ -70,35 +70,3 @@ services:
 
 volumes:
   pgdata:
-  # Оставляем эти сервисы для ручного запуска миграций и заполнения данных при необходимости
-#  migrations:
-#    build:
-#      context: .
-#      dockerfile: containers/server/Dockerfile
-#    env_file:
-#      - .env.docker
-#    depends_on:
-#      db:
-#        condition: service_healthy
-#    volumes:
-#      - ./server:/app
-#      - ./.env:/app/.env
-#    command: npm run migrate
-#    entrypoint: []  # Переопределяем entrypoint, чтобы не запускать весь скрипт
-#    profiles: ["tools"]
-#
-#  seed:
-#    build:
-#      context: .
-#      dockerfile: containers/server/Dockerfile
-#    env_file:
-#      - .env.docker
-#    depends_on:
-#      db:
-#        condition: service_healthy
-#    volumes:
-#      - ./server:/app
-#      - ./.env:/app/.env
-#    command: npm run seed:run
-#    entrypoint: []  # Переопределяем entrypoint, чтобы не запускать весь скрипт
-#    profiles: ["tools"]

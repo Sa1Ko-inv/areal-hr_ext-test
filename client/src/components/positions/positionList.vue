@@ -108,10 +108,11 @@ export default {
 @use "@/styles/base" as *;
 
 .positionList {
-  padding: 16px;
+  width: 1300px;
+  margin: 0 auto;
+  padding: 20px;
   border-radius: $border-radius;
   background-color: $background-color-light;
-  box-shadow: $box-shadow;
 
   &__title {
     color: $primary-color;

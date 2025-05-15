@@ -1,7 +1,7 @@
 // Цветовая палитра
 $primary-color: #792ec9;
 $primary-color-dark: #6525a7;
-$primary-color-background: #d5b9f6;
+$primary-color-background: #f2e8ff;
 $danger-color: #d32f2f;
 $danger-color-dark: #f3ddde;
 $danger-color-background: #f3d9d9;
@@ -29,7 +29,7 @@ $font-size-title: 23px;
 $font-size-text: 15px;
 
 // Базовые сбросы
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Arial', sans-serif;}
 
 // Универсальные утилиты
 .flex-center {

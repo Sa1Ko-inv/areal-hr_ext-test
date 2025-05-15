@@ -41,7 +41,7 @@ export const uploadEmployeeFiles = async (employeeId, formData) => {
 
 // Удаление файла
 export const deleteEmployeeFile = async (fileId) => {
-  const response = await $authHost.delete(`api/employee/file/${fileId}`);
+  const response = await $authHost.delete(`api/employee/file/hard/${fileId}`);
   return response.data;
 };
 

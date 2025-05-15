@@ -49,29 +49,33 @@
             format="DD/MM/YYYY"
             value-format="DD/MM/YYYY"
             :disabled="isSubmitting"
-            style="width: 100%; height: 42px"
+            style="width: 100%; height: 42px; --el-input-focus-border-color: #792ec9"
             size="large"
           />
           <div v-if="errors.birth_date" class="error-message">{{ errors.birth_date }}</div>
         </div>
 
         <div class="form-group">
-          <label for="files">Файлы сотрудника</label>
-          <MyInput
-            id="files"
+          <div>Файлы сотрудника</div>
+          <label class="file-upload-label" for="files">Загрузить файлы сотрудника</label>
+          <input
             type="file"
+            id="files"
             multiple
             @change="handleFileUpload"
-            accept=".jpg,.jpeg"
+            class="file-input"
+            accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xlsx"
           />
-          <small>Поддерживаются только JPG/JPEG файлы</small>
-          <div v-if="selectedFiles.length > 0" class="selected-files">
-            <p>Выбрано файлов: {{ selectedFiles.length }}</p>
-            <ul>
-              <li v-for="(file, index) in selectedFiles" :key="index">
-                {{ file.name }}
-              </li>
-            </ul>
+          <small>Поддерживаются только JPG/JPEG/PNG/PDF/DOCX/XLSX файлы</small>
+          <div v-if="selectedFiles.length > 0" class="selected-files-list">
+            <div
+              v-for="(file, index) in selectedFiles"
+              :key="index"
+              class="selected-file-item"
+            >
+              <span class="file-name" style="width: 700px">{{ file.name }}</span>
+              <MyButton modifier="delete" @click="removeSelectedFile(index)">×</MyButton>
+            </div>
           </div>
         </div>
       </div>
@@ -125,7 +129,7 @@
               format="DD/MM/YYYY"
               value-format="DD/MM/YYYY"
               :disabled="isSubmitting"
-              style="width: 100%; height: 42px"
+              style="width: 100%; height: 42px; --el-input-focus-border-color: #792ec9"
               size="large"
             />
             <div v-if="errors.passport_issued_date" class="error-message">{{ errors.passport_issued_date }}</div>
@@ -297,7 +301,31 @@ export default {
   },
   methods: {
     handleFileUpload(event) {
-      this.selectedFiles = Array.from(event.target.files);
+      const newFiles = Array.from(event.target.files);
+      const allowedExtensions = ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx', 'xlsx'];
+
+      // Проверка типов файлов (опционально)
+      const validFiles = newFiles.filter((file) => {
+        const ext = file.name.split('.').pop().toLowerCase();
+        return allowedExtensions.includes(ext);
+      });
+
+      if (validFiles.length !== newFiles.length) {
+        this.uploadError =
+          'Некоторые файлы имеют неподдерживаемый формат и были пропущены';
+      } else {
+        this.uploadError = null;
+      }
+
+      this.selectedFiles = [...this.selectedFiles, ...validFiles];
+
+      // Сбрасываем input, чтобы можно было выбрать те же файлы повторно
+      event.target.value = '';
+    },
+
+    // Удаление файла из списка выбранных
+    removeSelectedFile(index) {
+      this.selectedFiles.splice(index, 1);
     },
 
     async createEmployee() {
@@ -390,6 +418,54 @@ export default {
     margin-top: 5px;
     padding-left: 20px;
   }
+}
+
+.selected-files-list {
+  margin-bottom: 15px;
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid #eee;
+  border-radius: $border-radius;
+  padding: 5px;
+}
+
+.selected-file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.selected-file-item:last-child {
+  border-bottom: none;
+}
+
+.file-name {
+  font-size: $font-size-text;
+  font-weight: 500;
+  margin-bottom: 5px;
+  word-break: break-word;
+}
+
+.file-upload-label {
+  display: inline-block;
+  padding: 10px 16px;
+  background-color: $background-color-light;
+  color: $background-color-light;
+  //border-radius: $border-radius;
+  border: 2px solid $border-color;
+  border-radius: $border-radius;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.file-upload-label:hover {
+  background-color: $primary-color-background;
+}
+
+.file-input {
+  display: none;
 }
 
 // Base styles

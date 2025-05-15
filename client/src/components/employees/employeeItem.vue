@@ -7,7 +7,7 @@
           <div class="info-item">
             <strong class="info-item__key">ФИО:</strong>
             <span class="info-item__value">
-              {{employee.id}}{{ employee.last_name }} {{ employee.first_name }} {{ employee.middle_name }}</span>
+              {{ employee.last_name }} {{ employee.first_name }} {{ employee.middle_name }}</span>
           </div>
           <div class="info-item">
             <strong class="info-item__key">Дата рождения:</strong>

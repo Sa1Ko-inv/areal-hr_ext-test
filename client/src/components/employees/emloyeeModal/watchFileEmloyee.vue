@@ -10,6 +10,7 @@
     <!-- Секция загрузки файлов -->
     <div class="upload-section">
       <h4>Загрузить новые файлы</h4>
+      <div style="padding-bottom: 10px">Поддерживаются только JPG/JPEG/PNG/PDF/DOCX/XLSX файлы</div>
       <div class="file-input-wrapper">
         <label for="file-upload" class="file-upload-label">
           Выбрать файлы
@@ -20,12 +21,13 @@
           multiple
           @change="handleFileSelect"
           class="file-input"
-          accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
+          accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xlsx"
         />
         <span v-if="selectedFiles.length > 0" class="selected-files-count">
           Выбрано файлов: {{ selectedFiles.length }}
         </span>
       </div>
+
 
       <!-- Список выбранных файлов -->
       <div v-if="selectedFiles.length > 0" class="selected-files-list">
@@ -34,11 +36,8 @@
           :key="index"
           class="selected-file-item"
         >
-          <span class="file-name">{{ file.name }}</span>
-          <MyButton @click="removeSelectedFile(index)" class="remove-file-btn"
-          >×
-          </MyButton
-          >
+          <span class="file-name" style="width: 700px">{{ file.name }}</span>
+          <MyButton @click="removeSelectedFile(index)" class="remove-file-btn">×</MyButton>
         </div>
       </div>
 
@@ -47,9 +46,12 @@
         modifier="save"
         @click="uploadFiles"
         :disabled="selectedFiles.length === 0 || isUploading"
+        style="margin: 0"
       >
         {{ isUploading ? 'Загрузка...' : 'Загрузить файлы' }}
       </MyButton>
+
+
 
       <!-- Сообщение об ошибке -->
       <div v-if="uploadError" class="upload-error">
@@ -95,6 +97,7 @@
 
           <div class="file-actions">
             <a
+              v-if="!['doc', 'docx', 'xls', 'xlsx'].includes(getFileExtension(file.name).toLowerCase())"
               :href="getImageUrl(file.file_url)"
               target="_blank"
               class="view-btn"
@@ -192,7 +195,7 @@ export default {
         window.URL.revokeObjectURL(url);
       } catch (error) {
         console.error('Ошибка при скачивании файла:', error);
-        alert('Не удалось скачать файл');
+        alert('Не удалось открыть/скачать файл');
       }
     },
 
@@ -213,11 +216,12 @@ export default {
     // Обработка выбора файлов
     handleFileSelect(event) {
       const newFiles = Array.from(event.target.files);
+      const allowedExtensions = ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx', 'xlsx'];
 
       // Проверка типов файлов (опционально)
       const validFiles = newFiles.filter((file) => {
-        const fileType = file.type.toLowerCase();
-        return fileType.includes('image/');
+        const ext = file.name.split('.').pop().toLowerCase();
+        return allowedExtensions.includes(ext);
       });
 
       if (validFiles.length !== newFiles.length) {
@@ -321,13 +325,15 @@ export default {
 @use "@/styles/base" as *;
 
 .download-btn {
-  background: #4caf50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $success-color;
   color: white;
-  padding: 8px 12px;
-  border-radius: 4px;
+  padding: $button-padding;
+  border-radius: $border-radius;
   text-decoration: none;
-  font-size: 14px;
-  display: inline-block;
+  font-size: $font-size-text;
   margin-right: 10px;
 }
 
@@ -464,18 +470,32 @@ h4 {
 }
 
 .files-grid {
+  max-height: 550px;
+  overflow-y: auto;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 320px));
+  grid-template-columns: repeat(2, 1fr); // Фиксированные 2 колонки
+  gap: 15px; // Отступ между карточками
+  width: 100%; // Занимает всю доступную ширину
+  margin-bottom: 20px;
+
+  // Адаптивность для мобильных устройств
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr; // На мобильных - одна колонка
+  }
 }
 
 .file-card {
-  width: 300px;
+  width: 100%; // Занимает всю ширину колонки
   border: 1px solid #e0e0e0;
   border-radius: $border-radius;
   overflow: hidden;
   background-color: $background-color-light;
-  transition: transform 0.2s,
-  box-shadow 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: $box-shadow;
+  }
 }
 
 .file-card:hover {
@@ -539,15 +559,15 @@ h4 {
 }
 
 .view-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex: 1;
   padding: 6px 0;
   font-size: $font-size-text;
   border-radius: $border-radius;
   cursor: pointer;
   text-align: center;
-}
-
-.view-btn {
   background-color: $primary-color;
   color: $background-color-light;
   text-decoration: none;

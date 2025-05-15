@@ -109,13 +109,14 @@ export default {
 @use "@/styles/base" as *;
 
 .organizationList {
-  max-width: 1000px;
+  max-width: 1300px;
   margin: 0 auto;
   padding: 20px;
 
   &__title {
     color: $primary-color;
     margin-bottom: 20px;
+    font-size: $font-size-title;
   }
 
   &__items {

@@ -11,7 +11,6 @@ const HR_Operation = require('../models/hr_operation');
 const Department = require('../models/department');
 const Organization = require('../models/organization'); // Импортируем historyService
 
-//Топ версия
 class EmployeeController {
   // Добавляем новый метод для загрузки файлов
   async uploadEmployeeFiles(req, res) {
@@ -34,10 +33,20 @@ class EmployeeController {
 
         for (const file of files) {
           try {
+            // Исправляем кодировку имени файла
+            const decodedName = Buffer.from(file.name, 'latin1').toString('utf8');
+
             // Проверяем расширение файла
-            const fileExt = path.extname(file.name).toLowerCase();
-            if (fileExt !== '.jpg' && fileExt !== '.jpeg') {
-              console.log('Неподдерживаемый формат файла:', file.name);
+            const fileExt = path.extname(decodedName).toLowerCase();
+            if (
+              fileExt !== '.jpg'
+              && fileExt !== '.jpeg'
+              && fileExt !== '.png'
+              && fileExt !== '.pdf'
+              && fileExt !== '.docx'
+              && fileExt !== '.xlsx'
+            ) {
+              console.log('Неподдерживаемый формат файла:', decodedName);
               continue;
             }
 
@@ -51,7 +60,7 @@ class EmployeeController {
             // Создаем запись о файле в БД
             const fileRecord = await Files.create(
               {
-                name: file.name,
+                name: decodedName, // Используем исправленное имя
                 file_url: fileName,
                 employee_id: employeeId,
               },
@@ -394,9 +403,20 @@ class EmployeeController {
 
         for (const file of files) {
           try {
+            // Исправляем кодировку имени файла
+            const decodedName = Buffer.from(file.name, 'latin1').toString('utf8');
+
             // Проверяем расширение файла
-            const fileExt = path.extname(file.name).toLowerCase();
-            if (fileExt !== '.jpg' && fileExt !== '.jpeg' && fileExt !== '.png') {
+            const fileExt = path.extname(decodedName).toLowerCase();
+            if (
+              fileExt !== '.jpg'
+              && fileExt !== '.jpeg'
+              && fileExt !== '.png'
+              && fileExt !== '.pdf'
+              && fileExt !== '.docx'
+              && fileExt !== '.xlsx'
+            ) {
+              console.log('Неподдерживаемый формат файла:', decodedName);
               continue;
             }
 
@@ -410,7 +430,7 @@ class EmployeeController {
             // Создаем запись о файле в БД
             const fileRecord = await Files.create(
               {
-                name: file.name,
+                name: decodedName,
                 file_url: fileName,
                 employee_id: employee.id,
               },

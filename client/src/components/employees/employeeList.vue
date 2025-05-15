@@ -184,7 +184,6 @@ $section-gap: 20px;
   max-width: 1300px;
   margin: 0 auto;
   padding: 20px;
-  font-family: $font-family;
 
   h3 {
     color: $primary-color;

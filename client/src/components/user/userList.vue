@@ -126,21 +126,24 @@ const deleteUser = async (id) => {
 </template>
 
 <style scoped lang="scss">
+@use "@/styles/base" as *;
 .userList {
-  max-width: 1500px;
+  max-width: 1300px;
   margin: 0 auto;
   padding: 20px;
 }
 
 h3 {
+  color: $primary-color;
   margin-bottom: 20px;
+  font-size: $font-size-title;
 }
 .button--primary {
   margin-bottom: 15px;
 }
 .search-container {
   position: relative;
-  width: 1500px;
+  width: 100%;
   margin-bottom: 20px;
 
   .search-button {

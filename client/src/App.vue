@@ -27,7 +27,7 @@ export default defineComponent({
 </template>
 
 <style lang="scss">
-@import "styles/base.scss";
+@use "@/styles/base" as *;
 .spinner {
   display: flex;
   justify-content: center;

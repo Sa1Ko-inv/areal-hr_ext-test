@@ -100,7 +100,7 @@ const userUpdated = () => {
 
 <style scoped lang="scss">
 .user-card {
-  width: 1500px;
+  width: 100%;
   margin: 15px auto;
   background: #ffffff;
   border-radius: 12px;
