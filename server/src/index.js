@@ -22,7 +22,9 @@ if (!fs.existsSync(staticDir)) {
 const allowedOrigin = [
   'http://localhost',
   'http://localhost:3000',
-  'http://client:3000'
+  'http://client:3000',
+  'https://areal-hr-ext-test.ru',
+  'http://areal-hr-ext-test.ru',
 ]
 
 // cors нужен чтобы наше приложение могло отправлять запросы на другой домен
