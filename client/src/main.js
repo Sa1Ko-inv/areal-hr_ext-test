@@ -8,8 +8,6 @@ import ElementPlus from 'element-plus'
 import ru from 'element-plus/dist/locale/ru.mjs'
 import 'element-plus/dist/index.css'
 
-//TODO: Сделать 2 и последующие правки
-
 const app = createApp(App);
 app.use(VueTheMask)
 app.use(ElementPlus, { locale: ru })

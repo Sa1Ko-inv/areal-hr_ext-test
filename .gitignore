@@ -5,9 +5,12 @@
 
 /server/node_modules/
 /client/node_modules/
+/node_modules
 
 /client/.vite
 /client/dist
 /client/.vscode/
 
 /server/src/static/
+
+/docs/.vitepress/dist

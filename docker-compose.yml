@@ -8,9 +8,11 @@ services:
       - "80:80"
     volumes:
       - './nginx.conf:/etc/nginx/nginx.conf'
+      - './docs/.vitepress/dist:/usr/share/nginx/html'
     depends_on:
       - server
       - client
+      - docs
     networks:
       - dev
 
@@ -45,8 +47,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    volumes:
-      - ./server:/app #Удалить в продакшн
     networks:
       - dev
 
@@ -59,12 +59,21 @@ services:
       - "3000:3000"
     env_file:
       - .env
-    volumes:
-      - ./client:/app # Удалите в продакшене
     depends_on:
       - server  # Добавлено для синхронизации
-    stdin_open: true
-    tty: true
+    networks:
+      - dev
+
+
+  docs:
+    build:
+      context: .
+      dockerfile: containers/docs/Dockerfile
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ./docs:/app/docs  # Для разработки с hot-reload
     networks:
       - dev
 
